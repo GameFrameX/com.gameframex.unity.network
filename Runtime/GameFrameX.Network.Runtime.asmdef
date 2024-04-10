@@ -1,0 +1,30 @@
+{
+    "name": "GameFrameX.Network.Runtime",
+    "references": [
+        "GameFrameX.Runtime",
+        "GameFrameX.Event.Runtime",
+        "UnityWebSocket.Runtime",
+        "ProtoBuffer.Runtime"
+    ],
+    "rootNamespace": "GameFrameX.Network.Runtime",
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.alianblank.unitywebsocket",
+            "expression": "",
+            "define": "ENABLE_GAME_FRAME_X_WEB_SOCKET"
+        },
+        {
+            "name": "com.google.protobuf",
+            "expression": "",
+            "define": "ENABLE_PROTOBUF"
+        }
+    ],
+    "noEngineReferences": false
+}
