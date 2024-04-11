@@ -1,5 +1,5 @@
 {
-  "name": "com.alianblank.gameframex.network",
+  "name": "com.alianblank.gameframex.unity.network",
   "displayName": "Game Frame X Network",
   "category": "Game Framework X",
   "description": "Game Frame X Network Component",
@@ -9,7 +9,7 @@
     "Game Framework X"
   ],
   "repository": {
-    "name": "com.alianblank.gameframex.network",
+    "name": "com.alianblank.gameframex.unity.network",
     "url": "https://github.com/AlianBlank/com.alianblank.gameframex.unity.network.git",
     "type": "git"
   },
