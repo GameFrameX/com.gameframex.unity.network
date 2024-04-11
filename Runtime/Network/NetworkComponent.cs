@@ -5,6 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using GameFrameX.Event.Runtime;
 using GameFrameX.Runtime;
@@ -32,8 +33,9 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         protected override void Awake()
         {
+            ImplementationComponentType = Type.GetType(componentType);
+            InterfaceComponentType = typeof(INetworkManager);
             base.Awake();
-            new NetworkManager();
             _networkManager = GameFrameworkEntry.GetModule<INetworkManager>();
             if (_networkManager == null)
             {

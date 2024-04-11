@@ -13,7 +13,7 @@ using UnityEngine;
 namespace GameFrameX.Network.Editor
 {
     [CustomEditor(typeof(NetworkComponent))]
-    internal sealed class NetworkComponentInspector : GameFrameworkInspector
+    internal sealed class NetworkComponentInspector : ComponentTypeComponentInspector
     {
         public override void OnInspectorGUI()
         {
@@ -39,6 +39,11 @@ namespace GameFrameX.Network.Editor
             }
 
             Repaint();
+        }
+
+        protected override void RefreshTypeNames()
+        {
+            RefreshComponentTypeNames(typeof(INetworkManager));
         }
 
         private void DrawNetworkChannel(INetworkChannel networkChannel)
