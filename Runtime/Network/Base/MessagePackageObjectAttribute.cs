@@ -26,10 +26,12 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 消息对象标签
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
-    public class MessagePackageObjectAttribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class MessagePackageObjectAttribute : Attribute
     {
-        public MessagePackageObjectAttribute() { }
+        public MessagePackageObjectAttribute() : base()
+        {
+        }
     }
 #endif
 }
