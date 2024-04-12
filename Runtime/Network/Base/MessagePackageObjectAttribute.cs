@@ -2,7 +2,7 @@ using System;
 
 namespace GameFrameX.Network.Runtime
 {
-#if ENABLE_MESSAGEPACK
+#if ENABLE_GAME_FRAME_X_MESSAGEPACK
     /// <summary>
     /// 消息对象标签
     /// </summary>
@@ -12,7 +12,7 @@ namespace GameFrameX.Network.Runtime
         {
         }
     }
-#elif ENABLE_PROTOBUF
+#elif ENABLE_GAME_FRAME_X_PROTOBUF
     /// <summary>
     /// 消息对象标签
     /// </summary>

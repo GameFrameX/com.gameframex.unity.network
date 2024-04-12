@@ -16,14 +16,19 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "com.alianblank.unitywebsocket",
+            "name": "com.alianblank.gameframex.unity.psygames.unitywebsocket",
             "expression": "",
             "define": "ENABLE_GAME_FRAME_X_WEB_SOCKET"
         },
         {
-            "name": "com.google.protobuf",
+            "name": "com.alianblank.gameframex.unity.google.protobuf",
             "expression": "",
-            "define": "ENABLE_PROTOBUF"
+            "define": "ENABLE_GAME_FRAME_X_PROTOBUF"
+        },
+        {
+            "name": "com.alianblank.gameframex.unity.neuecc.messagepack",
+            "expression": "",
+            "define": "ENABLE_GAME_FRAME_X_MESSAGEPACK"
         }
     ],
     "noEngineReferences": false
