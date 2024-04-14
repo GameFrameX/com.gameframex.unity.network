@@ -18,15 +18,14 @@ namespace GameFrameX.Network.Runtime
                 return false;
             }
 
-
             // packetLength
-            int offest = 0;
-            int packetLength = reader.ReadInt(ref offest); //4
+            int offset = 0;
+            int packetLength = reader.ReadInt(ref offset); //4
             PacketLength = packetLength;
             // timestamp
-            long timestamp = reader.ReadLong(ref offest); //8
+            long timestamp = reader.ReadLong(ref offset); //8
             // MsgId
-            int msgId = reader.ReadInt(ref offest); //4
+            int msgId = reader.ReadInt(ref offset); //4
             Id = msgId;
             return true;
         }
