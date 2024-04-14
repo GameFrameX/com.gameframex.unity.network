@@ -7,24 +7,23 @@
 
 #if ENABLE_GAME_FRAME_X_WEB_SOCKET
 using System;
-using System.Buffers;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using GameFrameX.Runtime;
 
 namespace GameFrameX.Network.Runtime
 {
     public sealed partial class NetworkManager
     {
         /// <summary>
-        /// TCP 网络频道。
+        /// Web Socket 网络频道。
         /// </summary>
         private sealed class WebSocketNetworkChannel : NetworkChannelBase
         {
             private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+            private readonly byte[] _sendBuffer = new byte[BufferSize];
+            private const int BufferSize = 1024 * 8;
 
             /// <summary>
             /// 初始化网络频道的新实例。
@@ -97,13 +96,13 @@ namespace GameFrameX.Network.Runtime
                 if (serializeResult)
                 {
                     // TODO 效率不高
-                    var tcpClientNetSocket = (WebSocketClientNetSocket)PSocket;
+                    var webSocketClientNetSocket = (WebSocketClientNetSocket)PSocket;
 
                     byte[] buffer = new byte[PSendState.Stream.Length];
                     PSendState.Stream.Seek(0, SeekOrigin.Begin);
                     _ = PSendState.Stream.Read(buffer, 0, buffer.Length);
 
-                    tcpClientNetSocket.Client.SendAsync(buffer);
+                    webSocketClientNetSocket.Client.SendAsync(buffer);
                 }
                 else
                 {
