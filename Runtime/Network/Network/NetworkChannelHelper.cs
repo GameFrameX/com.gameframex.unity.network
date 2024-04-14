@@ -143,14 +143,14 @@ namespace GameFrameX.Network.Runtime
             return _netChannel.PacketSendBodyHandler.Handler(messageBodyBuffer, _cachedStream, destination);
         }
 
-        public bool DeserializePacketHeader(object source)
+        public bool DeserializePacketHeader(byte[] source)
         {
             GameFrameworkGuard.NotNull(source, nameof(source));
 
             return _netChannel.PacketReceiveHeaderHandler.Handler(source);
         }
 
-        public bool DeserializePacketBody(object source, int messageId, out MessageObject messageObject)
+        public bool DeserializePacketBody(byte[] source, int messageId, out MessageObject messageObject)
         {
             GameFrameworkGuard.NotNull(source, nameof(source));
 
