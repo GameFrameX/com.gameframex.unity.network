@@ -48,21 +48,6 @@ namespace GameFrameX.Network.Runtime
                 Reset(packetHeaderLength, null, null);
             }
 
-            public void PrepareForPacket(IPacketReceiveHeaderHandler packetHeader, IPacketReceiveBodyHandler packetBody)
-            {
-                if (packetHeader == null)
-                {
-                    throw new ArgumentNullException(nameof(packetHeader), "Packet header is invalid.");
-                }
-
-                if (packetBody == null)
-                {
-                    throw new ArgumentNullException(nameof(packetBody), "Packet body is invalid.");
-                }
-
-                Reset(packetHeader.PacketLength, packetHeader, packetBody);
-            }
-
             public void Dispose()
             {
                 Dispose(true);
