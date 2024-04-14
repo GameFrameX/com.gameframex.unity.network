@@ -476,6 +476,7 @@ namespace GameFrameX.Network.Runtime
                     }
                     catch
                     {
+                        // ignored
                     }
                     finally
                     {
