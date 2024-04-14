@@ -60,8 +60,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="source">要反序列化的来源流。</param>
         /// <returns>反序列化后的消息包头。</returns>
-        bool DeserializePacketHeader(object source);
-
+        bool DeserializePacketHeader(byte[] source);
 
         /// <summary>
         /// 反序列化消息包。
@@ -70,6 +69,6 @@ namespace GameFrameX.Network.Runtime
         /// <param name="messageId">消息ID</param>
         /// <param name="messageObject"></param>
         /// <returns>反序列化后的消息包。</returns>
-        bool DeserializePacketBody(object source, int messageId, out MessageObject messageObject);
+        bool DeserializePacketBody(byte[] source, int messageId, out MessageObject messageObject);
     }
 }
