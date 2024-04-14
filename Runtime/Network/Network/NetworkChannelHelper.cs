@@ -111,8 +111,8 @@ namespace GameFrameX.Network.Runtime
 
         public void PrepareForConnecting()
         {
-            _netChannel.Socket.ReceiveBufferSize = 1024 * 1024 * 5;
-            _netChannel.Socket.SendBufferSize = 1024 * 1024 * 5;
+            _netChannel.Socket.ReceiveBufferSize = 1024 * 1024 * 8;
+            _netChannel.Socket.SendBufferSize = 1024 * 1024 * 8;
         }
 
         public bool SendHeartBeat()
