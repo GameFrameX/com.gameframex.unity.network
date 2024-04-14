@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
+// using System.Text;
 
 namespace GameFrameX.Network.Runtime
 {
@@ -65,7 +65,7 @@ namespace GameFrameX.Network.Runtime
             ReqDictionary.Clear();
             RespDictionary.Clear();
             var types = assembly.GetTypes();
-            StringBuilder stringBuilder = new StringBuilder(1024);
+            // StringBuilder stringBuilder = new StringBuilder(1024);
             foreach (var type in types)
             {
                 var attribute = type.GetCustomAttribute(typeof(MessageTypeHandlerAttribute));
@@ -74,7 +74,7 @@ namespace GameFrameX.Network.Runtime
                     continue;
                 }
 
-                stringBuilder.AppendLine(type.FullName);
+                // stringBuilder.AppendLine(type.FullName);
                 if (attribute is MessageTypeHandlerAttribute messageIdHandler)
                 {
                     if (type.IsImplWithInterface(typeof(IRequestMessage)))
@@ -98,8 +98,8 @@ namespace GameFrameX.Network.Runtime
                 }
             }
 
-            GameFrameworkLog.Debug(" 注册消息ID类型: " + stringBuilder);
-            GameFrameworkLog.Info(" 注册消息ID类型: 结束");
+            // GameFrameworkLog.Debug(" 注册消息ID类型: " + stringBuilder);
+            // GameFrameworkLog.Info(" 注册消息ID类型: 结束");
         }
     }
 }
