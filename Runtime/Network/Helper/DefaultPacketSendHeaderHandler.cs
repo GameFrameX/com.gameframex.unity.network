@@ -11,21 +11,27 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         private const int NetPacketLength = 4;
 
-        // 消息码
+        /// <summary>
+        /// 消息码
+        /// </summary>
         private const int NetCmdIdLength = 4;
 
-        // 排序
-        private const int NetOrderLength = 4;
+        /// <summary>
+        /// 消息体长度
+        /// </summary>
+        private const int NetBodyLength = 4;
 
-        // 消息时间戳
-        private const int NetTicketLength = 8;
+        /// <summary>
+        /// 消息编号
+        /// </summary>
+        private const int NetUniqueIdLength = 4;
 
 
         public DefaultPacketSendHeaderHandler()
         {
-            // 4 + 8 + 4 + 4 
-            PacketHeaderLength = NetPacketLength + NetTicketLength + NetOrderLength + NetCmdIdLength;
-            _cachedByte = new byte[PacketHeaderLength];
+            // 4 + 4 + 4 + 4 
+            PacketHeaderLength = NetPacketLength + NetUniqueIdLength + NetCmdIdLength + NetBodyLength;
+            m_CachedByte = new byte[PacketHeaderLength];
         }
 
         /// <summary>
@@ -43,32 +49,34 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         public int PacketLength { get; private set; }
 
-        private const int Magic = 0x1234;
+        private const int Magic = 0x8023;
 
-        int count = 0;
-        private readonly byte[] _cachedByte;
+        int m_Count = 0;
+        private int m_Offset = 0;
+        private readonly byte[] m_CachedByte;
 
         public bool Handler<T>(T messageObject, MemoryStream cachedStream, out byte[] messageBodyBuffer) where T : MessageObject
         {
             cachedStream.Seek(0, SeekOrigin.Begin);
             cachedStream.SetLength(0);
-
+            m_Offset = 0;
             messageBodyBuffer = SerializerHelper.Serialize(messageObject);
             var messageType = messageObject.GetType();
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
             var messageLength = messageBodyBuffer.Length;
             PacketLength = PacketHeaderLength + messageLength;
-            int magic = Magic + ++count;
+            int magic = Magic + ++m_Count;
             magic ^= Magic << 8;
             magic ^= PacketLength;
-
-            int offset = 0;
-
-            _cachedByte.WriteInt(PacketLength, ref offset);
-            _cachedByte.WriteLong(GameTimeHelper.UnixTimeMilliseconds(), ref offset);
-            _cachedByte.WriteInt(Id, ref offset);
-            _cachedByte.WriteInt(messageLength, ref offset);
-            cachedStream.Write(_cachedByte, 0, PacketHeaderLength);
+            // 数据包总大小
+            m_CachedByte.WriteInt(PacketLength, ref m_Offset);
+            // 消息编号
+            m_CachedByte.WriteInt(magic, ref m_Offset);
+            // 消息ID
+            m_CachedByte.WriteInt(Id, ref m_Offset);
+            // 消息体长度
+            m_CachedByte.WriteInt(messageLength, ref m_Offset);
+            cachedStream.Write(m_CachedByte, 0, PacketHeaderLength);
             return true;
         }
     }
