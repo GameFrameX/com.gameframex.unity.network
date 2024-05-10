@@ -9,12 +9,10 @@ namespace GameFrameX.Network.Runtime
 {
     public class DefaultNetworkChannelHelper : INetworkChannelHelper, IReference
     {
-        private MemoryStream _cachedStream;
         private INetworkChannel m_NetworkChannel;
 
         public DefaultNetworkChannelHelper()
         {
-            _cachedStream = new MemoryStream(1024);
             m_NetworkChannel = null;
         }
 
@@ -106,28 +104,32 @@ namespace GameFrameX.Network.Runtime
 
         public void PrepareForConnecting()
         {
-            m_NetworkChannel.Socket.ReceiveBufferSize = 1024 * 1024 * 8;
-            m_NetworkChannel.Socket.SendBufferSize = 1024 * 1024 * 8;
+            m_NetworkChannel.Socket.ReceiveBufferSize = 1024 * 64 - 1;
+            m_NetworkChannel.Socket.SendBufferSize = 1024 * 64 - 1;
         }
 
         public bool SendHeartBeat()
         {
             var message = m_NetworkChannel.PacketHeartBeatHandler.Handler();
-            m_NetworkChannel.Send(message);
+            for (int i = 0; i < 10; i++)
+            {
+                m_NetworkChannel.Send(message);
+            }
+
             return true;
         }
 
-        public bool SerializePacketHeader<T>(T messageObject, Stream destination, out byte[] messageBodyBuffer) where T : MessageObject
+        public bool SerializePacketHeader<T>(T messageObject, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject
         {
             GameFrameworkGuard.NotNull(m_NetworkChannel, nameof(m_NetworkChannel));
             GameFrameworkGuard.NotNull(m_NetworkChannel.PacketSendHeaderHandler, nameof(m_NetworkChannel.PacketSendHeaderHandler));
             GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
             GameFrameworkGuard.NotNull(destination, nameof(destination));
 
-            return m_NetworkChannel.PacketSendHeaderHandler.Handler(messageObject, _cachedStream, out messageBodyBuffer);
+            return m_NetworkChannel.PacketSendHeaderHandler.Handler(messageObject, destination, out messageBodyBuffer);
         }
 
-        public bool SerializePacketBody(byte[] messageBodyBuffer, Stream destination)
+        public bool SerializePacketBody(byte[] messageBodyBuffer, MemoryStream destination)
         {
             GameFrameworkGuard.NotNull(m_NetworkChannel, nameof(m_NetworkChannel));
             GameFrameworkGuard.NotNull(m_NetworkChannel.PacketSendHeaderHandler, nameof(m_NetworkChannel.PacketSendHeaderHandler));
@@ -135,7 +137,7 @@ namespace GameFrameX.Network.Runtime
             GameFrameworkGuard.NotNull(messageBodyBuffer, nameof(messageBodyBuffer));
             GameFrameworkGuard.NotNull(destination, nameof(destination));
 
-            return m_NetworkChannel.PacketSendBodyHandler.Handler(messageBodyBuffer, _cachedStream, destination);
+            return m_NetworkChannel.PacketSendBodyHandler.Handler(messageBodyBuffer, destination);
         }
 
         public bool DeserializePacketHeader(byte[] source)
@@ -154,8 +156,6 @@ namespace GameFrameX.Network.Runtime
 
         public void Clear()
         {
-            _cachedStream?.Dispose();
-            _cachedStream = null;
             m_NetworkChannel?.Close();
             m_NetworkChannel = null;
         }

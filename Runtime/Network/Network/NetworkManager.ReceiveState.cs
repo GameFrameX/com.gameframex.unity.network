@@ -14,7 +14,7 @@ namespace GameFrameX.Network.Runtime
     {
         public sealed class ReceiveState : IDisposable
         {
-            private const int DefaultBufferLength = 1024 * 64;
+            public const int DefaultBufferLength = 1024 * 64;
             private bool _disposed;
 
             public ReceiveState()
@@ -24,10 +24,18 @@ namespace GameFrameX.Network.Runtime
             }
 
             public MemoryStream Stream { get; private set; }
+            public IPacketReceiveHeaderHandler PacketHeader { get; set; }
 
-            public void PrepareForPacketHeader(int packetHeaderLength)
+            public void PrepareForPacketHeader(int packetHeaderLength = 16)
             {
-                Reset(packetHeaderLength);
+                Reset(packetHeaderLength, null);
+            }
+
+            public void PrepareForPacket(IPacketReceiveHeaderHandler packetReceiveHeaderHandler)
+            {
+                GameFrameworkGuard.NotNull(packetReceiveHeaderHandler, nameof(packetReceiveHeaderHandler));
+
+                Reset(packetReceiveHeaderHandler.PacketLength, packetReceiveHeaderHandler);
             }
 
             public void Dispose()
@@ -55,7 +63,7 @@ namespace GameFrameX.Network.Runtime
                 _disposed = true;
             }
 
-            private void Reset(int targetLength)
+            public void Reset(int targetLength, IPacketReceiveHeaderHandler packetHeader)
             {
                 if (targetLength < 0)
                 {
@@ -64,6 +72,7 @@ namespace GameFrameX.Network.Runtime
 
                 Stream.Position = 0L;
                 Stream.SetLength(targetLength);
+                PacketHeader = packetHeader;
             }
         }
     }

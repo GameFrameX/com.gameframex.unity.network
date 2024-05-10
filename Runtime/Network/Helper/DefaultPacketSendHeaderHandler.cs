@@ -55,10 +55,8 @@ namespace GameFrameX.Network.Runtime
         private int m_Offset = 0;
         private readonly byte[] m_CachedByte;
 
-        public bool Handler<T>(T messageObject, MemoryStream cachedStream, out byte[] messageBodyBuffer) where T : MessageObject
+        public bool Handler<T>(T messageObject, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject
         {
-            cachedStream.Seek(0, SeekOrigin.Begin);
-            cachedStream.SetLength(0);
             m_Offset = 0;
             messageBodyBuffer = SerializerHelper.Serialize(messageObject);
             var messageType = messageObject.GetType();
@@ -76,7 +74,7 @@ namespace GameFrameX.Network.Runtime
             m_CachedByte.WriteInt(Id, ref m_Offset);
             // 消息体长度
             m_CachedByte.WriteInt(messageLength, ref m_Offset);
-            cachedStream.Write(m_CachedByte, 0, PacketHeaderLength);
+            destination.Write(m_CachedByte, 0, PacketHeaderLength);
             return true;
         }
     }

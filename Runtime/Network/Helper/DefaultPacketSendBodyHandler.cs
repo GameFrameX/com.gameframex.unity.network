@@ -4,10 +4,9 @@ namespace GameFrameX.Network.Runtime
 {
     public sealed class DefaultPacketSendBodyHandler : IPacketSendBodyHandler, IPacketHandler
     {
-        public bool Handler(byte[] messageBodyBuffer, MemoryStream cachedStream, Stream destination)
+        public bool Handler(byte[] messageBodyBuffer, MemoryStream destination)
         {
-            cachedStream.Write(messageBodyBuffer, 0, messageBodyBuffer.Length);
-            cachedStream.WriteTo(destination);
+            destination.Write(messageBodyBuffer, 0, messageBodyBuffer.Length);
             return true;
         }
     }

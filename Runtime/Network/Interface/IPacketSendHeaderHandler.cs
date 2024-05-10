@@ -26,10 +26,10 @@ namespace GameFrameX.Network.Runtime
         /// 处理消息
         /// </summary>
         /// <param name="messageObject">消息对象</param>
-        /// <param name="cachedStream">缓存流</param>
+        /// <param name="destination">缓存流</param>
         /// <param name="messageBodyBuffer">消息序列化完的二进制数组</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        bool Handler<T>(T messageObject, MemoryStream cachedStream, out byte[] messageBodyBuffer) where T : MessageObject;
+        bool Handler<T>(T messageObject, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject;
     }
 }

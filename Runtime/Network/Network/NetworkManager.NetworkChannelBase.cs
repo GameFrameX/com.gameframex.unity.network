@@ -434,7 +434,7 @@ namespace GameFrameX.Network.Runtime
                 }
 
                 PSendState.Reset();
-                PReceiveState.PrepareForPacketHeader(0);
+                PReceiveState.PrepareForPacketHeader();
             }
 
             /// <summary>
@@ -637,10 +637,10 @@ namespace GameFrameX.Network.Runtime
                             throw new GameFrameworkException(errorMessage);
                         }
 
-                        PSendState.Reset();
+                        // PSendState.Reset();
                     }
 
-                    PSendState.Reset();
+                    PSendState.Stream.Position = 0L;
                     return true;
                 }
             }
@@ -655,7 +655,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="buffer"></param>
             /// <returns></returns>
-            protected void ProcessReceiveMessage(ref byte[] buffer)
+            protected bool ProcessReceiveMessage(ref byte[] buffer)
             {
                 try
                 {
@@ -668,7 +668,7 @@ namespace GameFrameX.Network.Runtime
 
                     if (buffer.Length < PacketReceiveHeaderHandler.PacketHeaderLength)
                     {
-                        return;
+                        return false;
                     }
 
                     var result = PNetworkChannelHelper.DeserializePacketHeader(buffer);
@@ -677,7 +677,7 @@ namespace GameFrameX.Network.Runtime
                         var bodyLength = PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength;
                         if (buffer.Length < bodyLength)
                         {
-                            return;
+                            return false;
                         }
 
                         var body = buffer.ReadBytes(PacketReceiveHeaderHandler.PacketHeaderLength + 4, bodyLength);
@@ -691,7 +691,7 @@ namespace GameFrameX.Network.Runtime
                             if (NetworkChannelError != null)
                             {
                                 NetworkChannelError(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid.");
-                                return;
+                                return false;
                             }
                         }
 
@@ -709,6 +709,8 @@ namespace GameFrameX.Network.Runtime
                 {
                     NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid." + e.Message);
                 }
+
+                return true;
             }
         }
     }

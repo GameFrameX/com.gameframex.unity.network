@@ -18,9 +18,8 @@ namespace GameFrameX.Network.Runtime
         /// 
         /// </summary>
         /// <param name="messageBodyBuffer"></param>
-        /// <param name="cachedStream"></param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        bool Handler(byte[] messageBodyBuffer, MemoryStream cachedStream, Stream destination);
+        bool Handler(byte[] messageBodyBuffer, MemoryStream destination);
     }
 }

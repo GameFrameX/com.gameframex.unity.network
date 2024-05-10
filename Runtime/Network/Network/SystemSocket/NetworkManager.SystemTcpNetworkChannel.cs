@@ -20,16 +20,9 @@ namespace GameFrameX.Network.Runtime
         private sealed class SystemTcpNetworkChannel : NetworkChannelBase
         {
             private ConnectState m_ConnectState = null;
-            private SocketAsyncEventArgs _receiveEventArgs = new SocketAsyncEventArgs();
-            private SocketAsyncEventArgs _sendEventArgs = new SocketAsyncEventArgs();
-            private const int BufferSize = 8192;
             private byte[] _incompletePacket;
             private IPEndPoint connectedEndPoint = null;
             private SystemNetSocket PSystemNetSocket = null;
-            private readonly byte[] _receiveBuffer = new byte[BufferSize];
-
-            private bool isSending = false;
-            private bool isReceiving = false;
 
             /// <summary>
             /// 初始化网络频道的新实例。
@@ -39,12 +32,6 @@ namespace GameFrameX.Network.Runtime
             public SystemTcpNetworkChannel(string name, INetworkChannelHelper networkChannelHelper)
                 : base(name, networkChannelHelper)
             {
-                // 初始化接收用的 SocketAsyncEventArgs
-                _receiveEventArgs.SetBuffer(_receiveBuffer, 0, _receiveBuffer.Length);
-                _receiveEventArgs.Completed += Completed;
-
-                // 初始化发送用的 SocketAsyncEventArgs
-                _sendEventArgs.Completed += Completed;
             }
 
             /// <summary>
@@ -72,88 +59,126 @@ namespace GameFrameX.Network.Runtime
                 }
 
                 PNetworkChannelHelper.PrepareForConnecting();
-                m_ConnectState = new ConnectState(PSystemNetSocket, userData);
-                ConnectAsync();
+
+                ConnectAsync(userData);
             }
-
-            /*protected override void ProcessReceive()
-            {
-                base.ProcessReceive();
-                if (isReceiving)
-                {
-                    return;
-                }
-
-                ReceiveAsync();
-            }*/
 
             protected override bool ProcessSend()
             {
-                if (isSending)
-                {
-                    return false;
-                }
-
                 if (base.ProcessSend())
                 {
-                    // SendAsync();
+                    SendAsync();
                     return true;
                 }
 
                 return false;
             }
 
-            private void Completed(object sender, SocketAsyncEventArgs e)
-            {
-                switch (e.LastOperation)
-                {
-                    case SocketAsyncOperation.Receive:
-                        isReceiving = false;
-                        ProcessReceive(e);
-                        break;
-                    case SocketAsyncOperation.Send:
-                        isSending = false;
-                        ProcessSend(e);
-                        break;
-                    default:
-                        throw new Exception("Invalid operation completed");
-                }
-            }
 
             private void ReceiveAsync()
             {
-                if (isReceiving)
+                try
+                {
+                    PSystemNetSocket.BeginReceive(PReceiveState.Stream.GetBuffer(), (int)PReceiveState.Stream.Position, (int)(PReceiveState.Stream.Length - PReceiveState.Stream.Position), SocketFlags.None, ReceiveCallback, PSystemNetSocket);
+                }
+                catch (Exception exception)
+                {
+                    PActive = false;
+                    if (NetworkChannelError != null)
+                    {
+                        SocketException socketException = exception as SocketException;
+                        NetworkChannelError(this, NetworkErrorCode.ReceiveError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
+                        return;
+                    }
+
+                    throw;
+                }
+            }
+
+            private void ReceiveCallback(IAsyncResult asyncResult)
+            {
+                var systemNetSocket = (SystemNetSocket)asyncResult.AsyncState;
+                if (!systemNetSocket.IsConnected)
                 {
                     return;
                 }
 
-                isReceiving = true;
-                bool willRaiseEvent = PSystemNetSocket.Socket.ReceiveAsync(_receiveEventArgs);
-                if (!willRaiseEvent)
+                int bytesReceived = 0;
+                try
                 {
-                    ProcessReceive(_receiveEventArgs);
+                    bytesReceived = systemNetSocket.EndReceive(asyncResult);
+                }
+                catch (Exception exception)
+                {
+                    PActive = false;
+                    if (NetworkChannelError != null)
+                    {
+                        SocketException socketException = exception as SocketException;
+                        NetworkChannelError(this, NetworkErrorCode.ReceiveError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
+                        return;
+                    }
+
+                    throw;
+                }
+
+                if (bytesReceived <= 0)
+                {
+                    Close();
+                    return;
+                }
+
+                lock (PHeartBeatState)
+                {
+                    PHeartBeatState.Reset(PResetHeartBeatElapseSecondsWhenReceivePacket);
+                }
+
+                PReceiveState.Stream.Position += bytesReceived;
+                if (PReceiveState.Stream.Position < PReceiveState.Stream.Length)
+                {
+                    ReceiveAsync();
+                    return;
+                }
+
+                PReceiveState.Stream.Position = 0L;
+                bool processSuccess;
+                if (PReceiveState.PacketHeader != null)
+                {
+                    processSuccess = ProcessPackBody();
                 }
                 else
                 {
-                    isReceiving = false;
+                    processSuccess = ProcessPackHeader();
+                }
+
+                if (processSuccess)
+                {
+                    ReceiveAsync();
+                    return;
                 }
             }
 
-            private void ProcessReceive(SocketAsyncEventArgs e)
+            private bool ProcessPackHeader()
             {
-                isReceiving = false;
-                if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
-                {
-                    PReceiveState.Stream.Write(e.Buffer, e.Offset, e.BytesTransferred);
-                    var buffer = PReceiveState.Stream.GetBuffer();
-                    ProcessReceiveMessage(ref buffer);
-                    // We're ready to receive more data
-                    ReceiveAsync();
-                }
-                else
-                {
-                    Close();
-                }
+                var buffer = new byte[PacketReceiveHeaderHandler.PacketHeaderLength];
+                _ = PReceiveState.Stream.Read(buffer, 0, PacketReceiveHeaderHandler.PacketHeaderLength);
+                var processSuccess = PNetworkChannelHelper.DeserializePacketHeader(buffer);
+                PReceiveState.Reset(PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength, PacketReceiveHeaderHandler);
+                return processSuccess;
+            }
+
+            private bool ProcessPackBody()
+            {
+                var buffer = new byte[PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength];
+                _ = PReceiveState.Stream.Read(buffer, 0, PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength);
+                var processSuccess = PNetworkChannelHelper.DeserializePacketBody(buffer, PacketReceiveHeaderHandler.Id, out var messageObject);
+                Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+                PacketBase packetBase = ReferencePool.Acquire<PacketBase>();
+                packetBase.MessageObject = messageObject;
+                packetBase.MessageId = PacketReceiveHeaderHandler.Id;
+                PReceivePacketPool.Fire(this, packetBase);
+                PReceivedPacketCount++;
+                PReceiveState.PrepareForPacketHeader();
+                return processSuccess;
             }
 
             #region Sender
@@ -174,7 +199,6 @@ namespace GameFrameX.Network.Runtime
                 bool serializeResult = base.ProcessSendMessage(messageObject);
                 if (serializeResult)
                 {
-                    SendAsync();
                 }
                 else
                 {
@@ -185,20 +209,6 @@ namespace GameFrameX.Network.Runtime
                 return true;
             }
 
-            private void ProcessSend(SocketAsyncEventArgs e)
-            {
-                if (e.SocketError == SocketError.Success)
-                {
-                    // 数据发送成功
-                    Log.Info("发送成功");
-                    isSending = false;
-                }
-                else
-                {
-                    // 处理错误或断开连接
-                    Close();
-                }
-            }
 
             /// <summary>
             /// 实际发送异步数据
@@ -207,19 +217,7 @@ namespace GameFrameX.Network.Runtime
             {
                 try
                 {
-                    // Log.Info("SendAsync");
-                    isSending = true;
-                    _sendEventArgs.SetBuffer(PSendState.Stream.GetBuffer(), 0, (int)PSendState.Stream.Length);
-                    // 发送数据
-                    bool willRaiseEvent = PSystemNetSocket.Socket.SendAsync(_sendEventArgs);
-                    if (!willRaiseEvent)
-                    {
-                        // 发送数据完成
-                        PSentPacketCount++;
-                        PSendState.Reset();
-                        isSending = false;
-                        ProcessSend(_sendEventArgs);
-                    }
+                    PSystemNetSocket.BeginSend(PSendState.Stream.GetBuffer(), (int)PSendState.Stream.Position, (int)(PSendState.Stream.Length - PSendState.Stream.Position), SocketFlags.None, SendCallback, PSystemNetSocket);
                 }
                 catch (Exception exception)
                 {
@@ -227,7 +225,7 @@ namespace GameFrameX.Network.Runtime
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, NetworkErrorCode.SendError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, NetworkErrorCode.SendError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
                         return;
                     }
 
@@ -235,36 +233,53 @@ namespace GameFrameX.Network.Runtime
                 }
             }
 
+            private void SendCallback(IAsyncResult asyncResult)
+            {
+                var systemNetSocket = (SystemNetSocket)asyncResult.AsyncState;
+                if (!systemNetSocket.IsConnected)
+                {
+                    return;
+                }
+
+                int bytesSent = 0;
+                try
+                {
+                    bytesSent = systemNetSocket.EndSend(asyncResult, out var error);
+                }
+                catch (Exception exception)
+                {
+                    PActive = false;
+                    if (NetworkChannelError != null)
+                    {
+                        SocketException socketException = exception as SocketException;
+                        NetworkChannelError(this, NetworkErrorCode.SendError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
+                    }
+
+                    return;
+                }
+
+                PSendState.Stream.Position += bytesSent;
+                if (PSendState.Stream.Position < PSendState.Stream.Length)
+                {
+                    SendAsync();
+                    return;
+                }
+
+                PSentPacketCount++;
+                PSendState.Reset();
+            }
+
             #endregion
 
 
             #region Connect
 
-            private void ConnectAsync()
+            private void ConnectAsync(object userData)
             {
                 try
                 {
-                    ((SystemNetSocket)PSocket).Socket.Connect(connectedEndPoint);
-
-                    PSentPacketCount = 0;
-                    PReceivedPacketCount = 0;
-
-                    lock (PSendPacketPool)
-                    {
-                        PSendPacketPool.Clear();
-                    }
-
-                    PReceivePacketPool.Clear();
-
-                    lock (PHeartBeatState)
-                    {
-                        PHeartBeatState.Reset(true);
-                    }
-
-                    NetworkChannelConnected?.Invoke(this, m_ConnectState.UserData);
-
-                    PActive = true;
-                    ReceiveAsync();
+                    m_ConnectState = new ConnectState(PSystemNetSocket, userData);
+                    ((SystemNetSocket)PSocket).BeginConnect(connectedEndPoint.Address, connectedEndPoint.Port, ConnectCallback, m_ConnectState);
                 }
                 catch (Exception exception)
                 {
@@ -277,6 +292,46 @@ namespace GameFrameX.Network.Runtime
 
                     throw;
                 }
+            }
+
+            private void ConnectCallback(IAsyncResult asyncResult)
+            {
+                var connectState = (ConnectState)asyncResult.AsyncState;
+                var systemNetSocket = (SystemNetSocket)connectState.Socket;
+                try
+                {
+                    systemNetSocket.EndConnect(asyncResult);
+                }
+                catch (ObjectDisposedException)
+                {
+                    return;
+                }
+                catch (Exception exception)
+                {
+                    SocketException socketException = exception as SocketException;
+                    NetworkChannelError?.Invoke(this, NetworkErrorCode.ConnectError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
+                    Close();
+                    return;
+                }
+
+                PSentPacketCount = 0;
+                PReceivedPacketCount = 0;
+
+                lock (PSendPacketPool)
+                {
+                    PSendPacketPool.Clear();
+                }
+
+                PReceivePacketPool.Clear();
+
+                lock (PHeartBeatState)
+                {
+                    PHeartBeatState.Reset(true);
+                }
+
+                NetworkChannelConnected?.Invoke(this, m_ConnectState.UserData);
+                PActive = true;
+                ReceiveAsync();
             }
 
             #endregion

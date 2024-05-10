@@ -44,7 +44,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="messageBodyBuffer">消息体缓冲区,用于存储序列化后的消息</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        bool SerializePacketHeader<T>(T messageObject, Stream destination, out byte[] messageBodyBuffer) where T : MessageObject;
+        bool SerializePacketHeader<T>(T messageObject, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject;
 
         /// <summary>
         /// 序列化消息包。
@@ -52,7 +52,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="messageBodyBuffer">要序列化的消息包。</param>
         /// <param name="destination">要序列化的目标流。</param>
         /// <returns>是否序列化成功。</returns>
-        bool SerializePacketBody(byte[] messageBodyBuffer, Stream destination);
+        bool SerializePacketBody(byte[] messageBodyBuffer, MemoryStream destination);
 
         /// <summary>
         /// 反序列化消息包头。

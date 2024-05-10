@@ -79,15 +79,16 @@ namespace GameFrameX.Network.Runtime
             }
 
 
-            public void BeginSend(byte[] getBuffer, int streamPosition, int streamLength, SocketFlags none, AsyncCallback mSendCallback, INetworkSocket mSocket)
+            public IAsyncResult BeginSend(byte[] getBuffer, int streamPosition, int streamLength, SocketFlags none, AsyncCallback mSendCallback, INetworkSocket mSocket)
             {
-                m_Socket.BeginSend(getBuffer, streamPosition, streamLength, none, mSendCallback, mSocket);
+                return m_Socket.BeginSend(getBuffer, streamPosition, streamLength, none, mSendCallback, mSocket);
             }
 
-            public void BeginReceive(byte[] getBuffer, int streamPosition, int streamLength, SocketFlags none, AsyncCallback mReceiveCallback, INetworkSocket mSocket)
+            public int EndSend(IAsyncResult asyncResult, out SocketError error)
             {
-                m_Socket.BeginReceive(getBuffer, streamPosition, streamLength, none, mReceiveCallback, mSocket);
+                return m_Socket.EndSend(asyncResult, out error);
             }
+
 
             public void BeginConnect(IPAddress ipAddress, int port, AsyncCallback mConnectCallback, ConnectState connectState)
             {
@@ -99,9 +100,14 @@ namespace GameFrameX.Network.Runtime
                 m_Socket.EndConnect(ar);
             }
 
-            public int Receive(byte[] getBuffer, int streamPosition, int streamLength, SocketFlags none)
+            public void BeginReceive(byte[] getBuffer, int streamPosition, int streamLength, SocketFlags none, AsyncCallback mReceiveCallback, INetworkSocket mSocket)
             {
-                return m_Socket.Receive(getBuffer, streamPosition, streamLength, none);
+                m_Socket.BeginReceive(getBuffer, streamPosition, streamLength, none, mReceiveCallback, mSocket);
+            }
+
+            public int EndReceive(IAsyncResult asyncResult)
+            {
+                return m_Socket.EndReceive(asyncResult);
             }
         }
     }
