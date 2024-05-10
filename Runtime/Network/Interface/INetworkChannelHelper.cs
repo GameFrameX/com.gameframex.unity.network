@@ -5,7 +5,6 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
-using System.Buffers;
 using System.IO;
 
 namespace GameFrameX.Network.Runtime
@@ -40,9 +39,9 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 序列化消息头
         /// </summary>
-        /// <param name="messageObject"></param>
-        /// <param name="destination"></param>
-        /// <param name="messageBodyBuffer"></param>
+        /// <param name="messageObject">消息对象</param>
+        /// <param name="destination">消息流目标对象</param>
+        /// <param name="messageBodyBuffer">消息体缓冲区,用于存储序列化后的消息</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         bool SerializePacketHeader<T>(T messageObject, Stream destination, out byte[] messageBodyBuffer) where T : MessageObject;

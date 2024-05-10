@@ -11,13 +11,12 @@ namespace GameFrameX.Network.Runtime
     {
         public sealed class ConnectState
         {
-            private readonly INetworkSocket _socket;
-            private readonly object _userData;
+            private readonly INetworkSocket m_Socket;
 
             public ConnectState(INetworkSocket socket, object userData)
             {
-                _socket = socket;
-                _userData = userData;
+                m_Socket = socket;
+                UserData = userData;
             }
 
             /// <summary>
@@ -25,16 +24,13 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             public INetworkSocket Socket
             {
-                get { return _socket; }
+                get { return m_Socket; }
             }
 
             /// <summary>
             /// 用户自定义数据
             /// </summary>
-            public object UserData
-            {
-                get { return _userData; }
-            }
+            public object UserData { get; }
         }
     }
 }

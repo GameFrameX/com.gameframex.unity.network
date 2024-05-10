@@ -17,7 +17,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// TCP 网络频道。
         /// </summary>
-        private sealed class SocketNetworkChannel : NetworkChannelBase
+        private sealed class SystemTcpNetworkChannel : NetworkChannelBase
         {
             private ConnectState m_ConnectState = null;
             private SocketAsyncEventArgs _receiveEventArgs = new SocketAsyncEventArgs();
@@ -36,7 +36,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="name">网络频道名称。</param>
             /// <param name="networkChannelHelper">网络频道辅助器。</param>
-            public SocketNetworkChannel(string name, INetworkChannelHelper networkChannelHelper)
+            public SystemTcpNetworkChannel(string name, INetworkChannelHelper networkChannelHelper)
                 : base(name, networkChannelHelper)
             {
                 // 初始化接收用的 SocketAsyncEventArgs
@@ -146,9 +146,6 @@ namespace GameFrameX.Network.Runtime
                 {
                     PReceiveState.Stream.Write(e.Buffer, e.Offset, e.BytesTransferred);
                     var buffer = PReceiveState.Stream.GetBuffer();
-
-                    var v = buffer.ToArrayString();
-                    // HandleReceivedData(receivedData);
                     ProcessReceiveMessage(ref buffer);
                     // We're ready to receive more data
                     ReceiveAsync();

@@ -22,8 +22,8 @@ namespace GameFrameX.Network.Runtime
             int offset = 0;
             int packetLength = reader.ReadInt(ref offset); //4
             PacketLength = packetLength;
-            // timestamp
-            long timestamp = reader.ReadLong(ref offset); //8
+            // uniqueId
+            long uniqueId = reader.ReadInt(ref offset); //4
             // MsgId
             int msgId = reader.ReadInt(ref offset); //4
             Id = msgId;
@@ -39,7 +39,7 @@ namespace GameFrameX.Network.Runtime
         private const int NetCmdIdLength = 4;
 
         // 消息时间戳
-        private const int NetTicketLength = 8;
+        private const int NetTicketLength = 4;
 
         public DefaultPacketReceiveHeaderHandler()
         {

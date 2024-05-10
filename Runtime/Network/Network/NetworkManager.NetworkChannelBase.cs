@@ -702,7 +702,7 @@ namespace GameFrameX.Network.Runtime
                             return false;
                         }
 
-                        var body = buffer.ReadBytes(PacketReceiveHeaderHandler.PacketHeaderLength, bodyLength);
+                        var body = buffer.ReadBytes(PacketReceiveHeaderHandler.PacketHeaderLength + 4, bodyLength);
                         // 反序列化数据
                         result = PNetworkChannelHelper.DeserializePacketBody(body, PacketReceiveHeaderHandler.Id, out var messageObject);
 #if UNITY_EDITOR

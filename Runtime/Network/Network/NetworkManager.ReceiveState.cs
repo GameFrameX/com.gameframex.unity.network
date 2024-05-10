@@ -15,37 +15,19 @@ namespace GameFrameX.Network.Runtime
         public sealed class ReceiveState : IDisposable
         {
             private const int DefaultBufferLength = 1024 * 64;
-            private MemoryStream _mStream;
-            private IPacketReceiveHeaderHandler _packetReceiveHeaderHandler;
-            private IPacketReceiveBodyHandler _packetReceiveBodyHandler;
             private bool _disposed;
 
             public ReceiveState()
             {
-                _mStream = new MemoryStream(DefaultBufferLength);
-                _packetReceiveHeaderHandler = null;
-                _packetReceiveBodyHandler = null;
+                Stream = new MemoryStream(DefaultBufferLength);
                 _disposed = false;
             }
 
-            public MemoryStream Stream
-            {
-                get { return _mStream; }
-            }
-
-            public IPacketReceiveHeaderHandler PacketHeaderHandler
-            {
-                get { return _packetReceiveHeaderHandler; }
-            }
-
-            public IPacketReceiveBodyHandler PacketBodyHandler
-            {
-                get { return _packetReceiveBodyHandler; }
-            }
+            public MemoryStream Stream { get; private set; }
 
             public void PrepareForPacketHeader(int packetHeaderLength)
             {
-                Reset(packetHeaderLength, null, null);
+                Reset(packetHeaderLength);
             }
 
             public void Dispose()
@@ -63,27 +45,25 @@ namespace GameFrameX.Network.Runtime
 
                 if (disposing)
                 {
-                    if (_mStream != null)
+                    if (Stream != null)
                     {
-                        _mStream.Dispose();
-                        _mStream = null;
+                        Stream.Dispose();
+                        Stream = null;
                     }
                 }
 
                 _disposed = true;
             }
 
-            private void Reset(int targetLength, IPacketReceiveHeaderHandler packetReceiveHeaderHandler, IPacketReceiveBodyHandler packetReceiveBodyHandler)
+            private void Reset(int targetLength)
             {
                 if (targetLength < 0)
                 {
                     throw new GameFrameworkException("Target length is invalid.");
                 }
 
-                _mStream.Position = 0L;
-                _mStream.SetLength(targetLength);
-                _packetReceiveHeaderHandler = packetReceiveHeaderHandler;
-                _packetReceiveBodyHandler = packetReceiveBodyHandler;
+                Stream.Position = 0L;
+                Stream.SetLength(targetLength);
             }
         }
     }

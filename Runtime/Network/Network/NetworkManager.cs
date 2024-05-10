@@ -183,6 +183,7 @@ namespace GameFrameX.Network.Runtime
         /// <returns>要创建的网络频道。</returns>
         public INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper)
         {
+            GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
             GameFrameworkGuard.NotNull(networkChannelHelper, nameof(networkChannelHelper));
 
             if (HasNetworkChannel(channelName))
@@ -192,7 +193,7 @@ namespace GameFrameX.Network.Runtime
 #if ENABLE_GAME_FRAME_X_WEB_SOCKET && UNITY_WEBGL
             NetworkChannelBase networkChannel = new WebSocketNetworkChannel(channelName, networkChannelHelper);
 #else
-            NetworkChannelBase networkChannel = new SocketNetworkChannel(channelName, networkChannelHelper);
+            NetworkChannelBase networkChannel = new SystemTcpNetworkChannel(channelName, networkChannelHelper);
 #endif
             networkChannel.NetworkChannelConnected += OnNetworkChannelConnected;
             networkChannel.NetworkChannelClosed += OnNetworkChannelClosed;
@@ -210,6 +211,7 @@ namespace GameFrameX.Network.Runtime
         /// <returns>是否销毁网络频道成功。</returns>
         public bool DestroyNetworkChannel(string channelName)
         {
+            GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
             if (m_NetworkChannels.TryGetValue(channelName ?? string.Empty, out var networkChannel))
             {
                 networkChannel.NetworkChannelConnected -= OnNetworkChannelConnected;

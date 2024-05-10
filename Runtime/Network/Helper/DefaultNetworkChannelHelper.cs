@@ -1,11 +1,7 @@
 using System;
-using System.Buffers;
 using System.IO;
 using System.Reflection;
-using GameFrameX;
-using GameFrameX.Event;
 using GameFrameX.Event.Runtime;
-using GameFrameX.Network;
 using GameFrameX.Runtime;
 
 
@@ -14,13 +10,12 @@ namespace GameFrameX.Network.Runtime
     public class DefaultNetworkChannelHelper : INetworkChannelHelper, IReference
     {
         private MemoryStream _cachedStream;
-        private INetworkChannel _netChannel;
+        private INetworkChannel m_NetworkChannel;
 
         public DefaultNetworkChannelHelper()
         {
-            // _s2cPacketTypes = new Dictionary<int, Type>();
             _cachedStream = new MemoryStream(1024);
-            _netChannel = null;
+            m_NetworkChannel = null;
         }
 
         /// <summary>
@@ -43,7 +38,7 @@ namespace GameFrameX.Network.Runtime
 
         public void Initialize(INetworkChannel netChannel)
         {
-            _netChannel = netChannel;
+            m_NetworkChannel = netChannel;
             // 反射注册包和包处理函数。
             var packetReceiveHeaderHandlerBaseType = typeof(IPacketReceiveHeaderHandler);
             var packetReceiveBodyHandlerBaseType = typeof(IPacketReceiveBodyHandler);
@@ -68,27 +63,27 @@ namespace GameFrameX.Network.Runtime
                 if (type.IsImplWithInterface(packetReceiveHeaderHandlerBaseType))
                 {
                     var packetHandler = (IPacketReceiveHeaderHandler)Activator.CreateInstance(type);
-                    _netChannel.RegisterHandler(packetHandler);
+                    m_NetworkChannel.RegisterHandler(packetHandler);
                 }
                 else if (type.IsImplWithInterface(packetReceiveBodyHandlerBaseType))
                 {
                     var packetHandler = (IPacketReceiveBodyHandler)Activator.CreateInstance(type);
-                    _netChannel.RegisterHandler(packetHandler);
+                    m_NetworkChannel.RegisterHandler(packetHandler);
                 }
                 else if (type.IsImplWithInterface(packetSendHeaderHandlerBaseType))
                 {
                     var packetHandler = (IPacketSendHeaderHandler)Activator.CreateInstance(type);
-                    _netChannel.RegisterHandler(packetHandler);
+                    m_NetworkChannel.RegisterHandler(packetHandler);
                 }
                 else if (type.IsImplWithInterface(packetSendBodyHandlerBaseType))
                 {
                     var packetHandler = (IPacketSendBodyHandler)Activator.CreateInstance(type);
-                    _netChannel.RegisterHandler(packetHandler);
+                    m_NetworkChannel.RegisterHandler(packetHandler);
                 }
                 else if (type.IsImplWithInterface(packetHeartBeatHandlerBaseType))
                 {
                     var packetHandler = (IPacketHeartBeatHandler)Activator.CreateInstance(type);
-                    _netChannel.RegisterHandler(packetHandler);
+                    m_NetworkChannel.RegisterHandler(packetHandler);
                 }
             }
 
@@ -106,67 +101,68 @@ namespace GameFrameX.Network.Runtime
             Event.Unsubscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetMissHeartBeat);
             Event.Unsubscribe(NetworkErrorEventArgs.EventId, OnNetError);
             Event.Unsubscribe(NetworkConnectedEventArgs.EventId, OnNetCustomError);
-            _netChannel = null;
+            m_NetworkChannel = null;
         }
 
         public void PrepareForConnecting()
         {
-            _netChannel.Socket.ReceiveBufferSize = 1024 * 1024 * 8;
-            _netChannel.Socket.SendBufferSize = 1024 * 1024 * 8;
+            m_NetworkChannel.Socket.ReceiveBufferSize = 1024 * 1024 * 8;
+            m_NetworkChannel.Socket.SendBufferSize = 1024 * 1024 * 8;
         }
 
         public bool SendHeartBeat()
         {
-            var message = _netChannel.PacketHeartBeatHandler.Handler();
-            _netChannel.Send(message);
+            var message = m_NetworkChannel.PacketHeartBeatHandler.Handler();
+            m_NetworkChannel.Send(message);
             return true;
         }
 
         public bool SerializePacketHeader<T>(T messageObject, Stream destination, out byte[] messageBodyBuffer) where T : MessageObject
         {
-            GameFrameworkGuard.NotNull(_netChannel, nameof(_netChannel));
-            GameFrameworkGuard.NotNull(_netChannel.PacketSendHeaderHandler, nameof(_netChannel.PacketSendHeaderHandler));
+            GameFrameworkGuard.NotNull(m_NetworkChannel, nameof(m_NetworkChannel));
+            GameFrameworkGuard.NotNull(m_NetworkChannel.PacketSendHeaderHandler, nameof(m_NetworkChannel.PacketSendHeaderHandler));
             GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
             GameFrameworkGuard.NotNull(destination, nameof(destination));
 
-            return _netChannel.PacketSendHeaderHandler.Handler(messageObject, _cachedStream, out messageBodyBuffer);
+            return m_NetworkChannel.PacketSendHeaderHandler.Handler(messageObject, _cachedStream, out messageBodyBuffer);
         }
 
         public bool SerializePacketBody(byte[] messageBodyBuffer, Stream destination)
         {
-            GameFrameworkGuard.NotNull(_netChannel, nameof(_netChannel));
-            GameFrameworkGuard.NotNull(_netChannel.PacketSendHeaderHandler, nameof(_netChannel.PacketSendHeaderHandler));
-            GameFrameworkGuard.NotNull(_netChannel.PacketSendBodyHandler, nameof(_netChannel.PacketSendBodyHandler));
+            GameFrameworkGuard.NotNull(m_NetworkChannel, nameof(m_NetworkChannel));
+            GameFrameworkGuard.NotNull(m_NetworkChannel.PacketSendHeaderHandler, nameof(m_NetworkChannel.PacketSendHeaderHandler));
+            GameFrameworkGuard.NotNull(m_NetworkChannel.PacketSendBodyHandler, nameof(m_NetworkChannel.PacketSendBodyHandler));
             GameFrameworkGuard.NotNull(messageBodyBuffer, nameof(messageBodyBuffer));
             GameFrameworkGuard.NotNull(destination, nameof(destination));
 
-            return _netChannel.PacketSendBodyHandler.Handler(messageBodyBuffer, _cachedStream, destination);
+            return m_NetworkChannel.PacketSendBodyHandler.Handler(messageBodyBuffer, _cachedStream, destination);
         }
 
         public bool DeserializePacketHeader(byte[] source)
         {
             GameFrameworkGuard.NotNull(source, nameof(source));
 
-            return _netChannel.PacketReceiveHeaderHandler.Handler(source);
+            return m_NetworkChannel.PacketReceiveHeaderHandler.Handler(source);
         }
 
         public bool DeserializePacketBody(byte[] source, int messageId, out MessageObject messageObject)
         {
             GameFrameworkGuard.NotNull(source, nameof(source));
 
-            return _netChannel.PacketReceiveBodyHandler.Handler(source, messageId, out messageObject);
+            return m_NetworkChannel.PacketReceiveBodyHandler.Handler(source, messageId, out messageObject);
         }
 
         public void Clear()
         {
+            _cachedStream?.Dispose();
             _cachedStream = null;
-            _netChannel = null;
+            m_NetworkChannel?.Close();
+            m_NetworkChannel = null;
         }
 
         private void OnNetConnected(object sender, GameEventArgs e)
         {
-            var ne = e as NetworkConnectedEventArgs;
-            if (ne == null || ne.NetworkChannel != _netChannel)
+            if (!(e is NetworkConnectedEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
             {
                 return;
             }
@@ -176,8 +172,7 @@ namespace GameFrameX.Network.Runtime
 
         private void OnNetClosed(object sender, GameEventArgs e)
         {
-            var ne = e as NetworkClosedEventArgs;
-            if (ne == null || ne.NetworkChannel != _netChannel)
+            if (!(e is NetworkClosedEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
             {
                 return;
             }
@@ -187,8 +182,7 @@ namespace GameFrameX.Network.Runtime
 
         private void OnNetMissHeartBeat(object sender, GameEventArgs e)
         {
-            var ne = e as NetworkMissHeartBeatEventArgs;
-            if (ne == null || ne.NetworkChannel != _netChannel) return;
+            if (!(e is NetworkMissHeartBeatEventArgs ne) || ne.NetworkChannel != m_NetworkChannel) return;
             Log.Warning(Utility.Text.Format("Network channel '{0}' miss heart beat '{1}' times.", ne.NetworkChannel.Name, ne.MissCount));
             // if (ne.MissCount < 2) return;
             // ne.NetChannel.Close();
@@ -196,8 +190,7 @@ namespace GameFrameX.Network.Runtime
 
         private void OnNetError(object sender, GameEventArgs e)
         {
-            var ne = e as NetworkErrorEventArgs;
-            if (ne == null || ne.NetworkChannel != _netChannel)
+            if (!(e is NetworkErrorEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
             {
                 return;
             }
@@ -208,8 +201,7 @@ namespace GameFrameX.Network.Runtime
 
         private void OnNetCustomError(object sender, GameEventArgs e)
         {
-            var ne = e as NetworkCustomErrorEventArgs;
-            if (ne == null || ne.NetworkChannel != _netChannel)
+            if (!(e is NetworkCustomErrorEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
             {
                 return;
             }

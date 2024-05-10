@@ -19,11 +19,9 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// Web Socket 网络频道。
         /// </summary>
-        private sealed class WebSocketNetworkChannel : NetworkChannelBase
+        private sealed class WebSocketNetworkChannel : Network.Runtime.NetworkManager.NetworkChannelBase
         {
             private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-            private readonly byte[] _sendBuffer = new byte[BufferSize];
-            private const int BufferSize = 1024 * 8;
 
             /// <summary>
             /// 初始化网络频道的新实例。
@@ -44,7 +42,7 @@ namespace GameFrameX.Network.Runtime
             public override void Connect(IPAddress ipAddress, int port, object userData = null)
             {
                 base.Connect(ipAddress, port, userData);
-                PSocket = new WebSocketClientNetSocket(ipAddress, port, ReceiveCallback);
+                PSocket = new WebSocketNetSocket(ipAddress, port, ReceiveCallback);
                 if (PSocket == null)
                 {
                     const string errorMessage = "Initialize network channel failure.";
@@ -84,10 +82,8 @@ namespace GameFrameX.Network.Runtime
                 if (IsClose())
                 {
                     PActive = false;
-                    if (NetworkChannelError != null)
-                    {
-                        NetworkChannelError(this, NetworkErrorCode.SocketError, SocketError.Disconnecting, "Network channel is closing.");
-                    }
+                    const string errorMessage = "Network channel is closing.";
+                    NetworkChannelError?.Invoke(this, NetworkErrorCode.SocketError, SocketError.Disconnecting, errorMessage);
 
                     return false;
                 }
@@ -95,8 +91,7 @@ namespace GameFrameX.Network.Runtime
                 bool serializeResult = base.ProcessSendMessage(messageObject);
                 if (serializeResult)
                 {
-                    // TODO 效率不高
-                    var webSocketClientNetSocket = (WebSocketClientNetSocket)PSocket;
+                    var webSocketClientNetSocket = (WebSocketNetSocket)PSocket;
 
                     byte[] buffer = new byte[PSendState.Stream.Length];
                     PSendState.Stream.Seek(0, SeekOrigin.Begin);
@@ -117,16 +112,16 @@ namespace GameFrameX.Network.Runtime
             {
                 try
                 {
-                    var socketClient = (WebSocketClientNetSocket)PSocket;
+                    var socketClient = (WebSocketNetSocket)PSocket;
                     await socketClient.ConnectAsync();
-                    ConnectCallback(new ConnectState(PSocket, userData));
+                    ConnectCallback(new Network.Runtime.NetworkManager.ConnectState(PSocket, userData));
                 }
                 catch (Exception exception)
                 {
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, NetworkErrorCode.ConnectError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, NetworkErrorCode.ConnectError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
                         return;
                     }
 
@@ -135,11 +130,11 @@ namespace GameFrameX.Network.Runtime
             }
 
 
-            private void ConnectCallback(ConnectState connectState)
+            private void ConnectCallback(Network.Runtime.NetworkManager.ConnectState connectState)
             {
                 try
                 {
-                    var socketUserData = (WebSocketClientNetSocket)PSocket;
+                    var socketUserData = (WebSocketNetSocket)PSocket;
                     if (!socketUserData.IsConnected)
                     {
                         throw new SocketException((int)NetworkErrorCode.ConnectError);
@@ -155,7 +150,7 @@ namespace GameFrameX.Network.Runtime
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, NetworkErrorCode.ConnectError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, NetworkErrorCode.ConnectError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
                         return;
                     }
 
@@ -177,10 +172,7 @@ namespace GameFrameX.Network.Runtime
                     PHeartBeatState.Reset(true);
                 }
 
-                if (NetworkChannelConnected != null)
-                {
-                    NetworkChannelConnected(this, connectState.UserData);
-                }
+                NetworkChannelConnected?.Invoke(this, connectState.UserData);
 
                 PActive = true;
             }

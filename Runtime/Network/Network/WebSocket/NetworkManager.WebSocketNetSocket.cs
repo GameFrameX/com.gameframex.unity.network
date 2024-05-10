@@ -8,7 +8,7 @@ namespace GameFrameX.Network.Runtime
 {
     public partial class NetworkManager
     {
-        private sealed class WebSocketClientNetSocket : INetworkSocket
+        private sealed class WebSocketNetSocket : INetworkSocket
         {
             private readonly IWebSocket _client;
 
@@ -20,9 +20,9 @@ namespace GameFrameX.Network.Runtime
             TaskCompletionSource<bool> _connectTask = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             private Action<byte[]> _action;
 
-            public WebSocketClientNetSocket(IPAddress ipAddress, int port, Action<byte[]> action)
+            public WebSocketNetSocket(IPAddress ipAddress, int port, Action<byte[]> action)
             {
-                _client = new WebSocket("ws://" + ipAddress + ":" + port + "/" + (IsSSL ? "wss" : "ws"));
+                _client = new UnityWebSocket.WebSocket("ws://" + ipAddress + ":" + port + "/" + (IsSSL ? "wss" : "ws"));
                 _action = action;
                 _client.OnOpen += OnOpen;
                 _client.OnError += OnError;
