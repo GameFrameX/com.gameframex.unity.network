@@ -261,10 +261,7 @@ namespace GameFrameX.Network.Runtime
                         PHeartBeatState.Reset(true);
                     }
 
-                    if (NetworkChannelConnected != null)
-                    {
-                        NetworkChannelConnected(this, m_ConnectState.UserData);
-                    }
+                    NetworkChannelConnected?.Invoke(this, m_ConnectState.UserData);
 
                     PActive = true;
                     ReceiveAsync();
@@ -274,7 +271,7 @@ namespace GameFrameX.Network.Runtime
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, NetworkErrorCode.ConnectError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, NetworkErrorCode.ConnectError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
                         return;
                     }
 

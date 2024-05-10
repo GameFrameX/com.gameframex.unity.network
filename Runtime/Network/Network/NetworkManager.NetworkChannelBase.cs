@@ -23,46 +23,57 @@ namespace GameFrameX.Network.Runtime
             private const float DefaultHeartBeatInterval = 30f;
             private const int DefaultMissHeartBeatCountByClose = 10;
 
-            private readonly string _name;
             protected readonly Queue<MessageObject> PSendPacketPool;
             protected readonly EventPool<Packet> PReceivePacketPool;
             protected readonly INetworkChannelHelper PNetworkChannelHelper;
             protected AddressFamily PAddressFamily;
+
+            /// <summary>
+            /// 当收到数据包时是否重置心跳流逝时长
+            /// </summary>
             protected bool PResetHeartBeatElapseSecondsWhenReceivePacket;
+
+            /// <summary>
+            /// 心跳间隔
+            /// </summary>
             protected float PHeartBeatInterval;
+
+            /// <summary>
+            /// 心跳丢失次数
+            /// </summary>
             protected int MissHeartBeatCountByClose;
+
             protected INetworkSocket PSocket;
             protected readonly SendState PSendState;
             protected readonly ReceiveState PReceiveState;
             protected readonly HeartBeatState PHeartBeatState;
             protected int PSentPacketCount;
             protected int PReceivedPacketCount;
+            private bool m_Disposed;
+            private bool m_PActive;
 
             protected bool PActive
             {
-                get => _pActive;
+                get => m_PActive;
                 set
                 {
-                    _pActive = value;
+                    m_PActive = value;
                     Log.Debug(value);
                 }
             }
 
-            private bool _disposed;
-
-
-            private IPacketSendHeaderHandler _packetSendHeaderHandler;
-            private IPacketSendBodyHandler _packetSendBodyHandler;
-            private IPacketReceiveHeaderHandler _packetReceiveHeaderHandler;
-            private IPacketReceiveBodyHandler _packetReceiveBodyHandler;
-            private IPacketHeartBeatHandler _packetHeartBeatHandler;
+            private IPacketSendHeaderHandler m_PacketSendHeaderHandler;
+            private IPacketSendBodyHandler m_PacketSendBodyHandler;
+            private IPacketReceiveHeaderHandler m_PacketReceiveHeaderHandler;
+            private IPacketReceiveBodyHandler m_PacketReceiveBodyHandler;
+            private IPacketHeartBeatHandler m_PacketHeartBeatHandler;
 
             public Action<NetworkChannelBase, object> NetworkChannelConnected;
             public Action<NetworkChannelBase> NetworkChannelClosed;
             public Action<NetworkChannelBase, int> NetworkChannelMissHeartBeat;
             public Action<NetworkChannelBase, NetworkErrorCode, SocketError, string> NetworkChannelError;
             public Action<NetworkChannelBase, object> NetworkChannelCustomError;
-            private bool _pActive;
+
 
             /// <summary>
             /// 初始化网络频道基类的新实例。
@@ -71,7 +82,7 @@ namespace GameFrameX.Network.Runtime
             /// <param name="networkChannelHelper">网络频道辅助器。</param>
             public NetworkChannelBase(string name, INetworkChannelHelper networkChannelHelper)
             {
-                _name = name ?? string.Empty;
+                Name = name ?? string.Empty;
                 PSendPacketPool = new Queue<MessageObject>(128);
                 PReceivePacketPool = new EventPool<Packet>(EventPoolMode.Default);
                 PNetworkChannelHelper = networkChannelHelper;
@@ -86,7 +97,7 @@ namespace GameFrameX.Network.Runtime
                 PSentPacketCount = 0;
                 PReceivedPacketCount = 0;
                 PActive = false;
-                _disposed = false;
+                m_Disposed = false;
 
                 NetworkChannelConnected = null;
                 NetworkChannelClosed = null;
@@ -102,10 +113,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取网络频道名称。
             /// </summary>
-            public string Name
-            {
-                get { return _name; }
-            }
+            public string Name { get; }
 
             /// <summary>
             /// 获取网络频道所使用的 Socket。
@@ -134,10 +142,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取网络地址类型。
             /// </summary>
-            public AddressFamily AddressFamily
-            {
-                get { return PAddressFamily; }
-            }
+            public AddressFamily AddressFamily => PAddressFamily;
 
             /// <summary>
             /// 获取要发送的消息包数量。
@@ -156,34 +161,25 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取累计发送的消息包数量。
             /// </summary>
-            public int SentPacketCount
-            {
-                get { return PSentPacketCount; }
-            }
+            public int SentPacketCount => PSentPacketCount;
 
             /// <summary>
             /// 获取已接收未处理的消息包数量。
             /// </summary>
-            public int ReceivePacketCount
-            {
-                get { return PReceivePacketPool.EventCount; }
-            }
+            public int ReceivePacketCount => PReceivePacketPool.EventCount;
 
             /// <summary>
             /// 获取累计已接收的消息包数量。
             /// </summary>
-            public int ReceivedPacketCount
-            {
-                get { return PReceivedPacketCount; }
-            }
+            public int ReceivedPacketCount => PReceivedPacketCount;
 
             /// <summary>
             /// 获取或设置当收到消息包时是否重置心跳流逝时间。
             /// </summary>
             public bool ResetHeartBeatElapseSecondsWhenReceivePacket
             {
-                get { return PResetHeartBeatElapseSecondsWhenReceivePacket; }
-                set { PResetHeartBeatElapseSecondsWhenReceivePacket = value; }
+                get => PResetHeartBeatElapseSecondsWhenReceivePacket;
+                set => PResetHeartBeatElapseSecondsWhenReceivePacket = value;
             }
 
             /// <summary>
@@ -205,8 +201,8 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             public float HeartBeatInterval
             {
-                get { return PHeartBeatInterval; }
-                set { PHeartBeatInterval = value; }
+                get => PHeartBeatInterval;
+                set => PHeartBeatInterval = value;
             }
 
             /// <summary>
@@ -226,42 +222,27 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 消息发送包头处理器
             /// </summary>
-            public IPacketSendHeaderHandler PacketSendHeaderHandler
-            {
-                get { return _packetSendHeaderHandler; }
-            }
+            public IPacketSendHeaderHandler PacketSendHeaderHandler => m_PacketSendHeaderHandler;
 
             /// <summary>
             /// 消息发送内容处理器
             /// </summary>
-            public IPacketSendBodyHandler PacketSendBodyHandler
-            {
-                get { return _packetSendBodyHandler; }
-            }
+            public IPacketSendBodyHandler PacketSendBodyHandler => m_PacketSendBodyHandler;
 
             /// <summary>
             /// 消息接收包头处理器
             /// </summary>
-            public IPacketReceiveHeaderHandler PacketReceiveHeaderHandler
-            {
-                get { return _packetReceiveHeaderHandler; }
-            }
+            public IPacketReceiveHeaderHandler PacketReceiveHeaderHandler => m_PacketReceiveHeaderHandler;
 
             /// <summary>
             /// 心跳消息处理器
             /// </summary>
-            public IPacketHeartBeatHandler PacketHeartBeatHandler
-            {
-                get { return _packetHeartBeatHandler; }
-            }
+            public IPacketHeartBeatHandler PacketHeartBeatHandler => m_PacketHeartBeatHandler;
 
             /// <summary>
             /// 消息接收内容处理器
             /// </summary>
-            public IPacketReceiveBodyHandler PacketReceiveBodyHandler
-            {
-                get { return _packetReceiveBodyHandler; }
-            }
+            public IPacketReceiveBodyHandler PacketReceiveBodyHandler => m_PacketReceiveBodyHandler;
 
             #endregion
 
@@ -354,7 +335,7 @@ namespace GameFrameX.Network.Runtime
             public void RegisterHandler(IPacketSendHeaderHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
-                _packetSendHeaderHandler = handler;
+                m_PacketSendHeaderHandler = handler;
             }
 
 
@@ -365,7 +346,7 @@ namespace GameFrameX.Network.Runtime
             public void RegisterHandler(IPacketSendBodyHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
-                _packetSendBodyHandler = handler;
+                m_PacketSendBodyHandler = handler;
             }
 
             /// <summary>
@@ -375,7 +356,7 @@ namespace GameFrameX.Network.Runtime
             public void RegisterHandler(IPacketReceiveHeaderHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
-                _packetReceiveHeaderHandler = handler;
+                m_PacketReceiveHeaderHandler = handler;
             }
 
             /// <summary>
@@ -385,7 +366,7 @@ namespace GameFrameX.Network.Runtime
             public void RegisterHandler(IPacketReceiveBodyHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
-                _packetReceiveBodyHandler = handler;
+                m_PacketReceiveBodyHandler = handler;
             }
 
             /// <summary>
@@ -395,7 +376,7 @@ namespace GameFrameX.Network.Runtime
             public void RegisterHandler(IPacketHeartBeatHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
-                _packetHeartBeatHandler = handler;
+                m_PacketHeartBeatHandler = handler;
                 if (handler.HeartBeatInterval > 0)
                 {
                     PHeartBeatInterval = handler.HeartBeatInterval;
@@ -483,10 +464,7 @@ namespace GameFrameX.Network.Runtime
                         PSocket.Close();
                         PSocket = null;
 
-                        if (NetworkChannelClosed != null)
-                        {
-                            NetworkChannelClosed(this);
-                        }
+                        NetworkChannelClosed?.Invoke(this);
                     }
 
                     PSentPacketCount = 0;
@@ -570,7 +548,7 @@ namespace GameFrameX.Network.Runtime
             /// <param name="disposing">释放资源标记。</param>
             private void Dispose(bool disposing)
             {
-                if (_disposed)
+                if (m_Disposed)
                 {
                     return;
                 }
@@ -582,7 +560,7 @@ namespace GameFrameX.Network.Runtime
                     PReceiveState.Dispose();
                 }
 
-                _disposed = true;
+                m_Disposed = true;
             }
 
             /// <summary>
@@ -640,7 +618,7 @@ namespace GameFrameX.Network.Runtime
                             if (NetworkChannelError != null)
                             {
                                 SocketException socketException = exception as SocketException;
-                                NetworkChannelError(this, NetworkErrorCode.SerializeError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                                NetworkChannelError(this, NetworkErrorCode.SerializeError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
                                 return false;
                             }
 
@@ -659,10 +637,10 @@ namespace GameFrameX.Network.Runtime
                             throw new GameFrameworkException(errorMessage);
                         }
 
-                        PSendState.Stream.SetLength(0);
+                        PSendState.Reset();
                     }
 
-                    PSendState.Stream.Position = 0L;
+                    PSendState.Reset();
                     return true;
                 }
             }
@@ -677,7 +655,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="buffer"></param>
             /// <returns></returns>
-            protected bool ProcessReceiveMessage(ref byte[] buffer)
+            protected void ProcessReceiveMessage(ref byte[] buffer)
             {
                 try
                 {
@@ -690,7 +668,7 @@ namespace GameFrameX.Network.Runtime
 
                     if (buffer.Length < PacketReceiveHeaderHandler.PacketHeaderLength)
                     {
-                        return false;
+                        return;
                     }
 
                     var result = PNetworkChannelHelper.DeserializePacketHeader(buffer);
@@ -699,7 +677,7 @@ namespace GameFrameX.Network.Runtime
                         var bodyLength = PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength;
                         if (buffer.Length < bodyLength)
                         {
-                            return false;
+                            return;
                         }
 
                         var body = buffer.ReadBytes(PacketReceiveHeaderHandler.PacketHeaderLength + 4, bodyLength);
@@ -713,7 +691,7 @@ namespace GameFrameX.Network.Runtime
                             if (NetworkChannelError != null)
                             {
                                 NetworkChannelError(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid.");
-                                return false;
+                                return;
                             }
                         }
 
@@ -724,134 +702,14 @@ namespace GameFrameX.Network.Runtime
                     }
                     else
                     {
-                        if (NetworkChannelError != null)
-                        {
-                            NetworkChannelError(this, NetworkErrorCode.DeserializePacketHeaderError, SocketError.Success, "Packet header is invalid.");
-                            return false;
-                        }
+                        NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketHeaderError, SocketError.Success, "Packet header is invalid.");
                     }
-
-                    return result;
                 }
                 catch (Exception e)
                 {
-                    if (NetworkChannelError != null)
-                    {
-                        NetworkChannelError(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid.");
-                    }
-
-                    return false;
+                    NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid." + e.Message);
                 }
             }
-            /*
-            /// <summary>
-            /// 处理发送消息对象
-            /// </summary>
-            /// <param name="messageObject">消息对象</param>
-            /// <returns></returns>
-            /// <exception cref="InvalidOperationException"></exception>
-            protected virtual bool ProcessReceiveMessage(MessageObject messageObject)
-            {
-                bool serializeResult = PNetworkChannelHelper.SerializePacketHeader(messageObject, PSendState.Stream, out var messageBodyBuffer);
-                if (serializeResult)
-                {
-                    serializeResult = PNetworkChannelHelper.SerializePacketBody(messageBodyBuffer, PSendState.Stream);
-                }
-                else
-                {
-                    const string errorMessage = "Serialized packet failure.";
-                    throw new InvalidOperationException(errorMessage);
-                }
-
-                return serializeResult;
-            }*/
-
-            protected virtual bool ProcessPacketHeader()
-            {
-                try
-                {
-                    // var packetHeader = PNetworkChannelHelper.DeserializePacketHeader(PReceiveState.Stream, out var customErrorData);
-                    //
-                    // if (customErrorData != null && NetworkChannelCustomError != null)
-                    // {
-                    //     NetworkChannelCustomError(this, customErrorData);
-                    // }
-                    //
-                    // if (packetHeader == null)
-                    // {
-                    //     string errorMessage = "Packet header is invalid.";
-                    //     if (NetworkChannelError != null)
-                    //     {
-                    //         NetworkChannelError(this, NetworkErrorCode.DeserializePacketHeaderError, SocketError.Success, errorMessage);
-                    //         return false;
-                    //     }
-                    //
-                    //     throw new GameFrameworkException(errorMessage);
-                    // }
-                    //
-                    // PReceiveState.PrepareForPacket(PacketReceiveHeaderHandler, PacketReceiveBodyHandler);
-                    // if (packetHeader.PacketLength <= 0)
-                    // {
-                    //     bool processSuccess = ProcessPacket();
-                    //     PReceivedPacketCount++;
-                    //     return processSuccess;
-                    // }
-                }
-                catch (Exception exception)
-                {
-                    PActive = false;
-                    if (NetworkChannelError != null)
-                    {
-                        SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, NetworkErrorCode.DeserializePacketHeaderError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
-                        return false;
-                    }
-
-                    throw;
-                }
-
-                return true;
-            }
-
-            /*
-            protected virtual bool ProcessPacket()
-            {
-                lock (PHeartBeatState)
-                {
-                    PHeartBeatState.Reset(PResetHeartBeatElapseSecondsWhenReceivePacket);
-                }
-
-                try
-                {
-                    var packet = PNetworkChannelHelper.DeserializePacketBody(PReceiveState.Stream, 0, out var customErrorData);
-
-                    if (customErrorData != null && NetworkChannelCustomError != null)
-                    {
-                        NetworkChannelCustomError(this, customErrorData);
-                    }
-
-                    if (packet)
-                    {
-                        PReceivePacketPool.Fire(this, null);
-                    }
-
-                    PReceiveState.PrepareForPacketHeader(0);
-                }
-                catch (Exception exception)
-                {
-                    PActive = false;
-                    if (NetworkChannelError != null)
-                    {
-                        SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, NetworkErrorCode.DeserializePacketError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
-                        return false;
-                    }
-
-                    throw;
-                }
-
-                return true;
-            }*/
         }
     }
 }

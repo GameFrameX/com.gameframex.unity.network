@@ -8,42 +8,41 @@ namespace GameFrameX.Network.Runtime
     {
         private sealed class SystemNetSocket : INetworkSocket
         {
-            private readonly Socket _socket;
-
+            private readonly Socket m_Socket;
 
             public SystemNetSocket(System.Net.Sockets.AddressFamily ipAddressAddressFamily, SocketType socketType, ProtocolType protocolType)
             {
-                _socket = new Socket(ipAddressAddressFamily, socketType, protocolType);
+                m_Socket = new Socket(ipAddressAddressFamily, socketType, protocolType);
             }
 
             public bool IsConnected
             {
-                get { return _socket.Connected; }
+                get { return m_Socket.Connected; }
             }
 
             public Socket Socket
             {
-                get { return _socket; }
+                get { return m_Socket; }
             }
 
             public EndPoint LocalEndPoint
             {
-                get { return _socket.LocalEndPoint; }
+                get { return m_Socket.LocalEndPoint; }
             }
 
             public EndPoint RemoteEndPoint
             {
-                get { return _socket.RemoteEndPoint; }
+                get { return m_Socket.RemoteEndPoint; }
             }
 
             public int Available
             {
-                get { return _socket.Available; }
+                get { return m_Socket.Available; }
             }
 
             public int ReceiveBufferSize
             {
-                get { return _socket.ReceiveBufferSize; }
+                get { return m_Socket.ReceiveBufferSize; }
                 set
                 {
                     if (value <= 0)
@@ -51,13 +50,13 @@ namespace GameFrameX.Network.Runtime
                         throw new ArgumentException("Receive buffer size is invalid.", nameof(value));
                     }
 
-                    _socket.ReceiveBufferSize = value;
+                    m_Socket.ReceiveBufferSize = value;
                 }
             }
 
             public int SendBufferSize
             {
-                get { return _socket.SendBufferSize; }
+                get { return m_Socket.SendBufferSize; }
                 set
                 {
                     if (value <= 0)
@@ -65,44 +64,44 @@ namespace GameFrameX.Network.Runtime
                         throw new ArgumentException("Send buffer size is invalid.", nameof(value));
                     }
 
-                    _socket.SendBufferSize = value;
+                    m_Socket.SendBufferSize = value;
                 }
             }
 
             public void Shutdown()
             {
-                _socket.Shutdown(SocketShutdown.Both);
+                m_Socket.Shutdown(SocketShutdown.Both);
             }
 
             public void Close()
             {
-                _socket.Close();
+                m_Socket.Close();
             }
 
 
             public void BeginSend(byte[] getBuffer, int streamPosition, int streamLength, SocketFlags none, AsyncCallback mSendCallback, INetworkSocket mSocket)
             {
-                _socket.BeginSend(getBuffer, streamPosition, streamLength, none, mSendCallback, mSocket);
+                m_Socket.BeginSend(getBuffer, streamPosition, streamLength, none, mSendCallback, mSocket);
             }
 
             public void BeginReceive(byte[] getBuffer, int streamPosition, int streamLength, SocketFlags none, AsyncCallback mReceiveCallback, INetworkSocket mSocket)
             {
-                _socket.BeginReceive(getBuffer, streamPosition, streamLength, none, mReceiveCallback, mSocket);
+                m_Socket.BeginReceive(getBuffer, streamPosition, streamLength, none, mReceiveCallback, mSocket);
             }
 
             public void BeginConnect(IPAddress ipAddress, int port, AsyncCallback mConnectCallback, ConnectState connectState)
             {
-                _socket.BeginConnect(ipAddress, port, mConnectCallback, connectState);
+                m_Socket.BeginConnect(ipAddress, port, mConnectCallback, connectState);
             }
 
             public void EndConnect(IAsyncResult ar)
             {
-                _socket.EndConnect(ar);
+                m_Socket.EndConnect(ar);
             }
 
             public int Receive(byte[] getBuffer, int streamPosition, int streamLength, SocketFlags none)
             {
-                return _socket.Receive(getBuffer, streamPosition, streamLength, none);
+                return m_Socket.Receive(getBuffer, streamPosition, streamLength, none);
             }
         }
     }
