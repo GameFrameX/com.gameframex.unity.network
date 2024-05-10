@@ -24,7 +24,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息编号
         /// </summary>
-        private const int NetUniqueIdLength = 4;
+        private const int NetUniqueIdLength = 8;
 
 
         public DefaultPacketSendHeaderHandler()
@@ -69,9 +69,9 @@ namespace GameFrameX.Network.Runtime
             magic ^= Magic << 8;
             magic ^= PacketLength;
             // 数据包总大小
-            m_CachedByte.WriteInt(PacketLength, ref m_Offset);
+            m_CachedByte.WriteInt(messageLength, ref m_Offset);
             // 消息编号
-            m_CachedByte.WriteInt(magic, ref m_Offset);
+            m_CachedByte.WriteLong(magic, ref m_Offset);
             // 消息ID
             m_CachedByte.WriteInt(Id, ref m_Offset);
             // 消息体长度
