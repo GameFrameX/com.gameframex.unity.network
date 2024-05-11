@@ -35,7 +35,8 @@ namespace GameFrameX.Network.Runtime
             int packetLength = reader.ReadInt(ref offset); //4
             PacketLength = packetLength;
             // uniqueId
-            long uniqueId = reader.ReadLong(ref offset); //4
+            long uniqueId = reader.ReadLong(ref offset); //8
+            UniqueId = uniqueId;
             // MsgId
             int msgId = reader.ReadInt(ref offset); //4
             Id = msgId;
