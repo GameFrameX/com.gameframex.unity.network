@@ -7,6 +7,7 @@
 
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace GameFrameX.Network.Runtime
 {
@@ -155,5 +156,12 @@ namespace GameFrameX.Network.Runtime
         /// <typeparam name="T">消息包类型。</typeparam>
         /// <param name="messageObject">要发送的消息包。</param>
         void Send<T>(T messageObject) where T : MessageObject;
+
+        /// <summary>
+        /// 向远程主机发送消息包
+        /// </summary>
+        /// <param name="messageObject"></param>
+        /// <typeparam name="T"></typeparam>
+        Task<MessageObject> Call<T>(T messageObject) where T : MessageObject;
     }
 }
