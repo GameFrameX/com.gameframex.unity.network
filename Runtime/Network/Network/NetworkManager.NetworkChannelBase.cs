@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using GameFrameX.Runtime;
 
 namespace GameFrameX.Network.Runtime
@@ -47,6 +48,7 @@ namespace GameFrameX.Network.Runtime
             protected readonly SendState PSendState;
             protected readonly ReceiveState PReceiveState;
             protected readonly HeartBeatState PHeartBeatState;
+            protected readonly RpcState PRpcState;
             protected int PSentPacketCount;
             protected int PReceivedPacketCount;
             private bool m_Disposed;
@@ -94,6 +96,7 @@ namespace GameFrameX.Network.Runtime
                 PSendState = new SendState();
                 PReceiveState = new ReceiveState();
                 PHeartBeatState = new HeartBeatState();
+                PRpcState = new RpcState();
                 PSentPacketCount = 0;
                 PReceivedPacketCount = 0;
                 PActive = false;
@@ -268,6 +271,7 @@ namespace GameFrameX.Network.Runtime
                 PReceivePacketPool.Update(elapseSeconds, realElapseSeconds);
 
                 ProcessHeartBeat(realElapseSeconds);
+                PRpcState.Update(elapseSeconds, realElapseSeconds);
             }
 
             /// <summary>
@@ -485,12 +489,26 @@ namespace GameFrameX.Network.Runtime
             }
 
             /// <summary>
+            /// 向远程主机发送消息包
+            /// </summary>
+            /// <param name="messageObject"></param>
+            /// <typeparam name="TResult"></typeparam>
+            public async Task<TResult> Call<TResult>(MessageObject messageObject) where TResult : MessageObject, IResponseMessage
+            {
+                GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
+                Send(messageObject);
+                var result = await PRpcState.Call(messageObject);
+                return result as TResult;
+            }
+
+            /// <summary>
             /// 向远程主机发送消息包。
             /// </summary>
             /// <typeparam name="T">消息包类型。</typeparam>
             /// <param name="messageObject">要发送的消息包。</param>
             public void Send<T>(T messageObject) where T : MessageObject
             {
+                GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
                 if (PSocket == null)
                 {
                     const string errorMessage = "You must connect first.";

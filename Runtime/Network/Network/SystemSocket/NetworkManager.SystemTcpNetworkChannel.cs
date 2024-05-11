@@ -20,8 +20,7 @@ namespace GameFrameX.Network.Runtime
         private sealed class SystemTcpNetworkChannel : NetworkChannelBase
         {
             private ConnectState m_ConnectState = null;
-            private byte[] _incompletePacket;
-            private IPEndPoint connectedEndPoint = null;
+            private IPEndPoint m_ConnectedEndPoint = null;
             private SystemNetSocket PSystemNetSocket = null;
 
             /// <summary>
@@ -42,7 +41,7 @@ namespace GameFrameX.Network.Runtime
             /// <param name="userData">用户自定义数据。</param>
             public override void Connect(IPAddress ipAddress, int port, object userData = null)
             {
-                connectedEndPoint = new IPEndPoint(ipAddress, port);
+                m_ConnectedEndPoint = new IPEndPoint(ipAddress, port);
                 base.Connect(ipAddress, port, userData);
                 PSystemNetSocket = new SystemNetSocket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 PSocket = PSystemNetSocket;
@@ -74,6 +73,7 @@ namespace GameFrameX.Network.Runtime
                 return false;
             }
 
+            #region Receive
 
             private void ReceiveAsync()
             {
@@ -157,6 +157,10 @@ namespace GameFrameX.Network.Runtime
                 }
             }
 
+            /// <summary>
+            /// 解析消息头
+            /// </summary>
+            /// <returns></returns>
             private bool ProcessPackHeader()
             {
                 var buffer = new byte[PacketReceiveHeaderHandler.PacketHeaderLength];
@@ -166,20 +170,37 @@ namespace GameFrameX.Network.Runtime
                 return processSuccess;
             }
 
+            /// <summary>
+            /// 解析消息内容
+            /// </summary>
+            /// <returns></returns>
             private bool ProcessPackBody()
             {
                 var buffer = new byte[PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength];
                 _ = PReceiveState.Stream.Read(buffer, 0, PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength);
                 var processSuccess = PNetworkChannelHelper.DeserializePacketBody(buffer, PacketReceiveHeaderHandler.Id, out var messageObject);
+                if (processSuccess)
+                {
+                    messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
+                }
+
                 Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
-                PacketBase packetBase = ReferencePool.Acquire<PacketBase>();
-                packetBase.MessageObject = messageObject;
-                packetBase.MessageId = PacketReceiveHeaderHandler.Id;
-                PReceivePacketPool.Fire(this, packetBase);
+
+                bool replySuccess = PRpcState.Reply(messageObject);
+                if (!replySuccess)
+                {
+                    PacketBase packetBase = ReferencePool.Acquire<PacketBase>();
+                    packetBase.MessageObject = messageObject;
+                    packetBase.MessageId = PacketReceiveHeaderHandler.Id;
+                    PReceivePacketPool.Fire(this, packetBase);
+                }
+
                 PReceivedPacketCount++;
                 PReceiveState.PrepareForPacketHeader();
                 return processSuccess;
             }
+
+            #endregion
 
             #region Sender
 
@@ -271,7 +292,6 @@ namespace GameFrameX.Network.Runtime
 
             #endregion
 
-
             #region Connect
 
             private void ConnectAsync(object userData)
@@ -279,7 +299,7 @@ namespace GameFrameX.Network.Runtime
                 try
                 {
                     m_ConnectState = new ConnectState(PSystemNetSocket, userData);
-                    ((SystemNetSocket)PSocket).BeginConnect(connectedEndPoint.Address, connectedEndPoint.Port, ConnectCallback, m_ConnectState);
+                    ((SystemNetSocket)PSocket).BeginConnect(m_ConnectedEndPoint.Address, m_ConnectedEndPoint.Port, ConnectCallback, m_ConnectState);
                 }
                 catch (Exception exception)
                 {

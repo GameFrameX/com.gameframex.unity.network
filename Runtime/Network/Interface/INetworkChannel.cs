@@ -161,7 +161,8 @@ namespace GameFrameX.Network.Runtime
         /// 向远程主机发送消息包
         /// </summary>
         /// <param name="messageObject"></param>
-        /// <typeparam name="T"></typeparam>
-        Task<MessageObject> Call<T>(T messageObject) where T : MessageObject;
+        /// <typeparam name="T">发送的消息类型</typeparam>
+        /// <typeparam name="TResult">返回的消息类型</typeparam>
+        Task<TResult> Call<TResult>(MessageObject messageObject) where TResult : MessageObject, IResponseMessage;
     }
 }
