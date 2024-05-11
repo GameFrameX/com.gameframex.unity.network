@@ -27,6 +27,11 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         int Id { get; }
 
+        /// <summary>
+        /// 消息唯一编号
+        /// </summary>
+        long UniqueId { get; }
+
         bool Handler(object source);
     }
 }
