@@ -52,12 +52,14 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         private const int NetCmdIdLength = 4;
 
-        // 消息时间戳
-        private const int NetTicketLength = 8;
+        /// <summary>
+        /// 消息编号
+        /// </summary>
+        private const int NetUniqueIdLength = 8;
 
         public DefaultPacketReceiveHeaderHandler()
         {
-            PacketHeaderLength = NetPacketLength + NetTicketLength + NetCmdIdLength;
+            PacketHeaderLength = NetPacketLength + NetUniqueIdLength + NetCmdIdLength;
         }
 
         /// <summary>
