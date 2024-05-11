@@ -1,4 +1,5 @@
-﻿#if ENABLE_GAME_FRAME_X_PROTOBUF
+﻿using Newtonsoft.Json;
+#if ENABLE_GAME_FRAME_X_PROTOBUF
 using ProtoBuf;
 #endif
 
@@ -15,6 +16,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息唯一编号
         /// </summary>
+        [JsonIgnore]
         public long UniqueId { get; private set; }
 
         protected MessageObject()
