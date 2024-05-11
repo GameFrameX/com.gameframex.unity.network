@@ -11,6 +11,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using GameFrameX.Runtime;
 
 namespace GameFrameX.Network.Runtime
 {
@@ -19,9 +20,9 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// Web Socket 网络频道。
         /// </summary>
-        private sealed class WebSocketNetworkChannel : Network.Runtime.NetworkManager.NetworkChannelBase
+        private sealed class WebSocketNetworkChannel : NetworkChannelBase
         {
-            private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+            private readonly CancellationTokenSource m_CancellationTokenSource = new CancellationTokenSource();
 
             /// <summary>
             /// 初始化网络频道的新实例。
@@ -62,12 +63,12 @@ namespace GameFrameX.Network.Runtime
             public override void Close()
             {
                 base.Close();
-                _cancellationTokenSource.Cancel();
+                m_CancellationTokenSource.Cancel();
             }
 
             private bool IsClose()
             {
-                return _cancellationTokenSource.IsCancellationRequested;
+                return m_CancellationTokenSource.IsCancellationRequested;
             }
 
 
@@ -114,7 +115,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     var socketClient = (WebSocketNetSocket)PSocket;
                     await socketClient.ConnectAsync();
-                    ConnectCallback(new Network.Runtime.NetworkManager.ConnectState(PSocket, userData));
+                    ConnectCallback(new ConnectState(PSocket, userData));
                 }
                 catch (Exception exception)
                 {
@@ -130,7 +131,7 @@ namespace GameFrameX.Network.Runtime
             }
 
 
-            private void ConnectCallback(Network.Runtime.NetworkManager.ConnectState connectState)
+            private void ConnectCallback(ConnectState connectState)
             {
                 try
                 {
@@ -179,7 +180,70 @@ namespace GameFrameX.Network.Runtime
 
             private void ReceiveCallback(byte[] buffer)
             {
-                ProcessReceiveMessage(ref buffer);
+                try
+                {
+                    lock (PHeartBeatState)
+                    {
+                        PHeartBeatState.Reset(PResetHeartBeatElapseSecondsWhenReceivePacket);
+                    }
+
+                    PReceivedPacketCount++;
+
+                    if (buffer.Length < PacketReceiveHeaderHandler.PacketHeaderLength)
+                    {
+                        return;
+                    }
+
+                    var processSuccess = PNetworkChannelHelper.DeserializePacketHeader(buffer);
+                    if (processSuccess)
+                    {
+                        var bodyLength = PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength;
+                        if (buffer.Length < bodyLength)
+                        {
+                            return;
+                        }
+
+                        var body = buffer.ReadBytes(PacketReceiveHeaderHandler.PacketHeaderLength, bodyLength);
+                        // 反序列化数据
+                        processSuccess = PNetworkChannelHelper.DeserializePacketBody(body, PacketReceiveHeaderHandler.Id, out var messageObject);
+                        if (processSuccess)
+                        {
+                            messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
+                        }
+#if UNITY_EDITOR
+                        Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+#endif
+                        if (!processSuccess)
+                        {
+                            if (NetworkChannelError != null)
+                            {
+                                NetworkChannelError(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid.");
+                                return;
+                            }
+                        }
+
+                        var replySuccess = PRpcState.Reply(messageObject);
+                        if (!replySuccess)
+                        {
+                            PacketBase packetBase = ReferencePool.Acquire<PacketBase>();
+                            packetBase.MessageObject = messageObject;
+                            packetBase.MessageId = PacketReceiveHeaderHandler.Id;
+                            PReceivePacketPool.Fire(this, packetBase);
+                        }
+
+                        PReceivedPacketCount++;
+                    }
+                    else
+                    {
+                        NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketHeaderError, SocketError.Success, "Packet header is invalid.");
+                    }
+                }
+                catch (Exception e)
+                {
+                    NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid." + e.Message);
+                }
+
+                return;
             }
         }
     }

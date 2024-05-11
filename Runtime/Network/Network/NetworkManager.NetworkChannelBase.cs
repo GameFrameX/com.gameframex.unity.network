@@ -663,72 +663,8 @@ namespace GameFrameX.Network.Runtime
                 }
             }
 
-            protected virtual void ProcessReceive()
+            protected void ProcessReceive()
             {
-            }
-
-
-            /// <summary>
-            /// 处理消息
-            /// </summary>
-            /// <param name="buffer"></param>
-            /// <returns></returns>
-            protected bool ProcessReceiveMessage(ref byte[] buffer)
-            {
-                try
-                {
-                    lock (PHeartBeatState)
-                    {
-                        PHeartBeatState.Reset(PResetHeartBeatElapseSecondsWhenReceivePacket);
-                    }
-
-                    PReceivedPacketCount++;
-
-                    if (buffer.Length < PacketReceiveHeaderHandler.PacketHeaderLength)
-                    {
-                        return false;
-                    }
-
-                    var result = PNetworkChannelHelper.DeserializePacketHeader(buffer);
-                    if (result)
-                    {
-                        var bodyLength = PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength;
-                        if (buffer.Length < bodyLength)
-                        {
-                            return false;
-                        }
-
-                        var body = buffer.ReadBytes(PacketReceiveHeaderHandler.PacketHeaderLength + 4, bodyLength);
-                        // 反序列化数据
-                        result = PNetworkChannelHelper.DeserializePacketBody(body, PacketReceiveHeaderHandler.Id, out var messageObject);
-#if UNITY_EDITOR
-                        Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
-#endif
-                        if (!result)
-                        {
-                            if (NetworkChannelError != null)
-                            {
-                                NetworkChannelError(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid.");
-                                return false;
-                            }
-                        }
-
-                        PacketBase packetBase = ReferencePool.Acquire<PacketBase>();
-                        packetBase.MessageObject = messageObject;
-                        packetBase.MessageId = PacketReceiveHeaderHandler.Id;
-                        PReceivePacketPool.Fire(this, packetBase);
-                    }
-                    else
-                    {
-                        NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketHeaderError, SocketError.Success, "Packet header is invalid.");
-                    }
-                }
-                catch (Exception e)
-                {
-                    NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid." + e.Message);
-                }
-
-                return true;
             }
         }
     }
