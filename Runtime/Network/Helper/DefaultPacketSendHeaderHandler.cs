@@ -49,7 +49,6 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         public int PacketLength { get; private set; }
 
-        private const int Magic = 0x8023;
 
         int m_Count = 0;
         private int m_Offset = 0;
@@ -63,13 +62,10 @@ namespace GameFrameX.Network.Runtime
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
             var messageLength = messageBodyBuffer.Length;
             PacketLength = PacketHeaderLength + messageLength;
-            int magic = Magic + ++m_Count;
-            magic ^= Magic << 8;
-            magic ^= PacketLength;
             // 数据包总大小
             m_CachedByte.WriteInt(messageLength, ref m_Offset);
             // 消息编号
-            m_CachedByte.WriteLong(magic, ref m_Offset);
+            m_CachedByte.WriteLong(messageObject.UniqueId, ref m_Offset);
             // 消息ID
             m_CachedByte.WriteInt(Id, ref m_Offset);
             // 消息体长度
