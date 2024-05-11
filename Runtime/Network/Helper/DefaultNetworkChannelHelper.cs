@@ -111,11 +111,7 @@ namespace GameFrameX.Network.Runtime
         public bool SendHeartBeat()
         {
             var message = m_NetworkChannel.PacketHeartBeatHandler.Handler();
-            for (int i = 0; i < 10; i++)
-            {
-                m_NetworkChannel.Send(message);
-            }
-
+            m_NetworkChannel.Send(message);
             return true;
         }
 
