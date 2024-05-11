@@ -627,7 +627,7 @@ namespace GameFrameX.Network.Runtime
                         {
                             serializeResult = ProcessSendMessage(messageObject);
 #if UNITY_EDITOR
-                            Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+                            Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
 #endif
                         }
                         catch (Exception exception)

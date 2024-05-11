@@ -184,7 +184,7 @@ namespace GameFrameX.Network.Runtime
                     messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
                 }
 
-                Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+                Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
 
                 bool replySuccess = PRpcState.Reply(messageObject);
                 if (!replySuccess)
