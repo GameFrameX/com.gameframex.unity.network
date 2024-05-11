@@ -6,8 +6,20 @@ namespace GameFrameX.Network.Runtime
 {
     public sealed class DefaultPacketReceiveHeaderHandler : IPacketReceiveHeaderHandler, IPacketHandler
     {
+        /// <summary>
+        /// 包长度
+        /// </summary>
         public int PacketLength { get; private set; }
+
+        /// <summary>
+        /// 消息ID
+        /// </summary>
         public int Id { get; private set; }
+
+        /// <summary>
+        /// 消息唯一编号
+        /// </summary>
+        public long UniqueId { get; private set; }
 
 
         public bool Handler(object source)
@@ -35,7 +47,9 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         private const int NetPacketLength = 4;
 
-        // 消息码
+        /// <summary>
+        /// 消息码
+        /// </summary>
         private const int NetCmdIdLength = 4;
 
         // 消息时间戳
@@ -46,6 +60,9 @@ namespace GameFrameX.Network.Runtime
             PacketHeaderLength = NetPacketLength + NetTicketLength + NetCmdIdLength;
         }
 
+        /// <summary>
+        /// 包头长度
+        /// </summary>
         public int PacketHeaderLength { get; }
     }
 }
