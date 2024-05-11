@@ -192,7 +192,7 @@ namespace GameFrameX.Network.Runtime
             }
 
             Log.Error(Utility.Text.Format("Network channel '{0}' error, error code is '{1}', error message is '{2}'.", ne.NetworkChannel.Name, ne.ErrorCode, ne.ErrorMessage));
-            //ne.NetworkChannel.Close();
+            ne.NetworkChannel.Close();
         }
 
         private void OnNetCustomError(object sender, GameEventArgs e)
