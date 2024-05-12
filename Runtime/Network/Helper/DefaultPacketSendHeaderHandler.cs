@@ -63,7 +63,7 @@ namespace GameFrameX.Network.Runtime
             var messageLength = messageBodyBuffer.Length;
             PacketLength = PacketHeaderLength + messageLength;
             // 数据包总大小
-            m_CachedByte.WriteInt(messageLength, ref m_Offset);
+            m_CachedByte.WriteInt(PacketLength, ref m_Offset);
             // 消息编号
             m_CachedByte.WriteLong(messageObject.UniqueId, ref m_Offset);
             // 消息ID
