@@ -70,7 +70,59 @@ namespace GameFrameX.Network.Runtime
             {
                 return m_CancellationTokenSource.IsCancellationRequested;
             }
+            
+            protected override bool ProcessSend()
+            {
+                lock (PSendPacketPool)
+                {
+                    if (PSendPacketPool.Count <= 0)
+                    {
+                        return false;
+                    }
 
+                    while (PSendPacketPool.Count > 0)
+                    {
+                        var messageObject = PSendPacketPool.Dequeue();
+
+                        bool serializeResult = false;
+                        try
+                        {
+                            serializeResult = ProcessSendMessage(messageObject);
+#if UNITY_EDITOR
+                            Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+#endif
+                        }
+                        catch (Exception exception)
+                        {
+                            PActive = false;
+                            if (NetworkChannelError != null)
+                            {
+                                SocketException socketException = exception as SocketException;
+                                NetworkChannelError(this, NetworkErrorCode.SerializeError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
+                                return false;
+                            }
+
+                            throw;
+                        }
+
+                        if (!serializeResult)
+                        {
+                            const string errorMessage = "Serialized packet failure.";
+                            if (NetworkChannelError != null)
+                            {
+                                NetworkChannelError(this, NetworkErrorCode.SerializeError, SocketError.Success, errorMessage);
+                                return false;
+                            }
+
+                            throw new GameFrameworkException(errorMessage);
+                        }
+                        PSendState.Reset();
+                    }
+
+                    return true;
+                }
+            }
+            
 
             /// <summary>
             /// 处理发送消息对象
