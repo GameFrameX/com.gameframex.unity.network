@@ -7,6 +7,7 @@
 
 using System;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 
 namespace GameFrameX.Network.Runtime
@@ -136,6 +137,24 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="handler">要设置的默认事件处理函数。</param>
         void SetDefaultHandler(EventHandler<Packet> handler);
+
+        /// <summary>
+        /// 设置RPC错误的处理函数
+        /// </summary>
+        /// <param name="handler"></param>
+        void SetRPCErrorHandler(EventHandler<MessageObject> handler);
+
+        /// <summary>
+        /// 设置RPC开始的处理函数
+        /// </summary>
+        /// <param name="handler"></param>
+        void SetRPCStartHandler(EventHandler<MessageObject> handler);
+
+        /// <summary>
+        /// 设置RPC结束的处理函数
+        /// </summary>
+        /// <param name="handler"></param>
+        void SetRPCEndHandler(EventHandler<MessageObject> handler);
 
         /// <summary>
         /// 连接到远程主机。

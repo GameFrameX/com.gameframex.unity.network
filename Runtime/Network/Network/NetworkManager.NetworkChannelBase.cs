@@ -403,6 +403,36 @@ namespace GameFrameX.Network.Runtime
             }
 
             /// <summary>
+            /// 设置RPC错误的处理函数
+            /// </summary>
+            /// <param name="handler"></param>
+            public void SetRPCErrorHandler(EventHandler<MessageObject> handler)
+            {
+                GameFrameworkGuard.NotNull(handler, nameof(handler));
+                PRpcState.SetRPCErrorHandler(handler);
+            }
+
+            /// <summary>
+            /// 设置RPC开始的处理函数
+            /// </summary>
+            /// <param name="handler"></param>
+            public void SetRPCStartHandler(EventHandler<MessageObject> handler)
+            {
+                GameFrameworkGuard.NotNull(handler, nameof(handler));
+                PRpcState.SetRPCStartHandler(handler);
+            }
+
+            /// <summary>
+            /// 设置RPC结束的处理函数
+            /// </summary>
+            /// <param name="handler"></param>
+            public void SetRPCEndHandler(EventHandler<MessageObject> handler)
+            {
+                GameFrameworkGuard.NotNull(handler, nameof(handler));
+                PRpcState.SetRPCEndHandler(handler);
+            }
+
+            /// <summary>
             /// 连接到远程主机。
             /// </summary>
             /// <param name="ipAddress">远程主机的 IP 地址。</param>
