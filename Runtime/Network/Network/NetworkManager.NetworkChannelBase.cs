@@ -25,7 +25,6 @@ namespace GameFrameX.Network.Runtime
             private const int DefaultMissHeartBeatCountByClose = 10;
 
             protected readonly Queue<MessageObject> PSendPacketPool;
-            protected readonly EventPool<Packet> PReceivePacketPool;
             protected readonly INetworkChannelHelper PNetworkChannelHelper;
             protected AddressFamily PAddressFamily;
 
@@ -86,7 +85,6 @@ namespace GameFrameX.Network.Runtime
             {
                 Name = name ?? string.Empty;
                 PSendPacketPool = new Queue<MessageObject>(128);
-                PReceivePacketPool = new EventPool<Packet>(EventPoolMode.Default);
                 PNetworkChannelHelper = networkChannelHelper;
                 PAddressFamily = AddressFamily.Unknown;
                 PResetHeartBeatElapseSecondsWhenReceivePacket = false;
@@ -165,12 +163,7 @@ namespace GameFrameX.Network.Runtime
             /// 获取累计发送的消息包数量。
             /// </summary>
             public int SentPacketCount => PSentPacketCount;
-
-            /// <summary>
-            /// 获取已接收未处理的消息包数量。
-            /// </summary>
-            public int ReceivePacketCount => PReceivePacketPool.EventCount;
-
+            
             /// <summary>
             /// 获取累计已接收的消息包数量。
             /// </summary>
@@ -268,8 +261,6 @@ namespace GameFrameX.Network.Runtime
                     return;
                 }
 
-                PReceivePacketPool.Update(elapseSeconds, realElapseSeconds);
-
                 ProcessHeartBeat(realElapseSeconds);
                 PRpcState.Update(elapseSeconds, realElapseSeconds);
             }
@@ -327,7 +318,6 @@ namespace GameFrameX.Network.Runtime
             {
                 Close();
                 PSendState.Reset();
-                PReceivePacketPool.Shutdown();
                 PNetworkChannelHelper.Shutdown();
             }
 
@@ -390,16 +380,6 @@ namespace GameFrameX.Network.Runtime
                 {
                     MissHeartBeatCountByClose = handler.MissHeartBeatCountByClose;
                 }
-            }
-
-            /// <summary>
-            /// 设置默认事件处理函数。
-            /// </summary>
-            /// <param name="handler">要设置的默认事件处理函数。</param>
-            public void SetDefaultHandler(EventHandler<Packet> handler)
-            {
-                GameFrameworkGuard.NotNull(handler, nameof(handler));
-                PReceivePacketPool.SetDefaultHandler(handler);
             }
 
             /// <summary>
@@ -508,8 +488,6 @@ namespace GameFrameX.Network.Runtime
                     {
                         PSendPacketPool.Clear();
                     }
-
-                    PReceivePacketPool.Clear();
 
                     lock (PHeartBeatState)
                     {
@@ -695,6 +673,22 @@ namespace GameFrameX.Network.Runtime
 
             protected void ProcessReceive()
             {
+            }
+
+            protected void InvokeMessageHandler(MessageObject messageObject)
+            {
+                var handlers = ProtoMessageHandler.GetHandlers(messageObject.GetType());
+                try
+                {
+                    foreach (var handler in handlers)
+                    {
+                        handler.Invoke(messageObject);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                }
             }
         }
     }

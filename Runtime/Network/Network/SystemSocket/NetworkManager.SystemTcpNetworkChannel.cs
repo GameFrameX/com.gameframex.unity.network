@@ -189,10 +189,7 @@ namespace GameFrameX.Network.Runtime
                 bool replySuccess = PRpcState.Reply(messageObject);
                 if (!replySuccess)
                 {
-                    PacketBase packetBase = ReferencePool.Acquire<PacketBase>();
-                    packetBase.MessageObject = messageObject;
-                    packetBase.MessageId = PacketReceiveHeaderHandler.Id;
-                    PReceivePacketPool.Fire(this, packetBase);
+                    InvokeMessageHandler(messageObject);
                 }
 
                 PReceivedPacketCount++;
@@ -342,7 +339,6 @@ namespace GameFrameX.Network.Runtime
                     PSendPacketPool.Clear();
                 }
 
-                PReceivePacketPool.Clear();
 
                 lock (PHeartBeatState)
                 {

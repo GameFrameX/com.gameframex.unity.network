@@ -38,8 +38,6 @@ namespace GameFrameX.Network.Runtime
             _ = typeof(NetworkManager.ReceiveState);
             _ = typeof(NetworkManager.SendState);
             _ = typeof(NetworkMissHeartBeatEventArgs);
-            _ = typeof(Packet);
-            _ = typeof(PacketBase);
             _ = typeof(ProtoMessageIdHandler);
             _ = typeof(ServiceType);
             _ = typeof(NetworkComponent);

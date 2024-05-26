@@ -48,11 +48,6 @@ namespace GameFrameX.Network.Runtime
         int SentPacketCount { get; }
 
         /// <summary>
-        /// 获取已接收未处理的消息包数量。
-        /// </summary>
-        int ReceivePacketCount { get; }
-
-        /// <summary>
         /// 获取累计已接收的消息包数量。
         /// </summary>
         int ReceivedPacketCount { get; }
@@ -131,12 +126,6 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="handler">要注册的网络消息包处理函数</param>
         void RegisterHandler(IPacketHeartBeatHandler handler);
-
-        /// <summary>
-        /// 设置默认事件处理函数。
-        /// </summary>
-        /// <param name="handler">要设置的默认事件处理函数。</param>
-        void SetDefaultHandler(EventHandler<Packet> handler);
 
         /// <summary>
         /// 设置RPC错误的处理函数
