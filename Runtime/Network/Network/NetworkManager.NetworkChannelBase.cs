@@ -163,7 +163,7 @@ namespace GameFrameX.Network.Runtime
             /// 获取累计发送的消息包数量。
             /// </summary>
             public int SentPacketCount => PSentPacketCount;
-            
+
             /// <summary>
             /// 获取累计已接收的消息包数量。
             /// </summary>
@@ -634,8 +634,11 @@ namespace GameFrameX.Network.Runtime
                         try
                         {
                             serializeResult = ProcessSendMessage(messageObject);
-#if UNITY_EDITOR
-                            Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+#if ENABLE_GAMEFRAMEX_NETWORK_SEND_LOG
+                            if (!IgnoreSendIds.Contains(PacketSendHeaderHandler.Id))
+                            {
+                                Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+                            }
 #endif
                         }
                         catch (Exception exception)
@@ -689,6 +692,20 @@ namespace GameFrameX.Network.Runtime
                 {
                     Log.Error(e);
                 }
+            }
+
+            protected List<int> IgnoreSendIds = new List<int>();
+            protected List<int> IgnoreReceiveIds = new List<int>();
+
+            /// <summary>
+            /// 设置忽略的消息打印列表
+            /// </summary>
+            /// <param name="sendIds">发送列表</param>
+            /// <param name="receiveIds">接收列表</param>
+            public void SetIgnoreLogNetworkIds(List<int> sendIds, List<int> receiveIds)
+            {
+                IgnoreSendIds = sendIds;
+                IgnoreReceiveIds = receiveIds;
             }
         }
     }

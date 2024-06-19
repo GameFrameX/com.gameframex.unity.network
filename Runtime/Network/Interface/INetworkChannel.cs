@@ -6,6 +6,7 @@
 //------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -151,6 +152,13 @@ namespace GameFrameX.Network.Runtime
         /// <param name="port">远程主机的端口号。</param>
         /// <param name="userData">用户自定义数据。</param>
         void Connect(IPAddress ipAddress, int port, object userData = null);
+
+        /// <summary>
+        /// 设置忽略指定的消息包的发送和接收ID列表
+        /// </summary>
+        /// <param name="sendIds">发送消息ID列表</param>
+        /// <param name="receiveIds">接收消息ID列表</param>
+        void SetIgnoreLogNetworkIds(List<int> sendIds, List<int> receiveIds);
 
         /// <summary>
         /// 关闭网络频道。

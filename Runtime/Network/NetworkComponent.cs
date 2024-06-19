@@ -24,6 +24,16 @@ namespace GameFrameX.Network.Runtime
         private EventComponent m_EventComponent = null;
 
         /// <summary>
+        /// 忽略发送的网络消息ID的日志打印
+        /// </summary>
+        [SerializeField] private List<int> m_IgnoredSendNetworkIds = new List<int>();
+
+        /// <summary>
+        /// 忽略接收的网络消息ID的日志打印
+        /// </summary>
+        [SerializeField] private List<int> m_IgnoredReceiveNetworkIds = new List<int>();
+
+        /// <summary>
         /// 获取网络频道数量。
         /// </summary>
         public int NetworkChannelCount => m_NetworkManager.NetworkChannelCount;
@@ -109,7 +119,9 @@ namespace GameFrameX.Network.Runtime
         public INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
-            return m_NetworkManager.CreateNetworkChannel(channelName, networkChannelHelper);
+            var networkChannel = m_NetworkManager.CreateNetworkChannel(channelName, networkChannelHelper);
+            networkChannel.SetIgnoreLogNetworkIds(m_IgnoredSendNetworkIds,m_IgnoredReceiveNetworkIds);
+            return networkChannel;
         }
 
         /// <summary>

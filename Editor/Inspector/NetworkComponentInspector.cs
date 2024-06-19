@@ -15,10 +15,25 @@ namespace GameFrameX.Network.Editor
     [CustomEditor(typeof(NetworkComponent))]
     internal sealed class NetworkComponentInspector : ComponentTypeComponentInspector
     {
+        private SerializedProperty m_IgnoredSendNetworkIds;
+        private SerializedProperty m_IgnoredReceiveNetworkIds;
+
+        private readonly GUIContent m_IgnoredSendNetworkIdsGUIContent = new GUIContent("忽略发送消息ID的日志打印");
+        private readonly GUIContent m_IgnoredReceiveNetworkIdsGUIContent = new GUIContent("忽略接收消息ID的日志打印");
+
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-
+            serializedObject.Update();
+            EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
+            {
+                GUI.enabled = !EditorApplication.isPlaying;
+                EditorGUILayout.PropertyField(m_IgnoredSendNetworkIds, m_IgnoredSendNetworkIdsGUIContent);
+                EditorGUILayout.PropertyField(m_IgnoredReceiveNetworkIds, m_IgnoredReceiveNetworkIdsGUIContent);
+                GUI.enabled = false;
+            }
+            EditorGUI.EndDisabledGroup();
+            serializedObject.ApplyModifiedProperties();
             if (!EditorApplication.isPlaying)
             {
                 EditorGUILayout.HelpBox("Available during runtime only.", MessageType.Info);
@@ -70,6 +85,13 @@ namespace GameFrameX.Network.Editor
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.Separator();
+        }
+
+        protected override void Enable()
+        {
+            base.Enable();
+            m_IgnoredSendNetworkIds = serializedObject.FindProperty("m_IgnoredSendNetworkIds");
+            m_IgnoredReceiveNetworkIds = serializedObject.FindProperty("m_IgnoredReceiveNetworkIds");
         }
     }
 }

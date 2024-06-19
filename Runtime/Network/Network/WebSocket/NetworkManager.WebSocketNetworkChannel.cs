@@ -70,7 +70,7 @@ namespace GameFrameX.Network.Runtime
             {
                 return m_CancellationTokenSource.IsCancellationRequested;
             }
-            
+
             protected override bool ProcessSend()
             {
                 lock (PSendPacketPool)
@@ -88,8 +88,11 @@ namespace GameFrameX.Network.Runtime
                         try
                         {
                             serializeResult = ProcessSendMessage(messageObject);
-#if UNITY_EDITOR
-                            Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+#if ENABLE_GAMEFRAMEX_NETWORK_SEND_LOG
+                            if (!IgnoreSendIds.Contains(PacketSendHeaderHandler.Id))
+                            {
+                                Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+                            }
 #endif
                         }
                         catch (Exception exception)
@@ -116,13 +119,14 @@ namespace GameFrameX.Network.Runtime
 
                             throw new GameFrameworkException(errorMessage);
                         }
+
                         PSendState.Reset();
                     }
 
                     return true;
                 }
             }
-            
+
 
             /// <summary>
             /// 处理发送消息对象
@@ -260,8 +264,11 @@ namespace GameFrameX.Network.Runtime
                         {
                             messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
                         }
-#if UNITY_EDITOR
-                        Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+#if ENABLE_GAMEFRAMEX_NETWORK_RECEIVE_LOG
+                        if (!IgnoreReceiveIds.Contains(PacketReceiveHeaderHandler.Id))
+                        {
+                            Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
+                        }
 #endif
                         if (!processSuccess)
                         {
