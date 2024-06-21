@@ -634,12 +634,7 @@ namespace GameFrameX.Network.Runtime
                         try
                         {
                             serializeResult = ProcessSendMessage(messageObject);
-#if ENABLE_GAMEFRAMEX_NETWORK_SEND_LOG
-                            if (!IgnoreSendIds.Contains(PacketSendHeaderHandler.Id))
-                            {
-                                Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
-                            }
-#endif
+                            DebugSendLog(messageObject);
                         }
                         catch (Exception exception)
                         {
@@ -676,6 +671,26 @@ namespace GameFrameX.Network.Runtime
 
             protected void ProcessReceive()
             {
+            }
+
+            protected void DebugSendLog(MessageObject messageObject)
+            {
+#if ENABLE_GAMEFRAMEX_NETWORK_SEND_LOG
+                if (!IgnoreSendIds.Contains(PacketSendHeaderHandler.Id))
+                {
+                    Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId},{messageObject.GetType().Name}] 消息内容:{Utility.Json.ToJson(messageObject)}");
+                }
+#endif
+            }
+
+            protected void DebugReceiveLog(MessageObject messageObject)
+            {
+#if ENABLE_GAMEFRAMEX_NETWORK_RECEIVE_LOG
+                if (!IgnoreReceiveIds.Contains(PacketReceiveHeaderHandler.Id))
+                {
+                    Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id},{messageObject.UniqueId},{messageObject.GetType().Name}] 消息内容:{Utility.Json.ToJson(messageObject)}");
+                }
+#endif
             }
 
             protected void InvokeMessageHandler(MessageObject messageObject)

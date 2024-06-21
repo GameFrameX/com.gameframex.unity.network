@@ -183,12 +183,8 @@ namespace GameFrameX.Network.Runtime
                 {
                     messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
                 }
-#if ENABLE_GAMEFRAMEX_NETWORK_RECEIVE_LOG
-                if (!IgnoreReceiveIds.Contains(PacketReceiveHeaderHandler.Id))
-                {
-                    Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id},{messageObject.UniqueId}] ==>消息类型:{messageObject.GetType()} 消息内容:{Utility.Json.ToJson(messageObject)}");
-                }
-#endif
+
+                DebugReceiveLog(messageObject);
 
                 bool replySuccess = PRpcState.Reply(messageObject);
                 if (!replySuccess)
