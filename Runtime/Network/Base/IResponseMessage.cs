@@ -5,5 +5,9 @@ namespace GameFrameX.Network.Runtime
     /// </summary>
     public interface IResponseMessage
     {
+        /// <summary>
+        /// 错误码，非 0 表示错误
+        /// </summary>
+        int ErrorCode { get; }
     }
 }
