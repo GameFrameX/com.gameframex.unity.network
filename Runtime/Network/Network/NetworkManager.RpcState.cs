@@ -48,11 +48,14 @@ namespace GameFrameX.Network.Runtime
             /// <returns></returns>
             public bool Reply(MessageObject message)
             {
-                if (m_HandlingObjects.TryRemove(message.UniqueId, out var messageActorObject))
+                if (message.GetType() == typeof(IResponseMessage))
                 {
-                    messageActorObject.Reply(message as IResponseMessage);
-                    m_RpcEndHandler?.Invoke(this, message);
-                    return true;
+                    if (m_HandlingObjects.TryRemove(message.UniqueId, out var messageActorObject))
+                    {
+                        messageActorObject.Reply(message as IResponseMessage);
+                        m_RpcEndHandler?.Invoke(this, message);
+                        return true;
+                    }
                 }
 
                 return false;
