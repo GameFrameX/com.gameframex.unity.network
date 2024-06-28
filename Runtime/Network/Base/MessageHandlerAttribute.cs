@@ -37,7 +37,7 @@ namespace GameFrameX.Network.Runtime
 
             if (!message.IsImplWithInterface(typeof(INotifyMessage)))
             {
-                throw new ArgumentException($"message:{message.GetType().FullName}必须实现:" + nameof(INotifyMessage));
+                throw new ArgumentException($"message:{message.FullName}必须实现:" + nameof(INotifyMessage));
             }
 
             MessageType = message;
