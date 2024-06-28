@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+
 // using System.Text;
 
 namespace GameFrameX.Network.Runtime
@@ -87,6 +88,15 @@ namespace GameFrameX.Network.Runtime
                         }
                     }
                     else if (type.IsImplWithInterface(typeof(IResponseMessage)))
+                    {
+                        // 返回
+                        if (!RespDictionary.TryAdd(messageIdHandler.MessageId, type))
+                        {
+                            RespDictionary.TryGetValue(messageIdHandler.MessageId, out var value);
+                            throw new GameFrameworkException($"返回Id重复==>当前ID:{messageIdHandler.MessageId},已有ID类型:{value.FullName}");
+                        }
+                    }
+                    else if (type.IsImplWithInterface(typeof(INotifyMessage)))
                     {
                         // 返回
                         if (!RespDictionary.TryAdd(messageIdHandler.MessageId, type))
