@@ -48,7 +48,7 @@ namespace GameFrameX.Network.Runtime
             /// <returns></returns>
             public bool Reply(MessageObject message)
             {
-                if (message.GetType() == typeof(IResponseMessage))
+                if (message.GetType().IsImplWithInterface(typeof(IResponseMessage)))
                 {
                     if (m_HandlingObjects.TryRemove(message.UniqueId, out var messageActorObject))
                     {
