@@ -35,9 +35,9 @@ namespace GameFrameX.Network.Runtime
                 throw new ArgumentException("message必须继承:" + nameof(MessageObject));
             }
 
-            if (!message.IsImplWithInterface(typeof(IResponseMessage)))
+            if (!message.IsImplWithInterface(typeof(INotifyMessage)))
             {
-                throw new ArgumentException("message必须实现:" + nameof(IResponseMessage));
+                throw new ArgumentException($"message:{message.GetType().FullName}必须实现:" + nameof(INotifyMessage));
             }
 
             MessageType = message;
