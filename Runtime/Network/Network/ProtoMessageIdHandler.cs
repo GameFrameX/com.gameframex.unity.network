@@ -13,6 +13,7 @@ namespace GameFrameX.Network.Runtime
     {
         private static readonly BidirectionalDictionary<int, Type> ReqDictionary = new BidirectionalDictionary<int, Type>();
         private static readonly BidirectionalDictionary<int, Type> RespDictionary = new BidirectionalDictionary<int, Type>();
+        private static readonly List<Type> HeartBeatList = new List<Type>();
 
         /// <summary>
         /// 根据消息ID获取请求的类型
@@ -59,6 +60,16 @@ namespace GameFrameX.Network.Runtime
         }
 
         /// <summary>
+        /// 获取消息类型是否是心跳类型
+        /// </summary>
+        /// <param name="type">消息类型</param>
+        /// <returns></returns>
+        public static bool IsHeartbeat(Type type)
+        {
+            return HeartBeatList.Contains(type);
+        }
+
+        /// <summary>
         /// 初始化所有协议对象
         /// </summary>
         public static void Init(Assembly assembly)
@@ -78,6 +89,18 @@ namespace GameFrameX.Network.Runtime
                 // stringBuilder.AppendLine(type.FullName);
                 if (attribute is MessageTypeHandlerAttribute messageIdHandler)
                 {
+                    if (type.IsImplWithInterface(typeof(IHeartBeatMessage)))
+                    {
+                        if (HeartBeatList.Contains(type))
+                        {
+                            throw new GameFrameworkException($"心跳消息重复==>类型:{type.FullName}");
+                        }
+                        else
+                        {
+                            HeartBeatList.Add(type);
+                        }
+                    }
+
                     if (type.IsImplWithInterface(typeof(IRequestMessage)))
                     {
                         // 请求
