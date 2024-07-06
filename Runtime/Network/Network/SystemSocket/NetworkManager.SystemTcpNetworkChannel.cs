@@ -163,8 +163,9 @@ namespace GameFrameX.Network.Runtime
             /// <returns></returns>
             private bool ProcessPackHeader()
             {
-                var buffer = new byte[PacketReceiveHeaderHandler.PacketHeaderLength];
-                _ = PReceiveState.Stream.Read(buffer, 0, PacketReceiveHeaderHandler.PacketHeaderLength);
+                var headerLength = PacketReceiveHeaderHandler.PacketHeaderLength;
+                var buffer = new byte[headerLength];
+                _ = PReceiveState.Stream.Read(buffer, 0, headerLength);
                 var processSuccess = PNetworkChannelHelper.DeserializePacketHeader(buffer);
                 PReceiveState.Reset(PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength, PacketReceiveHeaderHandler);
                 return processSuccess;
@@ -176,8 +177,9 @@ namespace GameFrameX.Network.Runtime
             /// <returns></returns>
             private bool ProcessPackBody()
             {
-                var buffer = new byte[PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength];
-                _ = PReceiveState.Stream.Read(buffer, 0, PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength);
+                var bodyLength = PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength;
+                var buffer = new byte[bodyLength];
+                _ = PReceiveState.Stream.Read(buffer, 0, bodyLength);
                 var processSuccess = PNetworkChannelHelper.DeserializePacketBody(buffer, PacketReceiveHeaderHandler.Id, out var messageObject);
                 if (processSuccess)
                 {
