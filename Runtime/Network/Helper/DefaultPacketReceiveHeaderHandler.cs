@@ -1,7 +1,3 @@
-using System;
-using System.Buffers;
-using GameFrameX.Runtime;
-
 namespace GameFrameX.Network.Runtime
 {
     public sealed class DefaultPacketReceiveHeaderHandler : IPacketReceiveHeaderHandler, IPacketHandler
@@ -9,7 +5,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 包长度
         /// </summary>
-        public int PacketLength { get; private set; }
+        public ushort PacketLength { get; private set; }
 
         /// <summary>
         /// 消息ID
@@ -19,9 +15,24 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息唯一编号
         /// </summary>
-        public long UniqueId { get; private set; }
+        public int UniqueId { get; private set; }
+
+        /// <summary>
+        /// 消息操作类型
+        /// </summary>
+        public byte OperationType { get; private set; }
+
+        /// <summary>
+        /// 压缩标记
+        /// </summary>
+        public byte ZipFlag { get; private set; }
 
 
+        /// <summary>
+        /// 消息包处理
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
         public bool Handler(object source)
         {
             byte[] reader = source as byte[];
@@ -32,21 +43,33 @@ namespace GameFrameX.Network.Runtime
 
             // packetLength
             int offset = 0;
-            int packetLength = reader.ReadInt(ref offset); //4
+            var packetLength = reader.ReadUShort(ref offset); //4
             PacketLength = packetLength;
+            // operationType
+            OperationType = reader.ReadByte(ref offset); //1
+            // zipFlag
+            ZipFlag = reader.ReadByte(ref offset); //1
             // uniqueId
-            long uniqueId = reader.ReadLong(ref offset); //8
-            UniqueId = uniqueId;
+            UniqueId = reader.ReadInt(ref offset); //4
             // MsgId
-            int msgId = reader.ReadInt(ref offset); //4
-            Id = msgId;
+            Id = reader.ReadInt(ref offset); //4
             return true;
         }
 
         /// <summary>
         /// 网络包长度
         /// </summary>
-        private const int NetPacketLength = 4;
+        private const int NetPacketLength = 2;
+
+        /// <summary>
+        /// 操作消息类型
+        /// </summary>
+        private const int OperationTypeLength = 1;
+
+        /// <summary>
+        /// 消息压缩标记长度
+        /// </summary>
+        private const int NetZipFlagLength = 1;
 
         /// <summary>
         /// 消息码
@@ -56,16 +79,11 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息编号
         /// </summary>
-        private const int NetUniqueIdLength = 8;
-
-        public DefaultPacketReceiveHeaderHandler()
-        {
-            PacketHeaderLength = NetPacketLength + NetUniqueIdLength + NetCmdIdLength;
-        }
+        private const int NetUniqueIdLength = 4;
 
         /// <summary>
         /// 包头长度
         /// </summary>
-        public int PacketHeaderLength { get; }
+        public ushort PacketHeaderLength { get; } = NetPacketLength + OperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
     }
 }

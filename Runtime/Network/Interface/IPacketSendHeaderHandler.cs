@@ -10,7 +10,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息包头长度
         /// </summary>
-        int PacketHeaderLength { get; }
+        ushort PacketHeaderLength { get; }
 
         /// <summary>
         /// 获取网络消息包协议编号。
@@ -20,7 +20,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络消息包长度。
         /// </summary>
-        int PacketLength { get; }
+        ushort PacketLength { get; }
 
         /// <summary>
         /// 处理消息

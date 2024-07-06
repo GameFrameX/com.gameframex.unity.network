@@ -26,7 +26,7 @@ namespace GameFrameX.Network.Runtime
             public MemoryStream Stream { get; private set; }
             public IPacketReceiveHeaderHandler PacketHeader { get; set; }
 
-            public void PrepareForPacketHeader(int packetHeaderLength = 16)
+            public void PrepareForPacketHeader(int packetHeaderLength = 12)
             {
                 Reset(packetHeaderLength, null);
             }

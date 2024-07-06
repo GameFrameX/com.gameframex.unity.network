@@ -1,5 +1,4 @@
 using System.IO;
-using GameFrameX.Runtime;
 using ProtoBuf;
 
 namespace GameFrameX.Network.Runtime
@@ -9,7 +8,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 网络包长度
         /// </summary>
-        private const int NetPacketLength = 4;
+        private const int NetPacketLength = 2;
 
         /// <summary>
         /// 消息码
@@ -17,27 +16,32 @@ namespace GameFrameX.Network.Runtime
         private const int NetCmdIdLength = 4;
 
         /// <summary>
-        /// 消息体长度
+        /// 消息操作类型长度
         /// </summary>
-        private const int NetBodyLength = 4;
+        private const int NetOperationTypeLength = 1;
+
+        /// <summary>
+        /// 消息压缩标记长度
+        /// </summary>
+        private const int NetZipFlagLength = 1;
 
         /// <summary>
         /// 消息编号
         /// </summary>
-        private const int NetUniqueIdLength = 8;
+        private const int NetUniqueIdLength = 4;
 
 
         public DefaultPacketSendHeaderHandler()
         {
             // 4 + 4 + 4 + 4 
-            PacketHeaderLength = NetPacketLength + NetUniqueIdLength + NetCmdIdLength + NetBodyLength;
+            PacketHeaderLength = NetPacketLength + NetOperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
             m_CachedByte = new byte[PacketHeaderLength];
         }
 
         /// <summary>
         /// 消息包头长度
         /// </summary>
-        public int PacketHeaderLength { get; }
+        public ushort PacketHeaderLength { get; }
 
         /// <summary>
         /// 获取网络消息包协议编号。
@@ -47,7 +51,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络消息包长度。
         /// </summary>
-        public int PacketLength { get; private set; }
+        public ushort PacketLength { get; private set; }
 
 
         int m_Count = 0;
@@ -61,15 +65,17 @@ namespace GameFrameX.Network.Runtime
             var messageType = messageObject.GetType();
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
             var messageLength = messageBodyBuffer.Length;
-            PacketLength = PacketHeaderLength + messageLength;
+            PacketLength = (ushort)(PacketHeaderLength + messageLength);
             // 数据包总大小
-            m_CachedByte.WriteInt(PacketLength, ref m_Offset);
+            m_CachedByte.WriteUShort(PacketLength, ref m_Offset);
+            // 消息操作类型
+            m_CachedByte.WriteByte((byte)(ProtoMessageIdHandler.IsHeartbeat(messageType) ? 1 : 4), ref m_Offset);
+            // 消息压缩标记
+            m_CachedByte.WriteByte(0, ref m_Offset);
             // 消息编号
-            m_CachedByte.WriteLong(messageObject.UniqueId, ref m_Offset);
+            m_CachedByte.WriteInt(messageObject.UniqueId, ref m_Offset);
             // 消息ID
             m_CachedByte.WriteInt(Id, ref m_Offset);
-            // 消息体长度
-            m_CachedByte.WriteInt(messageLength, ref m_Offset);
             destination.Write(m_CachedByte, 0, PacketHeaderLength);
             return true;
         }
