@@ -2,6 +2,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using GameFrameX.Runtime;
 using UnityWebSocket;
 
 namespace GameFrameX.Network.Runtime
@@ -15,15 +16,23 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 是否是加密协议
             /// </summary>
-            private readonly bool IsSSL = false;
+            private readonly bool _isSSL = false;
+
+            /// <summary>
+            /// 是否正在连接
+            /// </summary>
+            private bool _isConnecting = false;
 
             TaskCompletionSource<bool> _connectTask = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             private Action<byte[]> _action;
+            private Action<string> _onCloseAction;
 
-            public WebSocketNetSocket(IPAddress ipAddress, int port, Action<byte[]> action)
+            public WebSocketNetSocket(IPAddress ipAddress, int port, bool isSSL, Action<byte[]> action, Action<string> onCloseAction)
             {
-                _client = new UnityWebSocket.WebSocket("ws://" + ipAddress + ":" + port + "/" + (IsSSL ? "wss" : "ws"));
+                _isSSL = isSSL;
+                _client = new UnityWebSocket.WebSocket("ws://" + ipAddress + ":" + port + "/" + (_isSSL ? "wss" : "ws"));
                 _action = action;
+                _onCloseAction = onCloseAction;
                 _client.OnOpen += OnOpen;
                 _client.OnError += OnError;
                 _client.OnClose += OnClose;
@@ -40,21 +49,35 @@ namespace GameFrameX.Network.Runtime
 
             private void OnClose(object sender, CloseEventArgs e)
             {
+                _onCloseAction?.Invoke(e.Reason + " " + e.Code);
+                Log.Error(e.Code + " " + e.Reason);
             }
 
             private void OnError(object sender, ErrorEventArgs e)
             {
+                if (_isConnecting)
+                {
+                    // 连接错误
+                }
+                else
+                {
+                    // 非连接错误
+                }
+
+                Log.Error(e.Message);
                 _connectTask.TrySetResult(false);
             }
 
             private void OnOpen(object sender, OpenEventArgs e)
             {
+                _isConnecting = false;
                 _connectTask.TrySetResult(true);
             }
 
 
             public async Task ConnectAsync()
             {
+                _isConnecting = true;
                 _connectTask = new TaskCompletionSource<bool>();
                 _client.ConnectAsync();
                 await _connectTask.Task;

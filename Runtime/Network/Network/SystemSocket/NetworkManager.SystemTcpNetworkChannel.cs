@@ -39,10 +39,11 @@ namespace GameFrameX.Network.Runtime
             /// <param name="ipAddress">远程主机的 IP 地址。</param>
             /// <param name="port">远程主机的端口号。</param>
             /// <param name="userData">用户自定义数据。</param>
-            public override void Connect(IPAddress ipAddress, int port, object userData = null)
+            /// <param name="isSsl">是否是加密</param>
+            public override void Connect(IPAddress ipAddress, int port, object userData = null, bool isSsl = false)
             {
                 m_ConnectedEndPoint = new IPEndPoint(ipAddress, port);
-                base.Connect(ipAddress, port, userData);
+                base.Connect(ipAddress, port, userData, isSsl);
                 PSystemNetSocket = new SystemNetSocket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 PSocket = PSystemNetSocket;
                 if (PSocket == null)

@@ -40,10 +40,11 @@ namespace GameFrameX.Network.Runtime
             /// <param name="ipAddress">远程主机的 IP 地址。</param>
             /// <param name="port">远程主机的端口号。</param>
             /// <param name="userData">用户自定义数据。</param>
-            public override void Connect(IPAddress ipAddress, int port, object userData = null)
+            /// <param name="isSsl">是否是加密</param>
+            public override void Connect(IPAddress ipAddress, int port, object userData = null, bool isSsl = false)
             {
-                base.Connect(ipAddress, port, userData);
-                PSocket = new WebSocketNetSocket(ipAddress, port, ReceiveCallback);
+                base.Connect(ipAddress, port, userData, isSsl);
+                PSocket = new WebSocketNetSocket(ipAddress, port, isSsl, ReceiveCallback, CloseCallback);
                 if (PSocket == null)
                 {
                     const string errorMessage = "Initialize network channel failure.";
@@ -60,6 +61,12 @@ namespace GameFrameX.Network.Runtime
                 ConnectAsync(userData);
             }
 
+            private void CloseCallback(string errorMessage)
+            {
+                NetworkChannelClosed?.Invoke(this);
+                NetworkChannelError?.Invoke(this, NetworkErrorCode.SocketError, SocketError.SocketError, errorMessage);
+            }
+
             public override void Close()
             {
                 base.Close();
@@ -68,7 +75,7 @@ namespace GameFrameX.Network.Runtime
 
             private bool IsClose()
             {
-                return m_CancellationTokenSource.IsCancellationRequested;
+                return !PSocket.IsConnected && m_CancellationTokenSource.IsCancellationRequested;
             }
 
             protected override bool ProcessSend()

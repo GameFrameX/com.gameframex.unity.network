@@ -428,7 +428,8 @@ namespace GameFrameX.Network.Runtime
             /// <param name="ipAddress">远程主机的 IP 地址。</param>
             /// <param name="port">远程主机的端口号。</param>
             /// <param name="userData">用户自定义数据。</param>
-            public virtual void Connect(IPAddress ipAddress, int port, object userData = null)
+            /// <param name="isSsl">是否加密</param>
+            public virtual void Connect(IPAddress ipAddress, int port, object userData = null, bool isSsl = false)
             {
                 if (PSocket != null)
                 {
