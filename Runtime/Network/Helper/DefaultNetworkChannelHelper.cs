@@ -81,7 +81,7 @@ namespace GameFrameX.Network.Runtime
                 else if (type.IsImplWithInterface(packetHeartBeatHandlerBaseType))
                 {
                     var packetHandler = (IPacketHeartBeatHandler)Activator.CreateInstance(type);
-                    m_NetworkChannel.RegisterHandler(packetHandler);
+                    m_NetworkChannel.RegisterHeartBeatHandler(packetHandler);
                 }
             }
 

@@ -125,6 +125,13 @@ namespace GameFrameX.Network.Runtime
         /// 注册网络消息心跳处理函数，用于处理心跳消息
         /// </summary>
         /// <param name="handler">要注册的网络消息包处理函数</param>
+        void RegisterHeartBeatHandler(IPacketHeartBeatHandler handler);
+
+        /// <summary>
+        /// 注册网络消息心跳处理函数，用于处理心跳消息
+        /// </summary>
+        /// <param name="handler">要注册的网络消息包处理函数</param>
+        [Obsolete("Use RegisterHeartBeatHandler instead")]
         void RegisterHandler(IPacketHeartBeatHandler handler);
 
         /// <summary>
