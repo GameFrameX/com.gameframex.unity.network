@@ -17,7 +17,7 @@ namespace GameFrameX.Network.Runtime
         /// 消息唯一编号
         /// </summary>
         [JsonIgnore]
-        public long UniqueId { get; private set; }
+        public int UniqueId { get; private set; }
 
         protected MessageObject()
         {
@@ -29,13 +29,13 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         public void UpdateUniqueId()
         {
-            UniqueId = Utility.IdGenerator.GetNextUniqueId();
+            UniqueId = Utility.IdGenerator.GetNextUniqueIntId();
         }
 
         /// <summary>
         /// 设置唯一编码
         /// </summary>
-        public void SetUpdateUniqueId(long uniqueId)
+        public void SetUpdateUniqueId(int uniqueId)
         {
             UniqueId = uniqueId;
         }
