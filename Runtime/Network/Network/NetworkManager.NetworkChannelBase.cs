@@ -707,16 +707,16 @@ namespace GameFrameX.Network.Runtime
             protected void InvokeMessageHandler(MessageObject messageObject)
             {
                 var handlers = ProtoMessageHandler.GetHandlers(messageObject.GetType());
-                try
+                foreach (var handler in handlers)
                 {
-                    foreach (var handler in handlers)
+                    try
                     {
                         handler.Invoke(messageObject);
                     }
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e);
+                    catch (Exception e)
+                    {
+                        Log.Error(e);
+                    }
                 }
             }
 
