@@ -38,21 +38,28 @@ namespace GameFrameX.Network.Runtime
                     continue;
                 }
 
-                messageHandlerAttribute.Init(messageHandler);
-                MessageHandlerDictionary.TryGetValue(messageHandlerAttribute.MessageType, out var list);
-                if (list == null)
+                bool isInitSuccess = messageHandlerAttribute.Init(messageHandler);
+                if (isInitSuccess)
                 {
-                    list = new List<MessageHandlerAttribute>(32);
-                    MessageHandlerDictionary.TryAdd(messageHandlerAttribute.MessageType, list);
-                }
+                    MessageHandlerDictionary.TryGetValue(messageHandlerAttribute.MessageType, out var list);
+                    if (list == null)
+                    {
+                        list = new List<MessageHandlerAttribute>(32);
+                        MessageHandlerDictionary.TryAdd(messageHandlerAttribute.MessageType, list);
+                    }
 
-                if (!list.Contains(messageHandlerAttribute))
-                {
-                    list.Add(messageHandlerAttribute);
+                    if (!list.Contains(messageHandlerAttribute))
+                    {
+                        list.Add(messageHandlerAttribute);
+                    }
+                    else
+                    {
+                        Log.Error("重复注册消息处理器：" + type.FullName + "->" + methodInfo.Name);
+                    }
                 }
                 else
                 {
-                    Log.Error("重复注册消息处理器：" + type.FullName + "->" + methodInfo.Name);
+                    Log.Error("初始化消息处理器：" + type.FullName + "->" + methodInfo.Name + " 失败");
                 }
             }
         }
