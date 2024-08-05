@@ -66,7 +66,19 @@ namespace GameFrameX.Network.Runtime
         /// <param name="messageHandler"></param>
         /// <exception cref="TargetParameterCountException"></exception>
         /// <exception cref="ArgumentException"></exception>
+        [Obsolete("已过时, 使用Add 函数")]
         internal bool Init(IMessageHandler messageHandler)
+        {
+            return Add(messageHandler);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <exception cref="TargetParameterCountException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        internal bool Add(IMessageHandler messageHandler)
         {
             GameFrameworkGuard.NotNull(MessageType, nameof(MessageType));
             GameFrameworkGuard.NotNull(messageHandler, nameof(messageHandler));
@@ -95,6 +107,48 @@ namespace GameFrameX.Network.Runtime
                     }
 
                     _invokeMethod = method;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <exception cref="TargetParameterCountException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        internal bool Remove(IMessageHandler messageHandler)
+        {
+            GameFrameworkGuard.NotNull(MessageType, nameof(MessageType));
+            GameFrameworkGuard.NotNull(messageHandler, nameof(messageHandler));
+            _messageHandler = null;
+            var target = messageHandler.GetType();
+
+            var methodInfos = target.GetMethods(Flags);
+
+            foreach (var method in methodInfos)
+            {
+                if (!method.IsDefined(typeof(MessageHandlerAttribute), true))
+                {
+                    continue;
+                }
+
+                if (method.Name == _invokeMethodName)
+                {
+                    if (method.GetParameters().Length != 1)
+                    {
+                        throw new TargetParameterCountException("参数个数必须为1");
+                    }
+
+                    if (method.GetParameters()[0].ParameterType.FullName != MessageType.FullName)
+                    {
+                        throw new ArgumentException("参数类型数必须为:" + MessageType.FullName);
+                    }
+
+                    _invokeMethod = null;
                     return true;
                 }
             }
