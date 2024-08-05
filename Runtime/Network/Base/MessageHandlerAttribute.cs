@@ -45,6 +45,11 @@ namespace GameFrameX.Network.Runtime
 
         internal void Invoke(MessageObject message)
         {
+            if (_invokeMethod == null)
+            {
+                throw new ArgumentNullException(nameof(_invokeMethod), $"未找到方法：{_invokeMethodName}.请确认是否注册成功");
+            }
+
             if (_invokeMethod.IsStatic)
             {
                 _invokeMethod?.Invoke(null, new object[] { message });
@@ -61,7 +66,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="messageHandler"></param>
         /// <exception cref="TargetParameterCountException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        internal void Init(IMessageHandler messageHandler)
+        internal bool Init(IMessageHandler messageHandler)
         {
             GameFrameworkGuard.NotNull(MessageType, nameof(MessageType));
             GameFrameworkGuard.NotNull(messageHandler, nameof(messageHandler));
@@ -90,9 +95,11 @@ namespace GameFrameX.Network.Runtime
                     }
 
                     _invokeMethod = method;
-                    return;
+                    return true;
                 }
             }
+
+            return false;
         }
     }
 }
