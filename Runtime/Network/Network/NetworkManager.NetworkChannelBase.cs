@@ -266,7 +266,7 @@ namespace GameFrameX.Network.Runtime
 				
 				while (m_ExecutionQueue.Count > 0)
                 {
-                    m_ExecutionQueue.Dequeue().Invoke();
+                    m_ExecutionQueue.Dequeue()?.Invoke();
                 }
             }
 
@@ -718,7 +718,7 @@ namespace GameFrameX.Network.Runtime
                     {
                         lock (m_ExecutionQueue)
                         {
-                            handler.messageObject = messageObject;
+							handler.SetMessageObject(messageObject);
                             m_ExecutionQueue.Enqueue(handler);
                         }
                     }

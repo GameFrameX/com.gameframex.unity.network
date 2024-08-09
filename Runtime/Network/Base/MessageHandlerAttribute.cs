@@ -20,7 +20,7 @@ namespace GameFrameX.Network.Runtime
         private MethodInfo _invokeMethod;
         private IMessageHandler _messageHandler;
 
-        public MessageObject messageObject;
+		private MessageObject _messageObject;
 
         /// <summary>
         /// 网络消息处理器
@@ -44,6 +44,15 @@ namespace GameFrameX.Network.Runtime
 
             MessageType = message;
         }
+		
+		/// <summary>
+        /// 设置消息对象
+        /// </summary>
+        /// <param name="messageObject"></param>
+        public void SetMessageObject(MessageObject messageObject)
+        {
+            _messageObject = messageObject;
+        }
 
         internal void Invoke()
         {
@@ -54,11 +63,11 @@ namespace GameFrameX.Network.Runtime
 
             if (_invokeMethod.IsStatic)
             {
-                _invokeMethod?.Invoke(null, new object[] { messageObject });
+                _invokeMethod?.Invoke(null, new object[] { _messageObject });
             }
             else
             {
-                _invokeMethod?.Invoke(_messageHandler, new object[] { messageObject });
+                _invokeMethod?.Invoke(_messageHandler, new object[] { _messageObject });
             }
         }
 
