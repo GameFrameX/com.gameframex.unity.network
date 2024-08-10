@@ -263,11 +263,13 @@ namespace GameFrameX.Network.Runtime
 
                 ProcessHeartBeat(realElapseSeconds);
                 PRpcState.Update(elapseSeconds, realElapseSeconds);
-				
-				while (m_ExecutionQueue.Count > 0)
+				lock (m_ExecutionQueue)
                 {
-                    m_ExecutionQueue.Dequeue()?.Invoke();
-                }
+					while (m_ExecutionQueue.Count > 0)
+					{
+						m_ExecutionQueue.Dequeue()?.Invoke();
+					}
+				}
             }
 
             /// <summary>
