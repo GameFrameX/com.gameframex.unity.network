@@ -100,31 +100,31 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 注册网络消息包处理函数。
         /// </summary>
-        /// <param name="handler">要注册的网络消息包处理函数。</param>
+        /// <param name="handler">处理器对象</param>
         void RegisterHandler(IPacketSendHeaderHandler handler);
 
         /// <summary>
         /// 注册网络消息包处理函数。
         /// </summary>
-        /// <param name="handler">要注册的网络消息包处理函数。</param>
+        /// <param name="handler">处理器对象。</param>
         void RegisterHandler(IPacketSendBodyHandler handler);
 
         /// <summary>
         /// 注册网络消息包处理函数。
         /// </summary>
-        /// <param name="handler">要注册的网络消息包处理函数。</param>
+        /// <param name="handler">处理器对象。</param>
         void RegisterHandler(IPacketReceiveHeaderHandler handler);
 
         /// <summary>
         /// 注册网络消息包处理函数。
         /// </summary>
-        /// <param name="handler">要注册的网络消息包处理函数。</param>
+        /// <param name="handler">处理器对象。</param>
         void RegisterHandler(IPacketReceiveBodyHandler handler);
 
         /// <summary>
         /// 注册网络消息心跳处理函数，用于处理心跳消息
         /// </summary>
-        /// <param name="handler">要注册的网络消息包处理函数</param>
+        /// <param name="handler">处理器对象</param>
         void RegisterHeartBeatHandler(IPacketHeartBeatHandler handler);
 
         /// <summary>
