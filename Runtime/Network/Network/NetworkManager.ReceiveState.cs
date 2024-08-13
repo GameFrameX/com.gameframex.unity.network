@@ -24,6 +24,12 @@ namespace GameFrameX.Network.Runtime
             }
 
             public MemoryStream Stream { get; private set; }
+
+            /// <summary>
+            /// 是否为空消息体
+            /// </summary>
+            public bool IsEmptyBody { get; private set; }
+
             public IPacketReceiveHeaderHandler PacketHeader { get; set; }
 
             public void PrepareForPacketHeader(int packetHeaderLength = 12)
@@ -72,6 +78,17 @@ namespace GameFrameX.Network.Runtime
 
                 Stream.Position = 0L;
                 Stream.SetLength(targetLength);
+
+                if (targetLength == 0)
+                {
+                    // 发现内容长度为空.说明是个空消息或者内容是默认值.
+                    IsEmptyBody = true;
+                }
+                else
+                {
+                    IsEmptyBody = false;
+                }
+
                 PacketHeader = packetHeader;
             }
         }

@@ -122,7 +122,7 @@ namespace GameFrameX.Network.Runtime
                     throw;
                 }
 
-                if (bytesReceived <= 0)
+                if (bytesReceived <= 0 && !PReceiveState.IsEmptyBody)
                 {
                     Close();
                     return;
