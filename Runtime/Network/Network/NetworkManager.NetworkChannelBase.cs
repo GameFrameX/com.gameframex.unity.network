@@ -43,6 +43,9 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             protected int MissHeartBeatCountByClose;
 
+            protected List<int> IgnoreSendIds = new List<int>();
+            protected List<int> IgnoreReceiveIds = new List<int>();
+
             protected INetworkSocket PSocket;
             protected readonly SendState PSendState;
             protected readonly ReceiveState PReceiveState;
@@ -55,7 +58,7 @@ namespace GameFrameX.Network.Runtime
 
             protected bool PActive
             {
-                get => m_PActive;
+                get { return m_PActive; }
                 set
                 {
                     m_PActive = value;
@@ -68,13 +71,13 @@ namespace GameFrameX.Network.Runtime
             private IPacketReceiveHeaderHandler m_PacketReceiveHeaderHandler;
             private IPacketReceiveBodyHandler m_PacketReceiveBodyHandler;
             private IPacketHeartBeatHandler m_PacketHeartBeatHandler;
+            private readonly Queue<MessageHandlerAttribute> m_ExecutionQueue = new Queue<MessageHandlerAttribute>();
 
             public Action<NetworkChannelBase, object> NetworkChannelConnected;
             public Action<NetworkChannelBase> NetworkChannelClosed;
             public Action<NetworkChannelBase, int> NetworkChannelMissHeartBeat;
             public Action<NetworkChannelBase, NetworkErrorCode, SocketError, string> NetworkChannelError;
             public Action<NetworkChannelBase, object> NetworkChannelCustomError;
-            private Queue<MessageHandlerAttribute> m_ExecutionQueue = new Queue<MessageHandlerAttribute>();
 
             /// <summary>
             /// 初始化网络频道基类的新实例。
@@ -143,7 +146,10 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取网络地址类型。
             /// </summary>
-            public AddressFamily AddressFamily => PAddressFamily;
+            public AddressFamily AddressFamily
+            {
+                get { return PAddressFamily; }
+            }
 
             /// <summary>
             /// 获取要发送的消息包数量。
@@ -162,20 +168,26 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取累计发送的消息包数量。
             /// </summary>
-            public int SentPacketCount => PSentPacketCount;
+            public int SentPacketCount
+            {
+                get { return PSentPacketCount; }
+            }
 
             /// <summary>
             /// 获取累计已接收的消息包数量。
             /// </summary>
-            public int ReceivedPacketCount => PReceivedPacketCount;
+            public int ReceivedPacketCount
+            {
+                get { return PReceivedPacketCount; }
+            }
 
             /// <summary>
             /// 获取或设置当收到消息包时是否重置心跳流逝时间。
             /// </summary>
             public bool ResetHeartBeatElapseSecondsWhenReceivePacket
             {
-                get => PResetHeartBeatElapseSecondsWhenReceivePacket;
-                set => PResetHeartBeatElapseSecondsWhenReceivePacket = value;
+                get { return PResetHeartBeatElapseSecondsWhenReceivePacket; }
+                set { PResetHeartBeatElapseSecondsWhenReceivePacket = value; }
             }
 
             /// <summary>
@@ -197,8 +209,8 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             public float HeartBeatInterval
             {
-                get => PHeartBeatInterval;
-                set => PHeartBeatInterval = value;
+                get { return PHeartBeatInterval; }
+                set { PHeartBeatInterval = value; }
             }
 
             /// <summary>
@@ -218,27 +230,52 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 消息发送包头处理器
             /// </summary>
-            public IPacketSendHeaderHandler PacketSendHeaderHandler => m_PacketSendHeaderHandler;
+            public IPacketSendHeaderHandler PacketSendHeaderHandler
+            {
+                get { return m_PacketSendHeaderHandler; }
+            }
 
             /// <summary>
             /// 消息发送内容处理器
             /// </summary>
-            public IPacketSendBodyHandler PacketSendBodyHandler => m_PacketSendBodyHandler;
+            public IPacketSendBodyHandler PacketSendBodyHandler
+            {
+                get { return m_PacketSendBodyHandler; }
+            }
 
             /// <summary>
             /// 消息接收包头处理器
             /// </summary>
-            public IPacketReceiveHeaderHandler PacketReceiveHeaderHandler => m_PacketReceiveHeaderHandler;
+            public IPacketReceiveHeaderHandler PacketReceiveHeaderHandler
+            {
+                get { return m_PacketReceiveHeaderHandler; }
+            }
 
             /// <summary>
             /// 心跳消息处理器
             /// </summary>
-            public IPacketHeartBeatHandler PacketHeartBeatHandler => m_PacketHeartBeatHandler;
+            public IPacketHeartBeatHandler PacketHeartBeatHandler
+            {
+                get { return m_PacketHeartBeatHandler; }
+            }
 
             /// <summary>
             /// 消息接收内容处理器
             /// </summary>
-            public IPacketReceiveBodyHandler PacketReceiveBodyHandler => m_PacketReceiveBodyHandler;
+            public IPacketReceiveBodyHandler PacketReceiveBodyHandler
+            {
+                get { return m_PacketReceiveBodyHandler; }
+            }
+
+            /// <summary>
+            /// 消息压缩处理器
+            /// </summary>
+            public IMessageCompressHandler MessageCompressHandler { get; private set; }
+
+            /// <summary>
+            /// 消息解压处理器
+            /// </summary>
+            public IMessageDecompressHandler MessageDecompressHandler { get; private set; }
 
             #endregion
 
@@ -263,13 +300,13 @@ namespace GameFrameX.Network.Runtime
 
                 ProcessHeartBeat(realElapseSeconds);
                 PRpcState.Update(elapseSeconds, realElapseSeconds);
-				lock (m_ExecutionQueue)
+                lock (m_ExecutionQueue)
                 {
-					while (m_ExecutionQueue.Count > 0)
-					{
-						m_ExecutionQueue.Dequeue()?.Invoke();
-					}
-				}
+                    while (m_ExecutionQueue.Count > 0)
+                    {
+                        m_ExecutionQueue.Dequeue()?.Invoke();
+                    }
+                }
             }
 
             /// <summary>
@@ -328,6 +365,25 @@ namespace GameFrameX.Network.Runtime
                 PNetworkChannelHelper.Shutdown();
             }
 
+            /// <summary>
+            /// 注册消息压缩处理器
+            /// </summary>
+            /// <param name="handler">处理器对象</param>
+            public void RegisterMessageCompressHandler(IMessageCompressHandler handler)
+            {
+                GameFrameworkGuard.NotNull(handler, nameof(handler));
+                MessageCompressHandler = handler;
+            }
+
+            /// <summary>
+            /// 注册消息解压处理器
+            /// </summary>
+            /// <param name="handler">处理器对象</param>
+            public void RegisterMessageDecompressHandler(IMessageDecompressHandler handler)
+            {
+                GameFrameworkGuard.NotNull(handler, nameof(handler));
+                MessageDecompressHandler = handler;
+            }
 
             /// <summary>
             /// 注册网络消息包处理函数。
@@ -720,7 +776,7 @@ namespace GameFrameX.Network.Runtime
                     {
                         lock (m_ExecutionQueue)
                         {
-							handler.SetMessageObject(messageObject);
+                            handler.SetMessageObject(messageObject);
                             m_ExecutionQueue.Enqueue(handler);
                         }
                     }
@@ -731,8 +787,6 @@ namespace GameFrameX.Network.Runtime
                 }
             }
 
-            protected List<int> IgnoreSendIds = new List<int>();
-            protected List<int> IgnoreReceiveIds = new List<int>();
 
             /// <summary>
             /// 设置忽略的消息打印列表

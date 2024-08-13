@@ -23,13 +23,19 @@ namespace GameFrameX.Network.Runtime
         ushort PacketLength { get; }
 
         /// <summary>
+        /// 是否压缩消息内容
+        /// </summary>
+        bool IsZip { get; }
+
+        /// <summary>
         /// 处理消息
         /// </summary>
         /// <param name="messageObject">消息对象</param>
+        /// <param name="messageCompressHandler">压缩消息内容处理器</param>
         /// <param name="destination">缓存流</param>
         /// <param name="messageBodyBuffer">消息序列化完的二进制数组</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        bool Handler<T>(T messageObject, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject;
+        bool Handler<T>(T messageObject, IMessageCompressHandler messageCompressHandler, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject;
     }
 }

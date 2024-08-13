@@ -260,6 +260,13 @@ namespace GameFrameX.Network.Runtime
                         }
 
                         var body = buffer.ReadBytes(PacketReceiveHeaderHandler.PacketHeaderLength, bodyLength);
+                        if (PReceiveState.PacketHeader.ZipFlag != 0)
+                        {
+                            // 解压
+                            GameFrameworkGuard.NotNull(MessageDecompressHandler, nameof(MessageDecompressHandler));
+                            body = MessageDecompressHandler.Handler(buffer);
+                        }
+
                         // 反序列化数据
                         processSuccess = PNetworkChannelHelper.DeserializePacketBody(body, PacketReceiveHeaderHandler.Id, out var messageObject);
                         if (processSuccess)
@@ -294,8 +301,6 @@ namespace GameFrameX.Network.Runtime
                 {
                     NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid." + e.Message);
                 }
-
-                return;
             }
         }
     }

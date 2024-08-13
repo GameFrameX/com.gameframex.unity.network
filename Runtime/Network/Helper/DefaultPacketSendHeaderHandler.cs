@@ -33,7 +33,7 @@ namespace GameFrameX.Network.Runtime
 
         public DefaultPacketSendHeaderHandler()
         {
-            // 4 + 4 + 4 + 4 
+            // 4 + 1 + 1 + 4 + 4 + 4
             PacketHeaderLength = NetPacketLength + NetOperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
             m_CachedByte = new byte[PacketHeaderLength];
         }
@@ -54,16 +54,35 @@ namespace GameFrameX.Network.Runtime
         public ushort PacketLength { get; private set; }
 
 
-        int m_Count = 0;
+        /// <summary>
+        /// 是否压缩消息内容
+        /// </summary>
+        public bool IsZip { get; private set; }
+
         private int m_Offset = 0;
         private readonly byte[] m_CachedByte;
 
-        public bool Handler<T>(T messageObject, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject
+        /// <summary>
+        /// 处理消息
+        /// </summary>
+        /// <param name="messageObject">消息对象</param>
+        /// <param name="messageCompressHandler">压缩消息内容处理器</param>
+        /// <param name="destination">缓存流</param>
+        /// <param name="messageBodyBuffer">消息序列化完的二进制数组</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public bool Handler<T>(T messageObject, IMessageCompressHandler messageCompressHandler, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject
         {
             m_Offset = 0;
-            messageBodyBuffer = SerializerHelper.Serialize(messageObject);
             var messageType = messageObject.GetType();
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
+            IsZip = messageCompressHandler != null;
+            messageBodyBuffer = SerializerHelper.Serialize(messageObject);
+            if (IsZip)
+            {
+                messageBodyBuffer = messageCompressHandler.Handler(messageBodyBuffer);
+            }
+
             var messageLength = messageBodyBuffer.Length;
             PacketLength = (ushort)(PacketHeaderLength + messageLength);
             // 数据包总大小
@@ -71,7 +90,7 @@ namespace GameFrameX.Network.Runtime
             // 消息操作类型
             m_CachedByte.WriteByte((byte)(ProtoMessageIdHandler.IsHeartbeat(messageType) ? 1 : 4), ref m_Offset);
             // 消息压缩标记
-            m_CachedByte.WriteByte(0, ref m_Offset);
+            m_CachedByte.WriteByte((byte)(IsZip ? 1 : 0), ref m_Offset);
             // 消息编号
             m_CachedByte.WriteInt(messageObject.UniqueId, ref m_Offset);
             // 消息ID

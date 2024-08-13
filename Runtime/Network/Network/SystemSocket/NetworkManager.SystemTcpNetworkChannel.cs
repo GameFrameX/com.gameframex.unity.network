@@ -181,6 +181,14 @@ namespace GameFrameX.Network.Runtime
                 var bodyLength = PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength;
                 var buffer = new byte[bodyLength];
                 _ = PReceiveState.Stream.Read(buffer, 0, bodyLength);
+
+                if (PReceiveState.PacketHeader.ZipFlag != 0)
+                {
+                    // 解压
+                    GameFrameworkGuard.NotNull(MessageDecompressHandler, nameof(MessageDecompressHandler));
+                    buffer = MessageDecompressHandler.Handler(buffer);
+                }
+
                 var processSuccess = PNetworkChannelHelper.DeserializePacketBody(buffer, PacketReceiveHeaderHandler.Id, out var messageObject);
                 if (processSuccess)
                 {
@@ -189,7 +197,7 @@ namespace GameFrameX.Network.Runtime
 
                 DebugReceiveLog(messageObject);
 
-                bool replySuccess = PRpcState.Reply(messageObject);
+                var replySuccess = PRpcState.Reply(messageObject);
                 if (!replySuccess)
                 {
                     InvokeMessageHandler(messageObject);

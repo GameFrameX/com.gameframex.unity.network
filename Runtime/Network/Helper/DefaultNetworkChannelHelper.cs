@@ -43,9 +43,11 @@ namespace GameFrameX.Network.Runtime
             var packetSendHeaderHandlerBaseType = typeof(IPacketSendHeaderHandler);
             var packetSendBodyHandlerBaseType = typeof(IPacketSendBodyHandler);
             var packetHeartBeatHandlerBaseType = typeof(IPacketHeartBeatHandler);
+            var messageCompressHandlerBaseType = typeof(IMessageCompressHandler);
+            var messageDecompressHandlerBaseType = typeof(IMessageDecompressHandler);
             var packetHandlerBaseType = typeof(IPacketHandler);
-            var assembly = Assembly.GetExecutingAssembly();
-            var types = assembly.GetTypes();
+
+            var types = Utility.Assembly.GetTypes();
             foreach (var type in types)
             {
                 if (!type.IsClass || type.IsAbstract)
@@ -60,28 +62,38 @@ namespace GameFrameX.Network.Runtime
 
                 if (type.IsImplWithInterface(packetReceiveHeaderHandlerBaseType))
                 {
-                    var packetHandler = (IPacketReceiveHeaderHandler)Activator.CreateInstance(type);
-                    m_NetworkChannel.RegisterHandler(packetHandler);
+                    var handler = (IPacketReceiveHeaderHandler)Activator.CreateInstance(type);
+                    m_NetworkChannel.RegisterHandler(handler);
                 }
                 else if (type.IsImplWithInterface(packetReceiveBodyHandlerBaseType))
                 {
-                    var packetHandler = (IPacketReceiveBodyHandler)Activator.CreateInstance(type);
-                    m_NetworkChannel.RegisterHandler(packetHandler);
+                    var handler = (IPacketReceiveBodyHandler)Activator.CreateInstance(type);
+                    m_NetworkChannel.RegisterHandler(handler);
                 }
                 else if (type.IsImplWithInterface(packetSendHeaderHandlerBaseType))
                 {
-                    var packetHandler = (IPacketSendHeaderHandler)Activator.CreateInstance(type);
-                    m_NetworkChannel.RegisterHandler(packetHandler);
+                    var handler = (IPacketSendHeaderHandler)Activator.CreateInstance(type);
+                    m_NetworkChannel.RegisterHandler(handler);
                 }
                 else if (type.IsImplWithInterface(packetSendBodyHandlerBaseType))
                 {
-                    var packetHandler = (IPacketSendBodyHandler)Activator.CreateInstance(type);
-                    m_NetworkChannel.RegisterHandler(packetHandler);
+                    var handler = (IPacketSendBodyHandler)Activator.CreateInstance(type);
+                    m_NetworkChannel.RegisterHandler(handler);
                 }
                 else if (type.IsImplWithInterface(packetHeartBeatHandlerBaseType))
                 {
-                    var packetHandler = (IPacketHeartBeatHandler)Activator.CreateInstance(type);
-                    m_NetworkChannel.RegisterHeartBeatHandler(packetHandler);
+                    var handler = (IPacketHeartBeatHandler)Activator.CreateInstance(type);
+                    m_NetworkChannel.RegisterHeartBeatHandler(handler);
+                }
+                else if (type.IsImplWithInterface(messageCompressHandlerBaseType))
+                {
+                    var handler = (IMessageCompressHandler)Activator.CreateInstance(type);
+                    m_NetworkChannel.RegisterMessageCompressHandler(handler);
+                }
+                else if (type.IsImplWithInterface(messageDecompressHandlerBaseType))
+                {
+                    var handler = (IMessageDecompressHandler)Activator.CreateInstance(type);
+                    m_NetworkChannel.RegisterMessageDecompressHandler(handler);
                 }
             }
 
@@ -122,7 +134,7 @@ namespace GameFrameX.Network.Runtime
             GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
             GameFrameworkGuard.NotNull(destination, nameof(destination));
 
-            return m_NetworkChannel.PacketSendHeaderHandler.Handler(messageObject, destination, out messageBodyBuffer);
+            return m_NetworkChannel.PacketSendHeaderHandler.Handler(messageObject, m_NetworkChannel.MessageCompressHandler, destination, out messageBodyBuffer);
         }
 
         public bool SerializePacketBody(byte[] messageBodyBuffer, MemoryStream destination)

@@ -98,6 +98,28 @@ namespace GameFrameX.Network.Runtime
         IPacketReceiveBodyHandler PacketReceiveBodyHandler { get; }
 
         /// <summary>
+        /// 消息压缩处理器
+        /// </summary>
+        IMessageCompressHandler MessageCompressHandler { get; }
+
+        /// <summary>
+        /// 消息解压处理器
+        /// </summary>
+        IMessageDecompressHandler MessageDecompressHandler { get; }
+
+        /// <summary>
+        /// 注册消息压缩处理器
+        /// </summary>
+        /// <param name="handler">处理器对象</param>
+        void RegisterMessageCompressHandler(IMessageCompressHandler handler);
+
+        /// <summary>
+        /// 注册消息解压处理器
+        /// </summary>
+        /// <param name="handler">处理器对象</param>
+        void RegisterMessageDecompressHandler(IMessageDecompressHandler handler);
+
+        /// <summary>
         /// 注册网络消息包处理函数。
         /// </summary>
         /// <param name="handler">处理器对象</param>
