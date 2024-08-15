@@ -28,6 +28,11 @@ namespace GameFrameX.Network.Runtime
         bool IsZip { get; }
 
         /// <summary>
+        /// 超过消息的长度超过该值的时候启用压缩.该值 必须在设置压缩器的时候才生效
+        /// </summary>
+        uint LimitCompressLength { get; }
+
+        /// <summary>
         /// 处理消息
         /// </summary>
         /// <param name="messageObject">消息对象</param>

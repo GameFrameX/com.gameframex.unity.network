@@ -3,7 +3,7 @@ using ProtoBuf;
 
 namespace GameFrameX.Network.Runtime
 {
-    public sealed class DefaultPacketSendHeaderHandler : IPacketSendHeaderHandler, IPacketHandler
+    public class DefaultPacketSendHeaderHandler : IPacketSendHeaderHandler, IPacketHandler
     {
         /// <summary>
         /// 网络包长度
@@ -53,13 +53,17 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         public ushort PacketLength { get; private set; }
 
-
         /// <summary>
         /// 是否压缩消息内容
         /// </summary>
         public bool IsZip { get; private set; }
 
-        private int m_Offset = 0;
+        /// <summary>
+        /// 超过消息的长度超过该值的时候启用压缩.该值 必须在设置压缩器的时候才生效,默认100
+        /// </summary>
+        public virtual uint LimitCompressLength { get; } = 100;
+
+        private int m_Offset;
         private readonly byte[] m_CachedByte;
 
         /// <summary>
@@ -76,11 +80,15 @@ namespace GameFrameX.Network.Runtime
             m_Offset = 0;
             var messageType = messageObject.GetType();
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
-            IsZip = messageCompressHandler != null;
             messageBodyBuffer = SerializerHelper.Serialize(messageObject);
-            if (IsZip)
+            if (messageCompressHandler != null && messageBodyBuffer.Length > LimitCompressLength)
             {
+                IsZip = true;
                 messageBodyBuffer = messageCompressHandler.Handler(messageBodyBuffer);
+            }
+            else
+            {
+                IsZip = false;
             }
 
             var messageLength = messageBodyBuffer.Length;
