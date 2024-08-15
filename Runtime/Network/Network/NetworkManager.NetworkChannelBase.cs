@@ -368,20 +368,18 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 注册消息压缩处理器
             /// </summary>
-            /// <param name="handler">处理器对象</param>
+            /// <param name="handler">处理器对象,当设置为空的时候，不启用消息压缩</param>
             public void RegisterMessageCompressHandler(IMessageCompressHandler handler)
             {
-                GameFrameworkGuard.NotNull(handler, nameof(handler));
                 MessageCompressHandler = handler;
             }
 
             /// <summary>
             /// 注册消息解压处理器
             /// </summary>
-            /// <param name="handler">处理器对象</param>
+            /// <param name="handler">处理器对象,当设置为空的时候，不启用消息解压</param>
             public void RegisterMessageDecompressHandler(IMessageDecompressHandler handler)
             {
-                GameFrameworkGuard.NotNull(handler, nameof(handler));
                 MessageDecompressHandler = handler;
             }
 
