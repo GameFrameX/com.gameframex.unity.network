@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using GameFrameX.Runtime;
 
 namespace GameFrameX.Network.Runtime
 {
@@ -32,9 +34,9 @@ namespace GameFrameX.Network.Runtime
         private IMessageHandler m_MessageHandler;
 
         /// <summary>
-        /// 消息对象
+        /// 消息处理对象队列
         /// </summary>
-        private MessageObject m_MessageObject;
+        private readonly Queue<MessageObject> m_MessageObjects = new Queue<MessageObject>();
 
         /// <summary>
         /// 网络消息处理器
@@ -66,7 +68,7 @@ namespace GameFrameX.Network.Runtime
         public void SetMessageObject(MessageObject messageObject)
         {
             GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
-            m_MessageObject = messageObject;
+            m_MessageObjects.Enqueue(messageObject);
         }
 
         internal void Invoke()
@@ -76,13 +78,21 @@ namespace GameFrameX.Network.Runtime
                 throw new ArgumentNullException(nameof(m_InvokeMethod), $"未找到方法：{m_InvokeMethodName}.请确认是否注册成功");
             }
 
+            if (m_MessageObjects.Count <= 0)
+            {
+                Log.Warning($"没有消息对象转发到方法：{m_InvokeMethodName}");
+                return;
+            }
+
+            var messageObject = m_MessageObjects.Dequeue();
+
             if (m_InvokeMethod.IsStatic)
             {
-                m_InvokeMethod?.Invoke(null, new object[] { m_MessageObject });
+                m_InvokeMethod?.Invoke(null, new object[] { messageObject });
             }
             else
             {
-                m_InvokeMethod?.Invoke(m_MessageHandler, new object[] { m_MessageObject });
+                m_InvokeMethod?.Invoke(m_MessageHandler, new object[] { messageObject });
             }
         }
 
