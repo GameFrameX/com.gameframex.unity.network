@@ -82,7 +82,7 @@ namespace GameFrameX.Network.Runtime
         private const int NetUniqueIdLength = 4;
 
         /// <summary>
-        /// 包头长度
+        /// 包头长度 2 + 1 + 1 + 4 + 4
         /// </summary>
         public ushort PacketHeaderLength { get; } = NetPacketLength + OperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
     }

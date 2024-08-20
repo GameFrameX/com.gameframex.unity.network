@@ -33,7 +33,7 @@ namespace GameFrameX.Network.Runtime
 
         public DefaultPacketSendHeaderHandler()
         {
-            // 4 + 1 + 1 + 4 + 4 + 4
+            // 2 + 1 + 1 + 4 + 4
             PacketHeaderLength = NetPacketLength + NetOperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
             m_CachedByte = new byte[PacketHeaderLength];
         }
