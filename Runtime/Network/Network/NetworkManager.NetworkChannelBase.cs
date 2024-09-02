@@ -61,8 +61,13 @@ namespace GameFrameX.Network.Runtime
                 get { return m_PActive; }
                 set
                 {
+                    if (m_PActive == value)
+                    {
+                        return;
+                    }
+
                     m_PActive = value;
-                    Log.Debug(value);
+                    NetworkChannelActiveChanged?.Invoke(this, m_PActive);
                 }
             }
 
@@ -75,6 +80,7 @@ namespace GameFrameX.Network.Runtime
 
             public Action<NetworkChannelBase, object> NetworkChannelConnected;
             public Action<NetworkChannelBase> NetworkChannelClosed;
+            public Action<NetworkChannelBase, bool> NetworkChannelActiveChanged;
             public Action<NetworkChannelBase, int> NetworkChannelMissHeartBeat;
             public Action<NetworkChannelBase, NetworkErrorCode, SocketError, string> NetworkChannelError;
             public Action<NetworkChannelBase, object> NetworkChannelCustomError;
