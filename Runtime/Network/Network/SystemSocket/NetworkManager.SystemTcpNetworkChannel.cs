@@ -123,7 +123,7 @@ namespace GameFrameX.Network.Runtime
                     throw;
                 }
 
-                if (bytesReceived <= 0 && !PReceiveState.IsEmptyBody)
+                if (bytesReceived <= 0)
                 {
                     Close();
                     return;
@@ -150,6 +150,13 @@ namespace GameFrameX.Network.Runtime
                 else
                 {
                     processSuccess = ProcessPackHeader();
+                    if (PReceiveState.IsEmptyBody)
+                    {
+                        // 如果是空消息,直接返回
+                        ProcessPackBody();
+                        ReceiveAsync();
+                        return;
+                    }
                 }
 
                 if (processSuccess)
