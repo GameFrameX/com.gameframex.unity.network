@@ -14,6 +14,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 网络管理器。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed partial class NetworkManager : GameFrameworkModule, INetworkManager
     {
         private readonly Dictionary<string, NetworkChannelBase> m_NetworkChannels;

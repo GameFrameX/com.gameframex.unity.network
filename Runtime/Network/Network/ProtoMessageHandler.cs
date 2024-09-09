@@ -10,6 +10,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 协议消息处理帮助类
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public static class ProtoMessageHandler
     {
         private static readonly ConcurrentDictionary<Type, List<MessageHandlerAttribute>> MessageHandlerDictionary = new ConcurrentDictionary<Type, List<MessageHandlerAttribute>>();

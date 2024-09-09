@@ -39,5 +39,10 @@ namespace GameFrameX.Network.Runtime
         {
             UniqueId = uniqueId;
         }
+
+        public override string ToString()
+        {
+            return Utility.Json.ToJson(this);
+        }
     }
 }

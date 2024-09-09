@@ -17,6 +17,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// TCP 网络频道。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         private sealed class SystemTcpNetworkChannel : NetworkChannelBase
         {
             private ConnectState m_ConnectState = null;

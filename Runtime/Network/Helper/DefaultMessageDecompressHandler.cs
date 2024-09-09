@@ -6,6 +6,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 默认消息解压处理
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class DefaultMessageDecompressHandler : IMessageDecompressHandler, IPacketHandler
     {
         /// <summary>

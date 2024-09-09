@@ -3,6 +3,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 默认心跳包处理
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public class BasePacketHeartBeatHandler : IPacketHeartBeatHandler, IPacketHandler
     {
         /// <summary>

@@ -12,6 +12,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 网络连接成功事件。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class NetworkConnectedEventArgs : GameEventArgs
     {
         /// <summary>

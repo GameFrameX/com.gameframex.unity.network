@@ -18,6 +18,7 @@ namespace GameFrameX.Network.Runtime
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("Game Framework/Network")]
+    [UnityEngine.Scripting.Preserve]
     public sealed class NetworkComponent : GameFrameworkComponent
     {
         private INetworkManager m_NetworkManager = null;

@@ -13,6 +13,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 网络错误事件。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class NetworkErrorEventArgs : GameEventArgs
     {
         /// <summary>

@@ -6,6 +6,7 @@ namespace GameFrameX.Network.Runtime
 {
     public partial class NetworkManager
     {
+        [UnityEngine.Scripting.Preserve]
         private sealed class SystemNetSocket : INetworkSocket
         {
             private readonly Socket m_Socket;

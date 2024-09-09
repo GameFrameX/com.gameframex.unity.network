@@ -20,6 +20,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// Web Socket 网络频道。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         private sealed class WebSocketNetworkChannel : NetworkChannelBase
         {
             private readonly CancellationTokenSource m_CancellationTokenSource = new CancellationTokenSource();

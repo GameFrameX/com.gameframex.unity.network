@@ -12,6 +12,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 网络心跳包丢失事件。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public sealed class NetworkMissHeartBeatEventArgs : GameEventArgs
     {
         /// <summary>

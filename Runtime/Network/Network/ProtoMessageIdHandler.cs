@@ -9,6 +9,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 协议消息处理器
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public static class ProtoMessageIdHandler
     {
         private static readonly BidirectionalDictionary<int, Type> ReqDictionary = new BidirectionalDictionary<int, Type>();

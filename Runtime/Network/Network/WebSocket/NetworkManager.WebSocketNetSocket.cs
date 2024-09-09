@@ -9,6 +9,7 @@ namespace GameFrameX.Network.Runtime
 {
     public partial class NetworkManager
     {
+        [UnityEngine.Scripting.Preserve]
         private sealed class WebSocketNetSocket : INetworkSocket
         {
             private readonly IWebSocket _client;

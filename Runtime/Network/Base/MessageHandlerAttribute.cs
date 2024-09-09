@@ -9,6 +9,7 @@ namespace GameFrameX.Network.Runtime
     /// 网络非RPC返回消息处理器
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
+    [UnityEngine.Scripting.Preserve]
     public class MessageHandlerAttribute : Attribute
     {
         public const BindingFlags Flags = BindingFlags.Default | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
