@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using GameFrameX.Runtime;
+using Newtonsoft.Json;
 #if ENABLE_GAME_FRAME_X_PROTOBUF
 using ProtoBuf;
 #endif

@@ -7,6 +7,7 @@
 
 using System;
 using System.IO;
+using GameFrameX.Runtime;
 
 namespace GameFrameX.Network.Runtime
 {
