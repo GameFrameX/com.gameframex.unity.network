@@ -15,7 +15,7 @@ namespace GameFrameX.Network.Runtime
 {
     public sealed partial class NetworkManager
     {
-        public sealed class RpcState : IDisposable
+        public partial class RpcState : IDisposable
         {
             private readonly ConcurrentDictionary<long, RpcMessageData> m_HandlingObjects = new ConcurrentDictionary<long, RpcMessageData>();
             private readonly HashSet<long> m_HandlingObjectIds = new HashSet<long>();
@@ -48,8 +48,15 @@ namespace GameFrameX.Network.Runtime
                     if (m_HandlingObjects.TryRemove(message.UniqueId, out var messageActorObject))
                     {
                         messageActorObject.Reply(message as IResponseMessage);
-                        m_RpcEndHandler?.Invoke(this, message);
-                        return true;
+                        try
+                        {
+                            m_RpcEndHandler?.Invoke(this, message);
+                            return true;
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Fatal(e);
+                        }
                     }
                 }
 
@@ -70,90 +77,16 @@ namespace GameFrameX.Network.Runtime
 
                 var defaultMessageActorObject = RpcMessageData.Create(messageObject as IRequestMessage);
                 m_HandlingObjects.TryAdd(messageObject.UniqueId, defaultMessageActorObject);
-                m_RpcStartHandler?.Invoke(this, messageObject);
+                try
+                {
+                    m_RpcStartHandler?.Invoke(this, messageObject);
+                }
+                catch (Exception e)
+                {
+                    Log.Fatal(e);
+                }
+
                 return defaultMessageActorObject.Task;
-            }
-
-            class RpcMessageData
-            {
-                /// <summary>
-                /// 消息的唯一ID
-                /// </summary>
-                public long UniqueId { get; }
-
-                /// <summary>
-                /// 创建时间
-                /// </summary>
-                public long CreatedTime { get; }
-
-                /// <summary>
-                /// 消耗的时间
-                /// </summary>
-                public long ElapseTime { get; private set; }
-
-                /// <summary>
-                /// 请求消息
-                /// </summary>
-                public IRequestMessage RequestMessage { get; protected set; }
-
-                /// <summary>
-                /// 超时时间。单位毫秒
-                /// </summary>
-                public int Timeout { get; }
-
-                /// <summary>
-                /// 响应消息
-                /// </summary>
-                public IResponseMessage ResponseMessage { get; protected set; }
-
-                /// <summary>
-                /// 设置等待的返回结果
-                /// </summary>
-                /// <param name="responseMessage"></param>
-                public void Reply(IResponseMessage responseMessage)
-                {
-                    ResponseMessage = responseMessage;
-                    m_Tcs.SetResult(responseMessage);
-                }
-
-                /// <summary>
-                /// 增加时间。如果超时返回true
-                /// </summary>
-                /// <param name="time"></param>
-                /// <returns></returns>
-                internal bool IncrementalElapseTime(long time)
-                {
-                    ElapseTime += time;
-                    if (ElapseTime >= Timeout)
-                    {
-                        m_Tcs.TrySetException(new TimeoutException("Rpc call timeout! Message is :" + RequestMessage));
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                internal static RpcMessageData Create(IRequestMessage actorRequestMessage, int timeout = 5000)
-                {
-                    var defaultMessageActorObject = new RpcMessageData(actorRequestMessage, timeout);
-                    return defaultMessageActorObject;
-                }
-
-                private RpcMessageData(IRequestMessage requestMessage, int timeout)
-                {
-                    CreatedTime = GameTimeHelper.UnixTimeMilliseconds();
-                    RequestMessage = requestMessage;
-                    Timeout = timeout;
-                    UniqueId = ((MessageObject)requestMessage).UniqueId;
-                    m_Tcs = new TaskCompletionSource<IResponseMessage>();
-                }
-
-                private readonly TaskCompletionSource<IResponseMessage> m_Tcs;
-
-                public Task<IResponseMessage> Task
-                {
-                    get { return m_Tcs.Task; }
-                }
             }
 
             public void Update(float elapseSeconds, float realElapseSeconds)
@@ -167,8 +100,15 @@ namespace GameFrameX.Network.Runtime
                         bool isTimeout = handlingObject.Value.IncrementalElapseTime(elapseSecondsTime);
                         if (isTimeout)
                         {
-                            m_RpcErrorHandler?.Invoke(this, handlingObject.Value.RequestMessage as MessageObject);
                             m_HandlingObjectIds.Add(handlingObject.Key);
+                            try
+                            {
+                                m_RpcErrorHandler?.Invoke(this, handlingObject.Value.RequestMessage as MessageObject);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Fatal(e);
+                            }
                         }
                     }
                 }

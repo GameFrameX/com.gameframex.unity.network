@@ -28,8 +28,8 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             public float HeartBeatElapseSeconds
             {
-                get => _heartBeatElapseSeconds;
-                set => _heartBeatElapseSeconds = value;
+                get { return _heartBeatElapseSeconds; }
+                set { _heartBeatElapseSeconds = value; }
             }
 
             /// <summary>
@@ -37,8 +37,8 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             public int MissHeartBeatCount
             {
-                get => _missHeartBeatCount;
-                set => _missHeartBeatCount = value;
+                get { return _missHeartBeatCount; }
+                set { _missHeartBeatCount = value; }
             }
 
             /// <summary>
