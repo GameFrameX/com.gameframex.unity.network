@@ -195,7 +195,7 @@ namespace GameFrameX.Network.Runtime
             {
                 throw new GameFrameworkException(Utility.Text.Format("Already exist network channel '{0}'.", channelName ?? string.Empty));
             }
-#if ENABLE_GAME_FRAME_X_WEB_SOCKET && UNITY_WEBGL
+#if (ENABLE_GAME_FRAME_X_WEB_SOCKET && UNITY_WEBGL) || FORCE_ENABLE_GAME_FRAME_X_WEB_SOCKET
             NetworkChannelBase networkChannel = new WebSocketNetworkChannel(channelName, networkChannelHelper);
 #else
             NetworkChannelBase networkChannel = new SystemTcpNetworkChannel(channelName, networkChannelHelper);

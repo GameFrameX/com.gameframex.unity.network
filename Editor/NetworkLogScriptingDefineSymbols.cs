@@ -17,6 +17,25 @@ namespace GameFrameX.Network.Editor
     {
         private const string EnableNetworkReceiveLogScriptingDefineSymbol = "ENABLE_GAMEFRAMEX_NETWORK_RECEIVE_LOG";
         private const string EnableNetworkSendLogScriptingDefineSymbol = "ENABLE_GAMEFRAMEX_NETWORK_SEND_LOG";
+        private const string ForceEnableNetworkSendLogScriptingDefineSymbol = "FORCE_ENABLE_GAME_FRAME_X_WEB_SOCKET";
+
+        /// <summary>
+        /// 禁用网络强制为WebSocket脚本宏定义。
+        /// </summary>
+        [MenuItem("GameFrameX/Log Scripting Define Symbols/Disable Force WebSocket", false, 105)]
+        public static void DisableForceWebSocketNetwork()
+        {
+            ScriptingDefineSymbols.RemoveScriptingDefineSymbol(ForceEnableNetworkSendLogScriptingDefineSymbol);
+        }
+
+        /// <summary>
+        /// 开启网络强制为WebSocket脚本宏定义。
+        /// </summary>
+        [MenuItem("GameFrameX/Log Scripting Define Symbols/Enable Force WebSocket", false, 106)]
+        public static void EnableForceWebSocketNetwork()
+        {
+            ScriptingDefineSymbols.AddScriptingDefineSymbol(ForceEnableNetworkSendLogScriptingDefineSymbol);
+        }
 
         /// <summary>
         /// 禁用网络接收日志脚本宏定义。
