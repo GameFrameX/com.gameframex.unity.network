@@ -24,6 +24,12 @@ namespace GameFrameX.Network.Runtime
         /// <returns>请求的类型</returns>
         public static Type GetReqTypeById(int messageId)
         {
+            if (ReqDictionary.Count <= 0)
+            {
+                Log.Warning("请先确认是否初始化 调用 ProtoMessageIdHandler.Init()");
+                return null;
+            }
+
             ReqDictionary.TryGetValue(messageId, out var value);
             return value;
         }
@@ -35,6 +41,12 @@ namespace GameFrameX.Network.Runtime
         /// <returns>请求消息ID</returns>
         public static int GetReqMessageIdByType(Type type)
         {
+            if (ReqDictionary.Count <= 0)
+            {
+                Log.Warning("请先确认是否初始化 调用 ProtoMessageIdHandler.Init()");
+                return 0;
+            }
+
             ReqDictionary.TryGetKey(type, out var value);
             return value;
         }
@@ -46,6 +58,12 @@ namespace GameFrameX.Network.Runtime
         /// <returns>响应的类型</returns>
         public static Type GetRespTypeById(int messageId)
         {
+            if (RespDictionary.Count <= 0)
+            {
+                Log.Warning("请先确认是否初始化 调用 ProtoMessageIdHandler.Init()");
+                return null;
+            }
+
             RespDictionary.TryGetValue(messageId, out var value);
             return value;
         }
@@ -57,6 +75,12 @@ namespace GameFrameX.Network.Runtime
         /// <returns>响应消息ID</returns>
         public static int GetRespMessageIdByType(Type type)
         {
+            if (RespDictionary.Count <= 0)
+            {
+                Log.Warning("请先确认是否初始化 调用 ProtoMessageIdHandler.Init()");
+                return 0;
+            }
+
             RespDictionary.TryGetKey(type, out var value);
             return value;
         }
