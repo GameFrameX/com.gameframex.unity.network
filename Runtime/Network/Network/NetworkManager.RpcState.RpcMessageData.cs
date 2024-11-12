@@ -28,7 +28,7 @@ namespace GameFrameX.Network.Runtime
                 /// <summary>
                 /// 请求消息
                 /// </summary>
-                public IRequestMessage RequestMessage { get; protected set; }
+                public IRequestMessage RequestMessage { get; private set; }
 
                 /// <summary>
                 /// 超时时间。单位毫秒
@@ -38,7 +38,7 @@ namespace GameFrameX.Network.Runtime
                 /// <summary>
                 /// 响应消息
                 /// </summary>
-                public IResponseMessage ResponseMessage { get; protected set; }
+                public IResponseMessage ResponseMessage { get; private set; }
 
                 /// <summary>
                 /// 设置等待的返回结果
