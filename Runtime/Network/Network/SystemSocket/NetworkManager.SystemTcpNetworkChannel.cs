@@ -190,17 +190,17 @@ namespace GameFrameX.Network.Runtime
                 var buffer = new byte[bodyLength];
                 _ = PReceiveState.Stream.Read(buffer, 0, bodyLength);
 
-                if (PReceiveState.PacketHeader.ZipFlag != 0)
+                if (PReceiveState.PacketHeader.Header.ZipFlag != 0)
                 {
                     // 解压
                     GameFrameworkGuard.NotNull(MessageDecompressHandler, nameof(MessageDecompressHandler));
                     buffer = MessageDecompressHandler.Handler(buffer);
                 }
 
-                var processSuccess = PNetworkChannelHelper.DeserializePacketBody(buffer, PacketReceiveHeaderHandler.Id, out var messageObject);
+                var processSuccess = PNetworkChannelHelper.DeserializePacketBody(buffer, PacketReceiveHeaderHandler.Header.MessageId, out var messageObject);
                 if (processSuccess)
                 {
-                    messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
+                    messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.Header.UniqueId);
                 }
 
                 DebugReceiveLog(messageObject);

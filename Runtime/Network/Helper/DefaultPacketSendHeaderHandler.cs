@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.IO;
 using ProtoBuf;
 
@@ -38,8 +39,7 @@ namespace GameFrameX.Network.Runtime
         public DefaultPacketSendHeaderHandler()
         {
             // 2 + 1 + 1 + 4 + 4
-            PacketHeaderLength = NetPacketLength + NetOperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
-            m_CachedByte = new byte[PacketHeaderLength];
+            PacketHeaderLength = 6;
         }
 
         /// <summary>
@@ -68,7 +68,6 @@ namespace GameFrameX.Network.Runtime
         public virtual uint LimitCompressLength { get; } = 100;
 
         private int m_Offset;
-        private readonly byte[] m_CachedByte;
 
         /// <summary>
         /// 处理消息
@@ -85,29 +84,37 @@ namespace GameFrameX.Network.Runtime
             var messageType = messageObject.GetType();
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
             messageBodyBuffer = SerializerHelper.Serialize(messageObject);
+
+            var messageObjectHeader = new MessageObjectHeader
+            {
+                MessageId = Id,
+                UniqueId = messageObject.UniqueId,
+                OperationType = (byte)(ProtoMessageIdHandler.IsHeartbeat(messageType) ? 1 : 4),
+                ZipFlag = 0
+            };
+
             if (messageCompressHandler != null && messageBodyBuffer.Length > LimitCompressLength)
             {
                 IsZip = true;
                 messageBodyBuffer = messageCompressHandler.Handler(messageBodyBuffer);
+                messageObjectHeader.ZipFlag = 1;
             }
             else
             {
                 IsZip = false;
+                messageObjectHeader.ZipFlag = 0;
             }
 
-            var messageLength = messageBodyBuffer.Length;
-            PacketLength = (ushort)(PacketHeaderLength + messageLength);
-            // 数据包总大小
-            m_CachedByte.WriteUShort(PacketLength, ref m_Offset);
-            // 消息操作类型
-            m_CachedByte.WriteByte((byte)(ProtoMessageIdHandler.IsHeartbeat(messageType) ? 1 : 4), ref m_Offset);
-            // 消息压缩标记
-            m_CachedByte.WriteByte((byte)(IsZip ? 1 : 0), ref m_Offset);
-            // 消息编号
-            m_CachedByte.WriteInt(messageObject.UniqueId, ref m_Offset);
-            // 消息ID
-            m_CachedByte.WriteInt(Id, ref m_Offset);
-            destination.Write(m_CachedByte, 0, PacketHeaderLength);
+            var messageHeaderBuffer = SerializerHelper.Serialize(messageObjectHeader);
+            PacketLength = (ushort)(messageHeaderBuffer.Length + messageBodyBuffer.Length);
+
+            var totalCount = PacketHeaderLength + messageHeaderBuffer.Length;
+            var cachedByte = ArrayPool<byte>.Shared.Rent(totalCount);
+            cachedByte.WriteUInt((uint)totalCount, ref m_Offset);
+            cachedByte.WriteUShort((ushort)messageHeaderBuffer.Length, ref m_Offset);
+            cachedByte.WriteBytesWithoutLength(messageHeaderBuffer, ref m_Offset);
+            destination.Write(cachedByte, 0, totalCount);
+            ArrayPool<byte>.Shared.Return(cachedByte);
             return true;
         }
     }

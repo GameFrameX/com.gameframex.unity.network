@@ -1,3 +1,5 @@
+using ProtoBuf;
+
 namespace GameFrameX.Network.Runtime
 {
     /// <summary>
@@ -12,25 +14,9 @@ namespace GameFrameX.Network.Runtime
         public ushort PacketLength { get; private set; }
 
         /// <summary>
-        /// 消息ID
+        /// 消息包头
         /// </summary>
-        public int Id { get; private set; }
-
-        /// <summary>
-        /// 消息唯一编号
-        /// </summary>
-        public int UniqueId { get; private set; }
-
-        /// <summary>
-        /// 消息操作类型
-        /// </summary>
-        public byte OperationType { get; private set; }
-
-        /// <summary>
-        /// 压缩标记
-        /// </summary>
-        public byte ZipFlag { get; private set; }
-
+        public INetworkMessageHeader Header { get; private set; }
 
         /// <summary>
         /// 消息包处理
@@ -39,55 +25,30 @@ namespace GameFrameX.Network.Runtime
         /// <returns></returns>
         public bool Handler(object source)
         {
-            byte[] reader = source as byte[];
-            if (reader == null)
+            if (!(source is byte[] reader))
             {
                 return false;
             }
 
-            // packetLength
-            int offset = 0;
-            var packetLength = reader.ReadUShort(ref offset); //4
-            PacketLength = packetLength;
-            // operationType
-            OperationType = reader.ReadByte(ref offset); //1
-            // zipFlag
-            ZipFlag = reader.ReadByte(ref offset); //1
-            // uniqueId
-            UniqueId = reader.ReadInt(ref offset); //4
-            // MsgId
-            Id = reader.ReadInt(ref offset); //4
+            m_Offset = 0;
+            // 消息总长度
+            PacketLength = (ushort)reader.ReadUInt(ref m_Offset); // 4
+            // 消息头长度
+            PacketHeaderLength = reader.ReadUShort(ref m_Offset); // 2
+            // 消息头字节数组
+            var messageHeaderData = reader.ReadBytes(ref m_Offset, PacketHeaderLength);
+            // 消息对象头
+            Header = (INetworkMessageHeader)SerializerHelper.Deserialize(messageHeaderData, typeof(MessageObjectHeader));
             return true;
         }
 
-        /// <summary>
-        /// 网络包长度
-        /// </summary>
-        private const int NetPacketLength = 2;
+        private int m_Offset;
 
         /// <summary>
-        /// 操作消息类型
+        /// 固定包头长度 4(总包长度) + 2(包头长度)
         /// </summary>
-        private const int OperationTypeLength = 1;
+        public ushort FixedPacketHeaderLength { get; } = 4 + 2;
 
-        /// <summary>
-        /// 消息压缩标记长度
-        /// </summary>
-        private const int NetZipFlagLength = 1;
-
-        /// <summary>
-        /// 消息码
-        /// </summary>
-        private const int NetCmdIdLength = 4;
-
-        /// <summary>
-        /// 消息编号
-        /// </summary>
-        private const int NetUniqueIdLength = 4;
-
-        /// <summary>
-        /// 包头长度 2 + 1 + 1 + 4 + 4
-        /// </summary>
-        public ushort PacketHeaderLength { get; } = NetPacketLength + OperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
+        public ushort PacketHeaderLength { get; private set; } = 4 + 2 + sizeof(int) + sizeof(int) + sizeof(byte) + sizeof(byte);
     }
 }

@@ -262,7 +262,7 @@ namespace GameFrameX.Network.Runtime
                         }
 
                         var body = buffer.ReadBytes(PacketReceiveHeaderHandler.PacketHeaderLength, bodyLength);
-                        if (PReceiveState.PacketHeader.ZipFlag != 0)
+                        if (PReceiveState.PacketHeader.Header.ZipFlag != 0)
                         {
                             // 解压
                             GameFrameworkGuard.NotNull(MessageDecompressHandler, nameof(MessageDecompressHandler));
@@ -270,10 +270,10 @@ namespace GameFrameX.Network.Runtime
                         }
 
                         // 反序列化数据
-                        processSuccess = PNetworkChannelHelper.DeserializePacketBody(body, PacketReceiveHeaderHandler.Id, out var messageObject);
+                        processSuccess = PNetworkChannelHelper.DeserializePacketBody(body, PacketReceiveHeaderHandler.Header.MessageId, out var messageObject);
                         if (processSuccess)
                         {
-                            messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
+                            messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.Header.UniqueId);
                         }
 
                         DebugReceiveLog(messageObject);
