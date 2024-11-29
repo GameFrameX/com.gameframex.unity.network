@@ -9,7 +9,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 包长度
         /// </summary>
-        public ushort PacketLength { get; private set; }
+        public uint PacketLength { get; private set; }
 
         /// <summary>
         /// 消息ID
@@ -47,7 +47,7 @@ namespace GameFrameX.Network.Runtime
 
             // packetLength
             int offset = 0;
-            var packetLength = reader.ReadUShort(ref offset); //4
+            var packetLength = reader.ReadUInt(ref offset); //4
             PacketLength = packetLength;
             // operationType
             OperationType = reader.ReadByte(ref offset); //1
@@ -55,7 +55,7 @@ namespace GameFrameX.Network.Runtime
             ZipFlag = reader.ReadByte(ref offset); //1
             // uniqueId
             UniqueId = reader.ReadInt(ref offset); //4
-            // MsgId
+            // MessageId
             Id = reader.ReadInt(ref offset); //4
             return true;
         }

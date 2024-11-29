@@ -20,7 +20,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络消息包长度。
         /// </summary>
-        ushort PacketLength { get; }
+        uint PacketLength { get; }
 
         /// <summary>
         /// 是否压缩消息内容

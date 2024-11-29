@@ -254,7 +254,7 @@ namespace GameFrameX.Network.Runtime
                     var processSuccess = PNetworkChannelHelper.DeserializePacketHeader(buffer);
                     if (processSuccess)
                     {
-                        var bodyLength = PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength;
+                        var bodyLength = (int)(PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength);
                         PReceiveState.Reset(bodyLength, PacketReceiveHeaderHandler);
                         if (buffer.Length < bodyLength)
                         {

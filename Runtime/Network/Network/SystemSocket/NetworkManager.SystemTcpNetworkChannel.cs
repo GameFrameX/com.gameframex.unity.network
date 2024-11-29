@@ -81,7 +81,9 @@ namespace GameFrameX.Network.Runtime
             {
                 try
                 {
-                    PSystemNetSocket.BeginReceive(PReceiveState.Stream.GetBuffer(), (int)PReceiveState.Stream.Position, (int)(PReceiveState.Stream.Length - PReceiveState.Stream.Position), SocketFlags.None, ReceiveCallback, PSystemNetSocket);
+                    var position = (int)PReceiveState.Stream.Position;
+                    var length = (int)(PReceiveState.Stream.Length - PReceiveState.Stream.Position);
+                    PSystemNetSocket.BeginReceive(PReceiveState.Stream.GetBuffer(), position, length, SocketFlags.None, ReceiveCallback, PSystemNetSocket);
                 }
                 catch (Exception exception)
                 {
@@ -176,7 +178,8 @@ namespace GameFrameX.Network.Runtime
                 var buffer = new byte[headerLength];
                 _ = PReceiveState.Stream.Read(buffer, 0, headerLength);
                 var processSuccess = PNetworkChannelHelper.DeserializePacketHeader(buffer);
-                PReceiveState.Reset(PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength, PacketReceiveHeaderHandler);
+                var bodyLength = (int)(PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength);
+                PReceiveState.Reset(bodyLength, PacketReceiveHeaderHandler);
                 return processSuccess;
             }
 
@@ -186,7 +189,7 @@ namespace GameFrameX.Network.Runtime
             /// <returns></returns>
             private bool ProcessPackBody()
             {
-                var bodyLength = PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength;
+                var bodyLength = (int)(PReceiveState.PacketHeader.PacketLength - PReceiveState.PacketHeader.PacketHeaderLength);
                 var buffer = new byte[bodyLength];
                 _ = PReceiveState.Stream.Read(buffer, 0, bodyLength);
 

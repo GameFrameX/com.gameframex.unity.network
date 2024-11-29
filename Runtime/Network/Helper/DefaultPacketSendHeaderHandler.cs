@@ -55,7 +55,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络消息包长度。
         /// </summary>
-        public ushort PacketLength { get; private set; }
+        public uint PacketLength { get; private set; }
 
         /// <summary>
         /// 是否压缩消息内容
@@ -96,9 +96,9 @@ namespace GameFrameX.Network.Runtime
             }
 
             var messageLength = messageBodyBuffer.Length;
-            PacketLength = (ushort)(PacketHeaderLength + messageLength);
+            PacketLength = (uint)(PacketHeaderLength + messageLength);
             // 数据包总大小
-            m_CachedByte.WriteUShort(PacketLength, ref m_Offset);
+            m_CachedByte.WriteUInt(PacketLength, ref m_Offset);
             // 消息操作类型
             m_CachedByte.WriteByte((byte)(ProtoMessageIdHandler.IsHeartbeat(messageType) ? 1 : 4), ref m_Offset);
             // 消息压缩标记

@@ -13,14 +13,14 @@ namespace GameFrameX.Network.Runtime
     public interface IPacketReceiveHeaderHandler
     {
         /// <summary>
+        /// 获取网络消息包长度。
+        /// </summary>
+        uint PacketLength { get; }
+
+        /// <summary>
         /// 消息包头长度
         /// </summary>
         ushort PacketHeaderLength { get; }
-
-        /// <summary>
-        /// 获取网络消息包长度。
-        /// </summary>
-        ushort PacketLength { get; }
 
         /// <summary>
         /// 获取网络消息包协议编号。
