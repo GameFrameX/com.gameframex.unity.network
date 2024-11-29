@@ -63,9 +63,9 @@ namespace GameFrameX.Network.Runtime
         public bool IsZip { get; private set; }
 
         /// <summary>
-        /// 超过消息的长度超过该值的时候启用压缩.该值 必须在设置压缩器的时候才生效,默认100
+        /// 超过消息的长度超过该值的时候启用压缩.该值 必须在设置压缩器的时候才生效,默认512
         /// </summary>
-        public virtual uint LimitCompressLength { get; } = 100;
+        public virtual uint LimitCompressLength { get; } = 512;
 
         private int m_Offset;
         private readonly byte[] m_CachedByte;
