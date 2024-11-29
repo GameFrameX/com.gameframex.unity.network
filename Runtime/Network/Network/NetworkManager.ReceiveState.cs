@@ -16,6 +16,7 @@ namespace GameFrameX.Network.Runtime
         public sealed class ReceiveState : IDisposable
         {
             public const int DefaultBufferLength = 1024 * 64;
+            public const int PacketHeaderLength = 14;
             private bool _disposed;
 
             public ReceiveState()
@@ -33,16 +34,9 @@ namespace GameFrameX.Network.Runtime
 
             public IPacketReceiveHeaderHandler PacketHeader { get; set; }
 
-            public void PrepareForPacketHeader(int packetHeaderLength = 12)
+            public void PrepareForPacketHeader(int packetHeaderLength = PacketHeaderLength)
             {
                 Reset(packetHeaderLength, null);
-            }
-
-            public void PrepareForPacket(IPacketReceiveHeaderHandler packetReceiveHeaderHandler)
-            {
-                GameFrameworkGuard.NotNull(packetReceiveHeaderHandler, nameof(packetReceiveHeaderHandler));
-
-                Reset(packetReceiveHeaderHandler.PacketLength, packetReceiveHeaderHandler);
             }
 
             public void Dispose()
