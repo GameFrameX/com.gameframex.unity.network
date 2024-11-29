@@ -12,32 +12,32 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 网络包长度
         /// </summary>
-        private const int NetPacketLength = 2;
+        private const int NetPacketLength = sizeof(uint);
 
         /// <summary>
         /// 消息码
         /// </summary>
-        private const int NetCmdIdLength = 4;
+        private const int NetCmdIdLength = sizeof(int);
 
         /// <summary>
         /// 消息操作类型长度
         /// </summary>
-        private const int NetOperationTypeLength = 1;
+        private const int NetOperationTypeLength = sizeof(byte);
 
         /// <summary>
         /// 消息压缩标记长度
         /// </summary>
-        private const int NetZipFlagLength = 1;
+        private const int NetZipFlagLength = sizeof(byte);
 
         /// <summary>
         /// 消息编号
         /// </summary>
-        private const int NetUniqueIdLength = 4;
+        private const int NetUniqueIdLength = sizeof(int);
 
 
         public DefaultPacketSendHeaderHandler()
         {
-            // 2 + 1 + 1 + 4 + 4
+            // 4 + 1 + 1 + 4 + 4
             PacketHeaderLength = NetPacketLength + NetOperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
             m_CachedByte = new byte[PacketHeaderLength];
         }
