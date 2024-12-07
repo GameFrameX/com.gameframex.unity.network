@@ -22,7 +22,7 @@ namespace GameFrameX.Network.Editor
         /// <summary>
         /// 禁用网络强制为WebSocket脚本宏定义。
         /// </summary>
-        [MenuItem("GameFrameX/Log Scripting Define Symbols/Disable Force WebSocket", false, 105)]
+        [MenuItem("GameFrameX/Scripting Define Symbols/Disable Force WebSocket", false, 400)]
         public static void DisableForceWebSocketNetwork()
         {
             ScriptingDefineSymbols.RemoveScriptingDefineSymbol(ForceEnableNetworkSendLogScriptingDefineSymbol);
@@ -31,7 +31,7 @@ namespace GameFrameX.Network.Editor
         /// <summary>
         /// 开启网络强制为WebSocket脚本宏定义。
         /// </summary>
-        [MenuItem("GameFrameX/Log Scripting Define Symbols/Enable Force WebSocket", false, 106)]
+        [MenuItem("GameFrameX/Scripting Define Symbols/Enable Force WebSocket", false, 401)]
         public static void EnableForceWebSocketNetwork()
         {
             ScriptingDefineSymbols.AddScriptingDefineSymbol(ForceEnableNetworkSendLogScriptingDefineSymbol);
@@ -40,7 +40,7 @@ namespace GameFrameX.Network.Editor
         /// <summary>
         /// 禁用网络接收日志脚本宏定义。
         /// </summary>
-        [MenuItem("GameFrameX/Log Scripting Define Symbols/Disable Network Receive Logs", false, 100)]
+        [MenuItem("GameFrameX/Scripting Define Symbols/Disable Network Receive Logs", false, 300)]
         public static void DisableNetworkReceiveLogs()
         {
             ScriptingDefineSymbols.RemoveScriptingDefineSymbol(EnableNetworkReceiveLogScriptingDefineSymbol);
@@ -49,7 +49,7 @@ namespace GameFrameX.Network.Editor
         /// <summary>
         /// 开启网络接收日志脚本宏定义。
         /// </summary>
-        [MenuItem("GameFrameX/Log Scripting Define Symbols/Enable Network Receive Logs", false, 101)]
+        [MenuItem("GameFrameX/Scripting Define Symbols/Enable Network Receive Logs", false, 301)]
         public static void EnableNetworkReceiveLogs()
         {
             ScriptingDefineSymbols.AddScriptingDefineSymbol(EnableNetworkReceiveLogScriptingDefineSymbol);
@@ -58,7 +58,7 @@ namespace GameFrameX.Network.Editor
         /// <summary>
         /// 禁用网络发送日志脚本宏定义。
         /// </summary>
-        [MenuItem("GameFrameX/Log Scripting Define Symbols/Disable Network Send Logs", false, 103)]
+        [MenuItem("GameFrameX/Scripting Define Symbols/Disable Network Send Logs", false, 200)]
         public static void DisableNetworkSendLogs()
         {
             ScriptingDefineSymbols.RemoveScriptingDefineSymbol(EnableNetworkSendLogScriptingDefineSymbol);
@@ -67,7 +67,7 @@ namespace GameFrameX.Network.Editor
         /// <summary>
         /// 开启网络发送日志脚本宏定义。
         /// </summary>
-        [MenuItem("GameFrameX/Log Scripting Define Symbols/Enable Network Send Logs", false, 104)]
+        [MenuItem("GameFrameX/Scripting Define Symbols/Enable Network Send Logs", false, 201)]
         public static void EnableNetworkSendLogs()
         {
             ScriptingDefineSymbols.AddScriptingDefineSymbol(EnableNetworkSendLogScriptingDefineSymbol);
