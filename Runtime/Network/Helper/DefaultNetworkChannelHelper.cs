@@ -104,7 +104,7 @@ namespace GameFrameX.Network.Runtime
             Event.Subscribe(NetworkClosedEventArgs.EventId, OnNetClosed);
             Event.Subscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetMissHeartBeat);
             Event.Subscribe(NetworkErrorEventArgs.EventId, OnNetError);
-            Event.Subscribe(NetworkConnectedEventArgs.EventId, OnNetCustomError);
+            Event.Subscribe(NetworkCustomErrorEventArgs.EventId, OnNetCustomError);
         }
 
         public void Shutdown()
@@ -113,7 +113,7 @@ namespace GameFrameX.Network.Runtime
             Event.Unsubscribe(NetworkClosedEventArgs.EventId, OnNetClosed);
             Event.Unsubscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetMissHeartBeat);
             Event.Unsubscribe(NetworkErrorEventArgs.EventId, OnNetError);
-            Event.Unsubscribe(NetworkConnectedEventArgs.EventId, OnNetCustomError);
+            Event.Unsubscribe(NetworkCustomErrorEventArgs.EventId, OnNetCustomError);
             m_NetworkChannel = null;
         }
 
@@ -178,7 +178,7 @@ namespace GameFrameX.Network.Runtime
                 return;
             }
 
-            Log.Info("网络连接成功......");
+            Log.Info($"网络连接成功......{ne.NetworkChannel.Name}");
         }
 
         private void OnNetClosed(object sender, GameEventArgs e)
@@ -188,15 +188,13 @@ namespace GameFrameX.Network.Runtime
                 return;
             }
 
-            Log.Info("网络连接关闭......");
+            Log.Info($"网络连接关闭......{ne.NetworkChannel.Name}");
         }
 
         private void OnNetMissHeartBeat(object sender, GameEventArgs e)
         {
             if (!(e is NetworkMissHeartBeatEventArgs ne) || ne.NetworkChannel != m_NetworkChannel) return;
             Log.Warning(Utility.Text.Format("Network channel '{0}' miss heart beat '{1}' times.", ne.NetworkChannel.Name, ne.MissCount));
-            // if (ne.MissCount < 2) return;
-            // ne.NetChannel.Close();
         }
 
         private void OnNetError(object sender, GameEventArgs e)
@@ -216,6 +214,8 @@ namespace GameFrameX.Network.Runtime
             {
                 return;
             }
+
+            Log.Error(Utility.Text.Format("Network channel '{0}' error", ne.NetworkChannel.Name));
         }
     }
 }
