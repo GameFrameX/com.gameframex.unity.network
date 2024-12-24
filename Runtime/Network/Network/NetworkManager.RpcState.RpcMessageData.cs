@@ -81,7 +81,7 @@ namespace GameFrameX.Network.Runtime
 
                 private RpcMessageData(IRequestMessage requestMessage, int timeout)
                 {
-                    CreatedTime = GameTimeHelper.UnixTimeMilliseconds();
+                    CreatedTime = TimerHelper.UnixTimeMilliseconds();
                     RequestMessage = requestMessage;
                     Timeout = timeout;
                     UniqueId = ((MessageObject)requestMessage).UniqueId;
