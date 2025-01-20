@@ -10,7 +10,7 @@
   ],
   "repository": {
     "name": "com.gameframex.unity.network",
-    "url": "https://github.com/AlianBlank/com.gameframex.unity.network.git",
+    "url": "https://github.com/gameframex/com.gameframex.unity.network.git",
     "type": "git"
   },
   "author": {
@@ -18,5 +18,8 @@
     "email": "alianblank@outlook.com",
     "url": "https://gameframex.doc.alianblank.com"
   },
-  "dependencies": {}
+  "dependencies": {
+    "com.gameframex.unity": "1.1.1",
+    "com.gameframex.unity.event": "1.0.0"
+  }
 }
