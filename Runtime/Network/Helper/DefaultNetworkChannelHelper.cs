@@ -178,7 +178,7 @@ namespace GameFrameX.Network.Runtime
                 return;
             }
 
-            Log.Info($"网络连接成功......{ne.NetworkChannel.Name}");
+            Log.Debug($"网络连接成功......{ne.NetworkChannel.Name}");
         }
 
         private void OnNetClosed(object sender, GameEventArgs e)
@@ -188,12 +188,16 @@ namespace GameFrameX.Network.Runtime
                 return;
             }
 
-            Log.Info($"网络连接关闭......{ne.NetworkChannel.Name}");
+            Log.Debug($"网络连接关闭......{ne.NetworkChannel.Name}");
         }
 
         private void OnNetMissHeartBeat(object sender, GameEventArgs e)
         {
-            if (!(e is NetworkMissHeartBeatEventArgs ne) || ne.NetworkChannel != m_NetworkChannel) return;
+            if (!(e is NetworkMissHeartBeatEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
+            {
+                return;
+            }
+
             Log.Warning(Utility.Text.Format("Network channel '{0}' miss heart beat '{1}' times.", ne.NetworkChannel.Name, ne.MissCount));
         }
 
