@@ -53,9 +53,9 @@ namespace GameFrameX.Network.Runtime
             protected readonly RpcState PRpcState;
             protected int PSentPacketCount;
             protected int PReceivedPacketCount;
+            protected bool PIsConnecting = false;
             private bool m_Disposed;
             private bool m_PActive;
-
             protected bool PActive
             {
                 get { return m_PActive; }
@@ -107,6 +107,7 @@ namespace GameFrameX.Network.Runtime
                 PSentPacketCount = 0;
                 PReceivedPacketCount = 0;
                 PActive = false;
+                PIsConnecting = false;
                 m_Disposed = false;
 
                 NetworkChannelConnected = null;

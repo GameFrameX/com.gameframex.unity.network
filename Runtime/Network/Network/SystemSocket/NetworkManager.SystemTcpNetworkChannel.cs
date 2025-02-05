@@ -43,6 +43,11 @@ namespace GameFrameX.Network.Runtime
             /// <param name="isSsl">是否是加密</param>
             public override void Connect(IPAddress ipAddress, int port, object userData = null, bool isSsl = false)
             {
+                if (PIsConnecting)
+                {
+                    return;
+                }
+
                 m_ConnectedEndPoint = new IPEndPoint(ipAddress, port);
                 base.Connect(ipAddress, port, userData, isSsl);
                 PSystemNetSocket = new SystemNetSocket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -317,6 +322,7 @@ namespace GameFrameX.Network.Runtime
             {
                 try
                 {
+                    PIsConnecting = true;
                     m_ConnectState = new ConnectState(PSystemNetSocket, userData);
                     ((SystemNetSocket)PSocket).BeginConnect(m_ConnectedEndPoint.Address, m_ConnectedEndPoint.Port, ConnectCallback, m_ConnectState);
                 }
@@ -335,6 +341,7 @@ namespace GameFrameX.Network.Runtime
 
             private void ConnectCallback(IAsyncResult asyncResult)
             {
+                PIsConnecting = false;
                 var connectState = (ConnectState)asyncResult.AsyncState;
                 var systemNetSocket = (SystemNetSocket)connectState.Socket;
                 try
