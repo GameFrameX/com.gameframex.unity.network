@@ -6,6 +6,7 @@
 //------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -77,7 +78,7 @@ namespace GameFrameX.Network.Runtime
             private IPacketReceiveHeaderHandler m_PacketReceiveHeaderHandler;
             private IPacketReceiveBodyHandler m_PacketReceiveBodyHandler;
             private IPacketHeartBeatHandler m_PacketHeartBeatHandler;
-            private readonly Queue<MessageHandlerAttribute> m_ExecutionQueue = new Queue<MessageHandlerAttribute>();
+            private readonly GameFrameworkLinkedList<MessageHandlerAttribute> m_ExecutionNotifyMessageLinkedList = new GameFrameworkLinkedList<MessageHandlerAttribute>();
 
             public Action<NetworkChannelBase, object> NetworkChannelConnected;
             public Action<NetworkChannelBase> NetworkChannelClosed;
@@ -310,11 +311,23 @@ namespace GameFrameX.Network.Runtime
 
                 ProcessHeartBeat(realElapseSeconds);
                 PRpcState.Update(elapseSeconds, realElapseSeconds);
-                lock (m_ExecutionQueue)
+                ProcessInvokingNotifyMessage();
+            }
+
+            /// <summary>
+            /// 处理通知消息的执行
+            /// </summary>
+            private void ProcessInvokingNotifyMessage()
+            {
+                while (m_ExecutionNotifyMessageLinkedList.TryRemoveFirst(out var handler))
                 {
-                    while (m_ExecutionQueue.Count > 0)
+                    try
                     {
-                        m_ExecutionQueue.Dequeue()?.Invoke();
+                        handler.Value.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Fatal(e);
                     }
                 }
             }
@@ -795,18 +808,8 @@ namespace GameFrameX.Network.Runtime
                 var handlers = ProtoMessageHandler.GetHandlers(messageObject.GetType());
                 foreach (var handler in handlers)
                 {
-                    try
-                    {
-                        lock (m_ExecutionQueue)
-                        {
-                            handler.SetMessageObject(messageObject);
-                            m_ExecutionQueue.Enqueue(handler);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e);
-                    }
+                    handler.SetMessageObject(messageObject);
+                    m_ExecutionNotifyMessageLinkedList.AddLast(handler);
                 }
             }
 
