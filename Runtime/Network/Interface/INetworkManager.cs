@@ -76,8 +76,9 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
         /// <param name="networkChannelHelper">网络频道辅助器。</param>
+        /// <param name="rpcTimeout">RPC超时时间</param>
         /// <returns>要创建的网络频道。</returns>
-        INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper);
+        INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper, int rpcTimeout);
 
         /// <summary>
         /// 销毁网络频道。

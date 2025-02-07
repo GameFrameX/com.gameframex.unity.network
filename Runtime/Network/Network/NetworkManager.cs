@@ -29,7 +29,8 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 初始化网络管理器的新实例。
         /// </summary>
-        [UnityEngine.Scripting.Preserve]  public NetworkManager()
+        [UnityEngine.Scripting.Preserve]
+        public NetworkManager()
         {
             m_NetworkChannels = new Dictionary<string, NetworkChannelBase>(StringComparer.Ordinal);
             m_NetworkConnectedEventHandler = null;
@@ -185,8 +186,9 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
         /// <param name="networkChannelHelper">网络频道辅助器。</param>
+        /// <param name="rpcTimeout">RPC超时时间</param>
         /// <returns>要创建的网络频道。</returns>
-        public INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper)
+        public INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper, int rpcTimeout)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
             GameFrameworkGuard.NotNull(networkChannelHelper, nameof(networkChannelHelper));
@@ -196,9 +198,9 @@ namespace GameFrameX.Network.Runtime
                 throw new GameFrameworkException(Utility.Text.Format("Already exist network channel '{0}'.", channelName ?? string.Empty));
             }
 #if (ENABLE_GAME_FRAME_X_WEB_SOCKET && UNITY_WEBGL) || FORCE_ENABLE_GAME_FRAME_X_WEB_SOCKET
-            NetworkChannelBase networkChannel = new WebSocketNetworkChannel(channelName, networkChannelHelper);
+            NetworkChannelBase networkChannel = new WebSocketNetworkChannel(channelName, networkChannelHelper, rpcTimeout);
 #else
-            NetworkChannelBase networkChannel = new SystemTcpNetworkChannel(channelName, networkChannelHelper);
+            NetworkChannelBase networkChannel = new SystemTcpNetworkChannel(channelName, networkChannelHelper, rpcTimeout);
 #endif
             networkChannel.NetworkChannelConnected += OnNetworkChannelConnected;
             networkChannel.NetworkChannelClosed += OnNetworkChannelClosed;

@@ -91,8 +91,9 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="name">网络频道名称。</param>
             /// <param name="networkChannelHelper">网络频道辅助器。</param>
+            /// <param name="rpcTimeout">RPC超时时间</param>
             [UnityEngine.Scripting.Preserve]
-            public NetworkChannelBase(string name, INetworkChannelHelper networkChannelHelper)
+            public NetworkChannelBase(string name, INetworkChannelHelper networkChannelHelper, int rpcTimeout)
             {
                 Name = name ?? string.Empty;
                 PSendPacketPool = new Queue<MessageObject>(128);
@@ -105,7 +106,7 @@ namespace GameFrameX.Network.Runtime
                 PSendState = new SendState();
                 PReceiveState = new ReceiveState();
                 PHeartBeatState = new HeartBeatState();
-                PRpcState = new RpcState();
+                PRpcState = new RpcState(rpcTimeout);
                 PSentPacketCount = 0;
                 PReceivedPacketCount = 0;
                 PActive = false;

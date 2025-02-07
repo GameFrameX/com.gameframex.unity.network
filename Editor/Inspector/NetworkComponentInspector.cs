@@ -18,9 +18,11 @@ namespace GameFrameX.Network.Editor
     {
         private SerializedProperty m_IgnoredSendNetworkIds;
         private SerializedProperty m_IgnoredReceiveNetworkIds;
+        private SerializedProperty m_rpcTimeout;
 
         private readonly GUIContent m_IgnoredSendNetworkIdsGUIContent = new GUIContent("忽略发送消息ID的日志打印");
         private readonly GUIContent m_IgnoredReceiveNetworkIdsGUIContent = new GUIContent("忽略接收消息ID的日志打印");
+        private readonly GUIContent m_rpcTimeoutGUIContent = new GUIContent("RPC超时时间,单位:毫秒");
 
         public override void OnInspectorGUI()
         {
@@ -29,6 +31,7 @@ namespace GameFrameX.Network.Editor
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
                 GUI.enabled = !EditorApplication.isPlaying;
+                EditorGUILayout.IntSlider(m_rpcTimeout, 3000, 50000, m_rpcTimeoutGUIContent);
                 EditorGUILayout.PropertyField(m_IgnoredSendNetworkIds, m_IgnoredSendNetworkIdsGUIContent);
                 EditorGUILayout.PropertyField(m_IgnoredReceiveNetworkIds, m_IgnoredReceiveNetworkIdsGUIContent);
                 GUI.enabled = false;
@@ -93,6 +96,7 @@ namespace GameFrameX.Network.Editor
             base.Enable();
             m_IgnoredSendNetworkIds = serializedObject.FindProperty("m_IgnoredSendNetworkIds");
             m_IgnoredReceiveNetworkIds = serializedObject.FindProperty("m_IgnoredReceiveNetworkIds");
+            m_rpcTimeout = serializedObject.FindProperty("m_rpcTimeout");
         }
     }
 }

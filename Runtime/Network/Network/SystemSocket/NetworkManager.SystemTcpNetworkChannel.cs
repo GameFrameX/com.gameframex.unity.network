@@ -29,8 +29,9 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="name">网络频道名称。</param>
             /// <param name="networkChannelHelper">网络频道辅助器。</param>
-            public SystemTcpNetworkChannel(string name, INetworkChannelHelper networkChannelHelper)
-                : base(name, networkChannelHelper)
+            /// <param name="rpcTimeout">RPC超时时间</param>
+            public SystemTcpNetworkChannel(string name, INetworkChannelHelper networkChannelHelper, int rpcTimeout)
+                : base(name, networkChannelHelper, rpcTimeout)
             {
             }
 

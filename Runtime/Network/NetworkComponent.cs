@@ -34,9 +34,17 @@ namespace GameFrameX.Network.Runtime
         [SerializeField] private List<int> m_IgnoredReceiveNetworkIds = new List<int>();
 
         /// <summary>
+        /// RPC超时时间，以毫秒为单位,默认为5秒
+        /// </summary>
+        [SerializeField] private int m_rpcTimeout = 5000;
+
+        /// <summary>
         /// 获取网络频道数量。
         /// </summary>
-        public int NetworkChannelCount => m_NetworkManager.NetworkChannelCount;
+        public int NetworkChannelCount
+        {
+            get { return m_NetworkManager.NetworkChannelCount; }
+        }
 
         /// <summary>
         /// 游戏框架组件初始化。
@@ -124,7 +132,7 @@ namespace GameFrameX.Network.Runtime
         public INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
-            var networkChannel = m_NetworkManager.CreateNetworkChannel(channelName, networkChannelHelper);
+            var networkChannel = m_NetworkManager.CreateNetworkChannel(channelName, networkChannelHelper, m_rpcTimeout);
             networkChannel.SetIgnoreLogNetworkIds(m_IgnoredSendNetworkIds, m_IgnoredReceiveNetworkIds);
             return networkChannel;
         }

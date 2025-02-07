@@ -22,7 +22,17 @@ namespace GameFrameX.Network.Runtime
             private EventHandler<MessageObject> m_RpcStartHandler;
             private EventHandler<MessageObject> m_RpcEndHandler;
             private EventHandler<MessageObject> m_RpcErrorHandler;
+            private int m_rpcTimeout = 5000;
             private bool m_Disposed = false;
+
+            public RpcState(int timeout)
+            {
+                m_rpcTimeout = timeout;
+                if (m_rpcTimeout < 3000)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(timeout), "RPC超时时间不能小于3000毫秒");
+                }
+            }
 
             public void Dispose()
             {
