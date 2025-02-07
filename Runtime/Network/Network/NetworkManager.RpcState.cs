@@ -47,26 +47,28 @@ namespace GameFrameX.Network.Runtime
             }
 
             /// <summary>
-            /// RPC回复
+            /// 处理RPC回复消息。
+            /// 此方法用于处理接收到的RPC回复消息，并触发相应的结束处理程序。
             /// </summary>
-            /// <param name="message">消息对象</param>
-            /// <returns></returns>
+            /// <param name="message">要处理的消息对象，必须实现IResponseMessage接口。</param>
+            /// <returns>如果成功处理回复消息，则返回true；否则返回false。</returns>
             public bool Reply(MessageObject message)
             {
                 if (message.GetType().IsImplWithInterface(typeof(IResponseMessage)))
                 {
                     if (m_HandlingObjects.TryRemove(message.UniqueId, out var messageActorObject))
                     {
-                        messageActorObject.Reply(message as IResponseMessage);
                         try
                         {
+                            messageActorObject.Reply(message as IResponseMessage);
                             m_RpcEndHandler?.Invoke(this, message);
-                            return true;
                         }
                         catch (Exception e)
                         {
                             Log.Fatal(e);
                         }
+
+                        return true;
                     }
                 }
 
@@ -74,10 +76,12 @@ namespace GameFrameX.Network.Runtime
             }
 
             /// <summary>
-            /// 调用并等待返回结果。可能引发超时异常
+            /// 调用RPC并等待返回结果。
+            /// 此方法会发送一个请求消息并返回一个任务，任务将在收到响应时完成。
+            /// 可能会引发超时异常。
             /// </summary>
-            /// <param name="messageObject">消息对象</param>
-            /// <returns></returns>
+            /// <param name="messageObject">要发送的消息对象，必须实现IRequestMessage接口。</param>
+            /// <returns>返回一个任务，该任务在收到响应时完成，并返回IResponseMessage。</returns>
             public Task<IResponseMessage> Call(MessageObject messageObject)
             {
                 if (m_HandlingObjects.TryGetValue(messageObject.UniqueId, out var messageActorObject))
