@@ -56,6 +56,7 @@ namespace GameFrameX.Network.Runtime
             protected bool PIsConnecting = false;
             private bool m_Disposed;
             private bool m_PActive;
+
             protected bool PActive
             {
                 get { return m_PActive; }
@@ -90,6 +91,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="name">网络频道名称。</param>
             /// <param name="networkChannelHelper">网络频道辅助器。</param>
+            [UnityEngine.Scripting.Preserve]
             public NetworkChannelBase(string name, INetworkChannelHelper networkChannelHelper)
             {
                 Name = name ?? string.Empty;
@@ -376,6 +378,7 @@ namespace GameFrameX.Network.Runtime
             /// 注册消息压缩处理器
             /// </summary>
             /// <param name="handler">处理器对象,当设置为空的时候，不启用消息压缩</param>
+            [UnityEngine.Scripting.Preserve]
             public void RegisterMessageCompressHandler(IMessageCompressHandler handler)
             {
                 MessageCompressHandler = handler;
@@ -385,6 +388,7 @@ namespace GameFrameX.Network.Runtime
             /// 注册消息解压处理器
             /// </summary>
             /// <param name="handler">处理器对象,当设置为空的时候，不启用消息解压</param>
+            [UnityEngine.Scripting.Preserve]
             public void RegisterMessageDecompressHandler(IMessageDecompressHandler handler)
             {
                 MessageDecompressHandler = handler;
@@ -394,6 +398,7 @@ namespace GameFrameX.Network.Runtime
             /// 注册网络消息包处理函数。
             /// </summary>
             /// <param name="handler">要注册的网络消息包处理函数。</param>
+            [UnityEngine.Scripting.Preserve]
             public void RegisterHandler(IPacketSendHeaderHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -405,6 +410,7 @@ namespace GameFrameX.Network.Runtime
             /// 注册网络消息包处理函数。
             /// </summary>
             /// <param name="handler">要注册的网络消息包处理函数。</param>
+            [UnityEngine.Scripting.Preserve]
             public void RegisterHandler(IPacketSendBodyHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -415,6 +421,7 @@ namespace GameFrameX.Network.Runtime
             /// 注册网络消息包处理函数。
             /// </summary>
             /// <param name="handler">要注册的网络消息包处理函数。</param>
+            [UnityEngine.Scripting.Preserve]
             public void RegisterHandler(IPacketReceiveHeaderHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -425,6 +432,7 @@ namespace GameFrameX.Network.Runtime
             /// 注册网络消息包处理函数。
             /// </summary>
             /// <param name="handler">要注册的网络消息包处理函数。</param>
+            [UnityEngine.Scripting.Preserve]
             public void RegisterHandler(IPacketReceiveBodyHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -436,6 +444,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="handler">要注册的网络消息包处理函数</param>
             [Obsolete("Use RegisterHeartBeatHandler instead")]
+            [UnityEngine.Scripting.Preserve]
             public void RegisterHandler(IPacketHeartBeatHandler handler)
             {
                 RegisterHeartBeatHandler(handler);
@@ -445,6 +454,7 @@ namespace GameFrameX.Network.Runtime
             /// 注册网络消息心跳处理函数，用于处理心跳消息
             /// </summary>
             /// <param name="handler">要注册的网络消息包处理函数</param>
+            [UnityEngine.Scripting.Preserve]
             public void RegisterHeartBeatHandler(IPacketHeartBeatHandler handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -464,6 +474,7 @@ namespace GameFrameX.Network.Runtime
             /// 设置RPC错误的处理函数
             /// </summary>
             /// <param name="handler"></param>
+            [UnityEngine.Scripting.Preserve]
             public void SetRPCErrorHandler(EventHandler<MessageObject> handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -474,6 +485,7 @@ namespace GameFrameX.Network.Runtime
             /// 设置RPC开始的处理函数
             /// </summary>
             /// <param name="handler"></param>
+            [UnityEngine.Scripting.Preserve]
             public void SetRPCStartHandler(EventHandler<MessageObject> handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -484,6 +496,7 @@ namespace GameFrameX.Network.Runtime
             /// 设置RPC结束的处理函数
             /// </summary>
             /// <param name="handler"></param>
+            [UnityEngine.Scripting.Preserve]
             public void SetRPCEndHandler(EventHandler<MessageObject> handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -497,6 +510,7 @@ namespace GameFrameX.Network.Runtime
             /// <param name="port">远程主机的端口号。</param>
             /// <param name="userData">用户自定义数据。</param>
             /// <param name="isSsl">是否加密</param>
+            [UnityEngine.Scripting.Preserve]
             public virtual void Connect(IPAddress ipAddress, int port, object userData = null, bool isSsl = false)
             {
                 if (PSocket != null)
@@ -533,6 +547,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 关闭连接并释放所有相关资源。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public virtual void Close()
             {
                 lock (this)
@@ -580,6 +595,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="messageObject"></param>
             /// <typeparam name="TResult"></typeparam>
+            [UnityEngine.Scripting.Preserve]
             public async Task<TResult> Call<TResult>(MessageObject messageObject) where TResult : MessageObject, IResponseMessage
             {
                 GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
@@ -593,6 +609,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <typeparam name="T">消息包类型。</typeparam>
             /// <param name="messageObject">要发送的消息包。</param>
+            [UnityEngine.Scripting.Preserve]
             public void Send<T>(T messageObject) where T : MessageObject
             {
                 GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
@@ -798,6 +815,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="sendIds">发送列表</param>
             /// <param name="receiveIds">接收列表</param>
+            [UnityEngine.Scripting.Preserve]
             public void SetIgnoreLogNetworkIds(List<int> sendIds, List<int> receiveIds)
             {
                 IgnoreSendIds = sendIds;

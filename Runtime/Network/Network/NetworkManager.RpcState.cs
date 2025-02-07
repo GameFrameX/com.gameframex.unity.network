@@ -128,6 +128,7 @@ namespace GameFrameX.Network.Runtime
             /// 设置RPC错误的处理函数
             /// </summary>
             /// <param name="handler">处理函数</param>
+            [UnityEngine.Scripting.Preserve]
             public void SetRPCErrorHandler(EventHandler<MessageObject> handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -138,6 +139,7 @@ namespace GameFrameX.Network.Runtime
             /// 设置RPC开始的处理函数
             /// </summary>
             /// <param name="handler">处理函数</param>
+            [UnityEngine.Scripting.Preserve]
             public void SetRPCStartHandler(EventHandler<MessageObject> handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));
@@ -148,6 +150,7 @@ namespace GameFrameX.Network.Runtime
             /// 设置RPC结束的处理函数
             /// </summary>
             /// <param name="handler">处理函数</param>
+            [UnityEngine.Scripting.Preserve]
             public void SetRPCEndHandler(EventHandler<MessageObject> handler)
             {
                 GameFrameworkGuard.NotNull(handler, nameof(handler));

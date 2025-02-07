@@ -16,7 +16,7 @@ namespace GameFrameX.Network.Runtime
         {
             private const int DefaultBufferLength = 1024 * 64;
             private bool m_Disposed;
-
+            [UnityEngine.Scripting.Preserve]
             public SendState()
             {
                 Stream = new MemoryStream(DefaultBufferLength);

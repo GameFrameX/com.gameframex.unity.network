@@ -10,6 +10,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 网络地址类型。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public enum AddressFamily : byte
     {
         /// <summary>

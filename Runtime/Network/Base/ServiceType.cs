@@ -3,6 +3,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 网络服务类型。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public enum ServiceType : byte
     {
         /// <summary>

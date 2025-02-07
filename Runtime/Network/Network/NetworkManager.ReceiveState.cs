@@ -19,6 +19,7 @@ namespace GameFrameX.Network.Runtime
             public const int PacketHeaderLength = 14;
             private bool _disposed;
 
+            [UnityEngine.Scripting.Preserve]
             public ReceiveState()
             {
                 Stream = new MemoryStream(DefaultBufferLength);

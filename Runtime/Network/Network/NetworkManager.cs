@@ -29,7 +29,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 初始化网络管理器的新实例。
         /// </summary>
-        public NetworkManager()
+        [UnityEngine.Scripting.Preserve]  public NetworkManager()
         {
             m_NetworkChannels = new Dictionary<string, NetworkChannelBase>(StringComparer.Ordinal);
             m_NetworkConnectedEventHandler = null;

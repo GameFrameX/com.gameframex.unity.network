@@ -17,6 +17,7 @@ namespace GameFrameX.Network.Runtime
             private float _heartBeatElapseSeconds;
             private int _missHeartBeatCount;
 
+            [UnityEngine.Scripting.Preserve]
             public HeartBeatState()
             {
                 _heartBeatElapseSeconds = 0f;

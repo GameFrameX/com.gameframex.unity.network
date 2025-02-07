@@ -5,7 +5,6 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using GameFrameX.Event.Runtime;
 using GameFrameX.Runtime;
@@ -44,7 +43,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         protected override void Awake()
         {
-            ImplementationComponentType = Type.GetType(componentType);
+            ImplementationComponentType = Utility.Assembly.GetType(componentType);
             InterfaceComponentType = typeof(INetworkManager);
             base.Awake();
             m_NetworkManager = GameFrameworkEntry.GetModule<INetworkManager>();
@@ -76,6 +75,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
         /// <returns>是否存在网络频道。</returns>
+        [UnityEngine.Scripting.Preserve]
         public bool HasNetworkChannel(string channelName)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
@@ -87,6 +87,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
         /// <returns>要获取的网络频道。</returns>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel GetNetworkChannel(string channelName)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
@@ -97,6 +98,7 @@ namespace GameFrameX.Network.Runtime
         /// 获取所有网络频道。
         /// </summary>
         /// <returns>所有网络频道。</returns>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel[] GetAllNetworkChannels()
         {
             return m_NetworkManager.GetAllNetworkChannels();
@@ -106,6 +108,7 @@ namespace GameFrameX.Network.Runtime
         /// 获取所有网络频道。
         /// </summary>
         /// <param name="results">所有网络频道。</param>
+        [UnityEngine.Scripting.Preserve]
         public void GetAllNetworkChannels(List<INetworkChannel> results)
         {
             m_NetworkManager.GetAllNetworkChannels(results);
@@ -117,11 +120,12 @@ namespace GameFrameX.Network.Runtime
         /// <param name="channelName">网络频道名称。</param>
         /// <param name="networkChannelHelper">网络频道辅助器。</param>
         /// <returns>要创建的网络频道。</returns>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
             var networkChannel = m_NetworkManager.CreateNetworkChannel(channelName, networkChannelHelper);
-            networkChannel.SetIgnoreLogNetworkIds(m_IgnoredSendNetworkIds,m_IgnoredReceiveNetworkIds);
+            networkChannel.SetIgnoreLogNetworkIds(m_IgnoredSendNetworkIds, m_IgnoredReceiveNetworkIds);
             return networkChannel;
         }
 
@@ -130,6 +134,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
         /// <returns>是否销毁网络频道成功。</returns>
+        [UnityEngine.Scripting.Preserve]
         public bool DestroyNetworkChannel(string channelName)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));

@@ -22,6 +22,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="messageId">消息ID</param>
         /// <returns>请求的类型</returns>
+        [UnityEngine.Scripting.Preserve]
         public static Type GetReqTypeById(int messageId)
         {
             if (ReqDictionary.Count <= 0)
@@ -39,6 +40,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="type">类型</param>
         /// <returns>请求消息ID</returns>
+        [UnityEngine.Scripting.Preserve]
         public static int GetReqMessageIdByType(Type type)
         {
             if (ReqDictionary.Count <= 0)
@@ -56,6 +58,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="messageId">消息ID</param>
         /// <returns>响应的类型</returns>
+        [UnityEngine.Scripting.Preserve]
         public static Type GetRespTypeById(int messageId)
         {
             if (RespDictionary.Count <= 0)
@@ -73,6 +76,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="type">类型</param>
         /// <returns>响应消息ID</returns>
+        [UnityEngine.Scripting.Preserve]
         public static int GetRespMessageIdByType(Type type)
         {
             if (RespDictionary.Count <= 0)
@@ -90,6 +94,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="type">消息类型</param>
         /// <returns></returns>
+        [UnityEngine.Scripting.Preserve]
         public static bool IsHeartbeat(Type type)
         {
             return HeartBeatList.Contains(type);
@@ -98,6 +103,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 初始化所有协议对象
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public static void Init(Assembly assembly)
         {
             ReqDictionary.Clear();

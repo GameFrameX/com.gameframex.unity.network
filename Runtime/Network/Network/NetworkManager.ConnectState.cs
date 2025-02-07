@@ -13,6 +13,7 @@ namespace GameFrameX.Network.Runtime
         {
             private readonly INetworkSocket m_Socket;
 
+            [UnityEngine.Scripting.Preserve]
             public ConnectState(INetworkSocket socket, object userData)
             {
                 m_Socket = socket;

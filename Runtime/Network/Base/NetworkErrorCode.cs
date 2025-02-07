@@ -10,6 +10,7 @@ namespace GameFrameX.Network.Runtime
     /// <summary>
     /// 网络错误码。
     /// </summary>
+    [UnityEngine.Scripting.Preserve]
     public enum NetworkErrorCode : byte
     {
         /// <summary>

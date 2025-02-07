@@ -13,6 +13,7 @@ namespace GameFrameX.Network.Runtime
                 /// <summary>
                 /// 消息的唯一ID
                 /// </summary>
+                [UnityEngine.Scripting.Preserve]
                 public long UniqueId { get; }
 
                 /// <summary>
@@ -73,6 +74,7 @@ namespace GameFrameX.Network.Runtime
                 /// <param name="actorRequestMessage"></param>
                 /// <param name="timeout"></param>
                 /// <returns></returns>
+                [UnityEngine.Scripting.Preserve]
                 internal static RpcMessageData Create(IRequestMessage actorRequestMessage, int timeout = 5000)
                 {
                     var defaultMessageActorObject = new RpcMessageData(actorRequestMessage, timeout);
