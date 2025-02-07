@@ -319,8 +319,9 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             private void ProcessInvokingNotifyMessage()
             {
-                while (m_ExecutionNotifyMessageLinkedList.TryRemoveFirst(out var handler))
+                while (m_ExecutionNotifyMessageLinkedList.First != null)
                 {
+                    var handler = m_ExecutionNotifyMessageLinkedList.First;
                     try
                     {
                         handler.Value.Invoke();
@@ -328,6 +329,10 @@ namespace GameFrameX.Network.Runtime
                     catch (Exception e)
                     {
                         Log.Fatal(e);
+                    }
+                    finally
+                    {
+                        m_ExecutionNotifyMessageLinkedList.RemoveFirst();
                     }
                 }
             }
