@@ -213,7 +213,7 @@ namespace GameFrameX.Network.Runtime
 
                 DebugReceiveLog(messageObject);
 
-                var replySuccess = PRpcState.Reply(messageObject);
+                var replySuccess = PRpcState.TryReply(messageObject);
                 if (!replySuccess)
                 {
                     InvokeMessageHandler(messageObject);

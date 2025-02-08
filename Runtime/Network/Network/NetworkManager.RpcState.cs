@@ -18,6 +18,7 @@ namespace GameFrameX.Network.Runtime
         public partial class RpcState : IDisposable
         {
             private readonly ConcurrentDictionary<long, RpcMessageData> m_HandlingObjects = new ConcurrentDictionary<long, RpcMessageData>();
+            private readonly GameFrameworkLinkedList<MessageObject> m_ExecutionMessageLinkedList = new GameFrameworkLinkedList<MessageObject>();
             private readonly HashSet<long> m_HandlingObjectIds = new HashSet<long>();
             private EventHandler<MessageObject> m_RpcStartHandler;
             private EventHandler<MessageObject> m_RpcEndHandler;
@@ -50,24 +51,42 @@ namespace GameFrameX.Network.Runtime
             /// 处理RPC回复消息。
             /// 此方法用于处理接收到的RPC回复消息，并触发相应的结束处理程序。
             /// </summary>
-            /// <param name="message">要处理的消息对象，必须实现IResponseMessage接口。</param>
             /// <returns>如果成功处理回复消息，则返回true；否则返回false。</returns>
-            public bool Reply(MessageObject message)
+            private void InvokingReplyRpcMessage()
             {
-                if (message.GetType().IsImplWithInterface(typeof(IResponseMessage)))
+                while (m_ExecutionMessageLinkedList.First != null)
                 {
-                    if (m_HandlingObjects.TryRemove(message.UniqueId, out var messageActorObject))
+                    var messageObject = m_ExecutionMessageLinkedList.First.Value;
+                    
+                    if (m_HandlingObjects.TryRemove(messageObject.UniqueId, out var messageActorObject))
                     {
                         try
                         {
-                            messageActorObject.Reply(message as IResponseMessage);
-                            m_RpcEndHandler?.Invoke(this, message);
+                            messageActorObject.Reply(messageObject as IResponseMessage);
+                            m_RpcEndHandler?.Invoke(this, messageObject);
                         }
                         catch (Exception e)
                         {
                             Log.Fatal(e);
                         }
+                    }
+                    m_ExecutionMessageLinkedList.RemoveFirst();
+                }
+            }
 
+            /// <summary>
+            /// 处理RPC回复消息。
+            /// 此方法用于处理接收到的RPC回复消息，并触发相应的结束处理程序。
+            /// </summary>
+            /// <param name="message">要处理的消息对象，必须实现IResponseMessage接口。</param>
+            /// <returns>如果成功处理回复消息，则返回true；否则返回false。</returns>
+            public bool TryReply(MessageObject message)
+            {
+                if (message.GetType().IsImplWithInterface(typeof(IResponseMessage)))
+                {
+                    if (m_HandlingObjects.TryGetValue(message.UniqueId, out _))
+                    {
+                        m_ExecutionMessageLinkedList.AddLast(message);
                         return true;
                     }
                 }
@@ -105,6 +124,8 @@ namespace GameFrameX.Network.Runtime
 
             public void Update(float elapseSeconds, float realElapseSeconds)
             {
+                InvokingReplyRpcMessage();
+
                 if (m_HandlingObjects.Count > 0)
                 {
                     var elapseSecondsTime = (long)(elapseSeconds * 1000);

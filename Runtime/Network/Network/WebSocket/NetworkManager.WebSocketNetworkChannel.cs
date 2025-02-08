@@ -298,7 +298,7 @@ namespace GameFrameX.Network.Runtime
                             }
                         }
 
-                        var replySuccess = PRpcState.Reply(messageObject);
+                        var replySuccess = PRpcState.TryReply(messageObject);
                         if (!replySuccess)
                         {
                             InvokeMessageHandler(messageObject);

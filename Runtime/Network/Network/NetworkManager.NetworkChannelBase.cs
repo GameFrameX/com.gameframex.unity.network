@@ -308,8 +308,8 @@ namespace GameFrameX.Network.Runtime
                 }
 
                 ProcessHeartBeat(realElapseSeconds);
-                PRpcState.Update(elapseSeconds, realElapseSeconds);
                 ProcessInvokingNotifyMessage();
+                PRpcState.Update(elapseSeconds, realElapseSeconds);
             }
 
             /// <summary>
