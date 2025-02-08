@@ -96,7 +96,6 @@ namespace GameFrameX.Network.Runtime
                     while (PSendPacketPool.First != null)
                     {
                         var messageObject = PSendPacketPool.First.Value;
-                        
 
                         bool serializeResult;
                         try
@@ -298,11 +297,8 @@ namespace GameFrameX.Network.Runtime
                             }
                         }
 
-                        var replySuccess = PRpcState.TryReply(messageObject);
-                        if (!replySuccess)
-                        {
-                            InvokeMessageHandler(messageObject);
-                        }
+                        // 将收到的消息加入到链表最后
+                        m_ExecutionMessageLinkedList.AddLast(messageObject);
 
                         PReceivedPacketCount++;
                     }

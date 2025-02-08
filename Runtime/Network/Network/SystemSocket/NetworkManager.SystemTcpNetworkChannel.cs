@@ -212,12 +212,8 @@ namespace GameFrameX.Network.Runtime
                 }
 
                 DebugReceiveLog(messageObject);
-
-                var replySuccess = PRpcState.TryReply(messageObject);
-                if (!replySuccess)
-                {
-                    InvokeMessageHandler(messageObject);
-                }
+                // 将收到的消息加入到链表最后
+                m_ExecutionMessageLinkedList.AddLast(messageObject);
 
                 PReceivedPacketCount++;
                 PReceiveState.PrepareForPacketHeader();

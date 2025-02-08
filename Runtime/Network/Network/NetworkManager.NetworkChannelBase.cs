@@ -78,7 +78,8 @@ namespace GameFrameX.Network.Runtime
             private IPacketReceiveHeaderHandler m_PacketReceiveHeaderHandler;
             private IPacketReceiveBodyHandler m_PacketReceiveBodyHandler;
             private IPacketHeartBeatHandler m_PacketHeartBeatHandler;
-            private readonly GameFrameworkLinkedList<MessageHandlerAttribute> m_ExecutionNotifyMessageLinkedList = new GameFrameworkLinkedList<MessageHandlerAttribute>();
+
+            protected readonly GameFrameworkLinkedList<MessageObject> m_ExecutionMessageLinkedList = new GameFrameworkLinkedList<MessageObject>();
 
             public Action<NetworkChannelBase, object> NetworkChannelConnected;
             public Action<NetworkChannelBase> NetworkChannelClosed;
@@ -308,21 +309,41 @@ namespace GameFrameX.Network.Runtime
                 }
 
                 ProcessHeartBeat(realElapseSeconds);
-                ProcessInvokingNotifyMessage();
+                ProcessReceivedMessage();
                 PRpcState.Update(elapseSeconds, realElapseSeconds);
             }
 
             /// <summary>
-            /// 处理通知消息的执行
+            /// 
             /// </summary>
-            private void ProcessInvokingNotifyMessage()
+            private void ProcessReceivedMessage()
             {
-                while (m_ExecutionNotifyMessageLinkedList.First != null)
+                while (m_ExecutionMessageLinkedList.First != null)
                 {
-                    var handler = m_ExecutionNotifyMessageLinkedList.First;
+                    var messageObject = m_ExecutionMessageLinkedList.First.Value;
                     try
                     {
-                        handler.Value.Invoke();
+                        // 执行RPC匹配
+                        var replySuccess = PRpcState.TryReply(messageObject);
+                        if (replySuccess)
+                        {
+                            continue;
+                        }
+
+                        // 执行通知消息
+                        var handlers = ProtoMessageHandler.GetHandlers(messageObject.GetType());
+                        foreach (var handler in handlers)
+                        {
+                            handler.SetMessageObject(messageObject);
+                            try
+                            {
+                                handler.Invoke();
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Fatal(e);
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
@@ -330,7 +351,7 @@ namespace GameFrameX.Network.Runtime
                     }
                     finally
                     {
-                        m_ExecutionNotifyMessageLinkedList.RemoveFirst();
+                        m_ExecutionMessageLinkedList.RemoveFirst();
                     }
                 }
             }
@@ -807,16 +828,6 @@ namespace GameFrameX.Network.Runtime
                     Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id},{messageObject.UniqueId},{messageObject.GetType().Name}] 消息内容:{Utility.Json.ToJson(messageObject)}");
                 }
 #endif
-            }
-
-            protected void InvokeMessageHandler(MessageObject messageObject)
-            {
-                var handlers = ProtoMessageHandler.GetHandlers(messageObject.GetType());
-                foreach (var handler in handlers)
-                {
-                    handler.SetMessageObject(messageObject);
-                    m_ExecutionNotifyMessageLinkedList.AddLast(handler);
-                }
             }
 
 
