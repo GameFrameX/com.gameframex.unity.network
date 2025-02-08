@@ -41,11 +41,6 @@ namespace GameFrameX.Network.Runtime
         event EventHandler<NetworkErrorEventArgs> NetworkError;
 
         /// <summary>
-        /// 用户自定义网络错误事件。
-        /// </summary>
-        event EventHandler<NetworkCustomErrorEventArgs> NetworkCustomError;
-
-        /// <summary>
         /// 检查是否存在网络频道。
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>

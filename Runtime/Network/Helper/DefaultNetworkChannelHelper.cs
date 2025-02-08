@@ -104,7 +104,6 @@ namespace GameFrameX.Network.Runtime
             Event.Subscribe(NetworkClosedEventArgs.EventId, OnNetClosed);
             Event.Subscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetMissHeartBeat);
             Event.Subscribe(NetworkErrorEventArgs.EventId, OnNetError);
-            Event.Subscribe(NetworkCustomErrorEventArgs.EventId, OnNetCustomError);
         }
 
         public void Shutdown()
@@ -113,7 +112,6 @@ namespace GameFrameX.Network.Runtime
             Event.Unsubscribe(NetworkClosedEventArgs.EventId, OnNetClosed);
             Event.Unsubscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetMissHeartBeat);
             Event.Unsubscribe(NetworkErrorEventArgs.EventId, OnNetError);
-            Event.Unsubscribe(NetworkCustomErrorEventArgs.EventId, OnNetCustomError);
             m_NetworkChannel = null;
         }
 
@@ -210,16 +208,6 @@ namespace GameFrameX.Network.Runtime
 
             Log.Error(Utility.Text.Format("Network channel '{0}' error, error code is '{1}', error message is '{2}'.", ne.NetworkChannel.Name, ne.ErrorCode, ne.ErrorMessage));
             ne.NetworkChannel.Close();
-        }
-
-        private void OnNetCustomError(object sender, GameEventArgs e)
-        {
-            if (!(e is NetworkCustomErrorEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
-            {
-                return;
-            }
-
-            Log.Error(Utility.Text.Format("Network channel '{0}' error", ne.NetworkChannel.Name));
         }
     }
 }

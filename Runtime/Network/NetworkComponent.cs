@@ -65,7 +65,6 @@ namespace GameFrameX.Network.Runtime
             m_NetworkManager.NetworkClosed += OnNetworkClosed;
             m_NetworkManager.NetworkMissHeartBeat += OnNetworkMissHeartBeat;
             m_NetworkManager.NetworkError += OnNetworkError;
-            m_NetworkManager.NetworkCustomError += OnNetworkCustomError;
         }
 
         private void Start()
@@ -165,11 +164,6 @@ namespace GameFrameX.Network.Runtime
         }
 
         private void OnNetworkError(object sender, NetworkErrorEventArgs eventArgs)
-        {
-            m_EventComponent.Fire(this, eventArgs);
-        }
-
-        private void OnNetworkCustomError(object sender, NetworkCustomErrorEventArgs eventArgs)
         {
             m_EventComponent.Fire(this, eventArgs);
         }

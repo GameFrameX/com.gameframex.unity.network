@@ -24,7 +24,6 @@ namespace GameFrameX.Network.Runtime
         private EventHandler<NetworkClosedEventArgs> m_NetworkClosedEventHandler;
         private EventHandler<NetworkMissHeartBeatEventArgs> m_NetworkMissHeartBeatEventHandler;
         private EventHandler<NetworkErrorEventArgs> m_NetworkErrorEventHandler;
-        private EventHandler<NetworkCustomErrorEventArgs> m_NetworkCustomErrorEventHandler;
 
         /// <summary>
         /// 初始化网络管理器的新实例。
@@ -37,7 +36,6 @@ namespace GameFrameX.Network.Runtime
             m_NetworkClosedEventHandler = null;
             m_NetworkMissHeartBeatEventHandler = null;
             m_NetworkErrorEventHandler = null;
-            m_NetworkCustomErrorEventHandler = null;
         }
 
         /// <summary>
@@ -85,15 +83,6 @@ namespace GameFrameX.Network.Runtime
         }
 
         /// <summary>
-        /// 用户自定义网络错误事件。
-        /// </summary>
-        public event EventHandler<NetworkCustomErrorEventArgs> NetworkCustomError
-        {
-            add { m_NetworkCustomErrorEventHandler += value; }
-            remove { m_NetworkCustomErrorEventHandler -= value; }
-        }
-
-        /// <summary>
         /// 网络管理器轮询。
         /// </summary>
         /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
@@ -118,7 +107,6 @@ namespace GameFrameX.Network.Runtime
                 networkChannelBase.NetworkChannelClosed -= OnNetworkChannelClosed;
                 networkChannelBase.NetworkChannelMissHeartBeat -= OnNetworkChannelMissHeartBeat;
                 networkChannelBase.NetworkChannelError -= OnNetworkChannelError;
-                networkChannelBase.NetworkChannelCustomError -= OnNetworkChannelCustomError;
                 networkChannelBase.Shutdown();
             }
 
@@ -206,7 +194,6 @@ namespace GameFrameX.Network.Runtime
             networkChannel.NetworkChannelClosed += OnNetworkChannelClosed;
             networkChannel.NetworkChannelMissHeartBeat += OnNetworkChannelMissHeartBeat;
             networkChannel.NetworkChannelError += OnNetworkChannelError;
-            networkChannel.NetworkChannelCustomError += OnNetworkChannelCustomError;
             m_NetworkChannels.Add(channelName, networkChannel);
             return networkChannel;
         }
@@ -225,7 +212,6 @@ namespace GameFrameX.Network.Runtime
                 networkChannel.NetworkChannelClosed -= OnNetworkChannelClosed;
                 networkChannel.NetworkChannelMissHeartBeat -= OnNetworkChannelMissHeartBeat;
                 networkChannel.NetworkChannelError -= OnNetworkChannelError;
-                networkChannel.NetworkChannelCustomError -= OnNetworkChannelCustomError;
                 networkChannel.Shutdown();
                 if (channelName != null)
                 {
@@ -284,19 +270,6 @@ namespace GameFrameX.Network.Runtime
                     NetworkErrorEventArgs networkErrorEventArgs = NetworkErrorEventArgs.Create(networkChannel, errorCode, socketErrorCode, errorMessage);
                     m_NetworkErrorEventHandler(this, networkErrorEventArgs);
                     // ReferencePool.Release(networkErrorEventArgs);
-                }
-            }
-        }
-
-        private void OnNetworkChannelCustomError(NetworkChannelBase networkChannel, object customErrorData)
-        {
-            if (m_NetworkCustomErrorEventHandler != null)
-            {
-                lock (m_NetworkCustomErrorEventHandler)
-                {
-                    NetworkCustomErrorEventArgs networkCustomErrorEventArgs = NetworkCustomErrorEventArgs.Create(networkChannel, customErrorData);
-                    m_NetworkCustomErrorEventHandler(this, networkCustomErrorEventArgs);
-                    // ReferencePool.Release(networkCustomErrorEventArgs);
                 }
             }
         }
