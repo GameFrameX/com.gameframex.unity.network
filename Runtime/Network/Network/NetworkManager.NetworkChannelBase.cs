@@ -739,11 +739,10 @@ namespace GameFrameX.Network.Runtime
                     }
 
 
-                    while (PSendPacketPool.First !=null)
+                    while (PSendPacketPool.First != null)
                     {
                         var messageObject = PSendPacketPool.First.Value;
-                        PSendPacketPool.RemoveFirst();
-                        bool serializeResult = false;
+                        bool serializeResult;
                         try
                         {
                             serializeResult = ProcessSendMessage(messageObject);
@@ -760,6 +759,10 @@ namespace GameFrameX.Network.Runtime
                             }
 
                             throw;
+                        }
+                        finally
+                        {
+                            PSendPacketPool.RemoveFirst();
                         }
 
                         if (!serializeResult)
