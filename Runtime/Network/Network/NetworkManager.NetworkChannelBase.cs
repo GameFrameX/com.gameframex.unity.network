@@ -85,7 +85,6 @@ namespace GameFrameX.Network.Runtime
             public Action<NetworkChannelBase, bool> NetworkChannelActiveChanged;
             public Action<NetworkChannelBase, int> NetworkChannelMissHeartBeat;
             public Action<NetworkChannelBase, NetworkErrorCode, SocketError, string> NetworkChannelError;
-            public Action<NetworkChannelBase, object> NetworkChannelCustomError;
 
             /// <summary>
             /// 初始化网络频道基类的新实例。
