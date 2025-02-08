@@ -93,11 +93,12 @@ namespace GameFrameX.Network.Runtime
                         return false;
                     }
 
-                    while (PSendPacketPool.Count > 0)
+                    while (PSendPacketPool.First != null)
                     {
-                        var messageObject = PSendPacketPool.Dequeue();
+                        var messageObject = PSendPacketPool.First.Value;
+                        PSendPacketPool.RemoveFirst();
 
-                        bool serializeResult = false;
+                        bool serializeResult;
                         try
                         {
                             serializeResult = ProcessSendMessage(messageObject);

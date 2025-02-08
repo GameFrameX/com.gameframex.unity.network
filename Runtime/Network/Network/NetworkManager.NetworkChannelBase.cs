@@ -25,7 +25,7 @@ namespace GameFrameX.Network.Runtime
             private const float DefaultHeartBeatInterval = 30f;
             private const int DefaultMissHeartBeatCountByClose = 10;
 
-            protected readonly Queue<MessageObject> PSendPacketPool;
+            protected readonly GameFrameworkLinkedList<MessageObject> PSendPacketPool;
             protected readonly INetworkChannelHelper PNetworkChannelHelper;
             protected AddressFamily PAddressFamily;
 
@@ -96,7 +96,7 @@ namespace GameFrameX.Network.Runtime
             public NetworkChannelBase(string name, INetworkChannelHelper networkChannelHelper, int rpcTimeout)
             {
                 Name = name ?? string.Empty;
-                PSendPacketPool = new Queue<MessageObject>(128);
+                PSendPacketPool = new GameFrameworkLinkedList<MessageObject>();
                 PNetworkChannelHelper = networkChannelHelper;
                 PAddressFamily = AddressFamily.Unknown;
                 PResetHeartBeatElapseSecondsWhenReceivePacket = false;
@@ -117,7 +117,6 @@ namespace GameFrameX.Network.Runtime
                 NetworkChannelClosed = null;
                 NetworkChannelMissHeartBeat = null;
                 NetworkChannelError = null;
-                NetworkChannelCustomError = null;
 
                 networkChannelHelper.Initialize(this);
             }
@@ -669,7 +668,7 @@ namespace GameFrameX.Network.Runtime
 
                 lock (PSendPacketPool)
                 {
-                    PSendPacketPool.Enqueue(messageObject);
+                    PSendPacketPool.AddLast(messageObject);
                 }
             }
 
@@ -740,10 +739,10 @@ namespace GameFrameX.Network.Runtime
                     }
 
 
-                    while (PSendPacketPool.Count > 0)
+                    while (PSendPacketPool.First !=null)
                     {
-                        var messageObject = PSendPacketPool.Dequeue();
-
+                        var messageObject = PSendPacketPool.First.Value;
+                        PSendPacketPool.RemoveFirst();
                         bool serializeResult = false;
                         try
                         {
