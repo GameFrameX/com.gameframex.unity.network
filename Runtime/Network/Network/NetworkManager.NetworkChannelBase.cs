@@ -625,6 +625,8 @@ namespace GameFrameX.Network.Runtime
                     {
                         PHeartBeatState.Reset(true);
                     }
+
+                    m_ExecutionMessageLinkedList.Clear();
                 }
             }
 
