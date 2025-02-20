@@ -46,7 +46,26 @@ namespace GameFrameX.Network.Runtime
                     return;
                 }
 
-                m_ConnectedEndPoint = new IPEndPoint(IPAddress.Parse(address.Host), address.Port);
+                if (IPAddress.TryParse(address.Host, out var ipAddress))
+                {
+                    m_ConnectedEndPoint = new IPEndPoint(ipAddress, address.Port);
+                }
+                else
+                {
+                    var ipHost = Utility.Net.GetHostIPv4(address.Host);
+                    if (IPAddress.TryParse(ipHost, out ipAddress))
+                    {
+                        m_ConnectedEndPoint = new IPEndPoint(ipAddress, address.Port);
+                    }
+                    else
+                    {
+                        // 获取IP失败
+                        Log.Error($"IP address is invalid.{address.Host}");
+                        Close();
+                        return;
+                    }
+                }
+
                 base.Connect(address, userData);
                 PSystemNetSocket = new SystemNetSocket(m_ConnectedEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 PSocket = PSystemNetSocket;

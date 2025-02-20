@@ -556,27 +556,53 @@ namespace GameFrameX.Network.Runtime
                     PSocket = null;
                 }
 
-                EndPoint endPoint = new IPEndPoint(IPAddress.Parse(address.Host), address.Port);
-                switch (endPoint.AddressFamily)
+                bool isVerify = true;
+                IPEndPoint endPoint = null;
+                if (IPAddress.TryParse(address.Host, out var ipAddress))
                 {
-                    case System.Net.Sockets.AddressFamily.InterNetwork:
-                        PAddressFamily = AddressFamily.IPv4;
-                        break;
-
-                    case System.Net.Sockets.AddressFamily.InterNetworkV6:
-                        PAddressFamily = AddressFamily.IPv6;
-                        break;
-
-                    default:
-                        string errorMessage = Utility.Text.Format("Not supported address family '{0}'.", endPoint.AddressFamily);
-                        if (NetworkChannelError != null)
-                        {
-                            NetworkChannelError(this, NetworkErrorCode.AddressFamilyError, SocketError.Success, errorMessage);
-                            return;
-                        }
-
-                        throw new GameFrameworkException(errorMessage);
+                    endPoint = new IPEndPoint(ipAddress, address.Port);
                 }
+                else
+                {
+                    var ipHost = Utility.Net.GetHostIPv4(address.Host);
+                    if (IPAddress.TryParse(ipHost, out ipAddress))
+                    {
+                        endPoint = new IPEndPoint(ipAddress, address.Port);
+                    }
+                    else
+                    {
+                        // 获取IP失败
+                        Log.Error($"IP address is invalid.{address.Host}");
+                        isVerify = false;
+                        Close();
+                        PSocket = null;
+                    }
+                }
+
+                if (isVerify)
+                {
+                    switch (endPoint.AddressFamily)
+                    {
+                        case System.Net.Sockets.AddressFamily.InterNetwork:
+                            PAddressFamily = AddressFamily.IPv4;
+                            break;
+
+                        case System.Net.Sockets.AddressFamily.InterNetworkV6:
+                            PAddressFamily = AddressFamily.IPv6;
+                            break;
+
+                        default:
+                            string errorMessage = Utility.Text.Format("Not supported address family '{0}'.", endPoint.AddressFamily);
+                            if (NetworkChannelError != null)
+                            {
+                                NetworkChannelError(this, NetworkErrorCode.AddressFamilyError, SocketError.Success, errorMessage);
+                                return;
+                            }
+
+                            throw new GameFrameworkException(errorMessage);
+                    }
+                }
+
 
                 PSendState.Reset();
                 PReceiveState.PrepareForPacketHeader();
