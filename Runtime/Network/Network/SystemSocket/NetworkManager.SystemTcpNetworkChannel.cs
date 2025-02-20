@@ -21,7 +21,6 @@ namespace GameFrameX.Network.Runtime
         private sealed class SystemTcpNetworkChannel : NetworkChannelBase
         {
             private ConnectState m_ConnectState = null;
-            private IPEndPoint m_ConnectedEndPoint = null;
             private SystemNetSocket PSystemNetSocket = null;
 
             /// <summary>
@@ -46,29 +45,13 @@ namespace GameFrameX.Network.Runtime
                     return;
                 }
 
-                if (IPAddress.TryParse(address.Host, out var ipAddress))
+                base.Connect(address, userData);
+                if (IsVerifyAddress)
                 {
-                    m_ConnectedEndPoint = new IPEndPoint(ipAddress, address.Port);
-                }
-                else
-                {
-                    var ipHost = Utility.Net.GetHostIPv4(address.Host);
-                    if (IPAddress.TryParse(ipHost, out ipAddress))
-                    {
-                        m_ConnectedEndPoint = new IPEndPoint(ipAddress, address.Port);
-                    }
-                    else
-                    {
-                        // 获取IP失败
-                        Log.Error($"IP address is invalid.{address.Host}");
-                        Close();
-                        return;
-                    }
+                    PSystemNetSocket = new SystemNetSocket(ConnectEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    PSocket = PSystemNetSocket;
                 }
 
-                base.Connect(address, userData);
-                PSystemNetSocket = new SystemNetSocket(m_ConnectedEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                PSocket = PSystemNetSocket;
                 if (PSocket == null)
                 {
                     string errorMessage = "Initialize network channel failure.";
@@ -337,7 +320,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     PIsConnecting = true;
                     m_ConnectState = new ConnectState(PSystemNetSocket, userData);
-                    ((SystemNetSocket)PSocket).BeginConnect(m_ConnectedEndPoint.Address, m_ConnectedEndPoint.Port, ConnectCallback, m_ConnectState);
+                    ((SystemNetSocket)PSocket).BeginConnect(ConnectEndPoint.Address, ConnectEndPoint.Port, ConnectCallback, m_ConnectState);
                 }
                 catch (Exception exception)
                 {

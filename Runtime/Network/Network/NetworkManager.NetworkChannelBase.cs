@@ -542,6 +542,9 @@ namespace GameFrameX.Network.Runtime
                 PRpcState.SetRPCEndHandler(handler);
             }
 
+            protected bool IsVerifyAddress = true;
+            protected IPEndPoint ConnectEndPoint;
+
             /// <summary>
             /// 连接到远程主机。
             /// </summary>
@@ -556,32 +559,42 @@ namespace GameFrameX.Network.Runtime
                     PSocket = null;
                 }
 
-                bool isVerify = true;
-                IPEndPoint endPoint = null;
+                IsVerifyAddress = true;
+                ConnectEndPoint = null;
                 if (IPAddress.TryParse(address.Host, out var ipAddress))
                 {
-                    endPoint = new IPEndPoint(ipAddress, address.Port);
+                    ConnectEndPoint = new IPEndPoint(ipAddress, address.Port);
                 }
                 else
                 {
-                    var ipHost = Utility.Net.GetHostIPv4(address.Host);
-                    if (IPAddress.TryParse(ipHost, out ipAddress))
+                    try
                     {
-                        endPoint = new IPEndPoint(ipAddress, address.Port);
+                        var ipHost = Utility.Net.GetHostIPv4(address.Host);
+                        if (IPAddress.TryParse(ipHost, out ipAddress))
+                        {
+                            ConnectEndPoint = new IPEndPoint(ipAddress, address.Port);
+                        }
+                        else
+                        {
+                            // 获取IP失败
+                            Log.Error($"IP address is invalid.{address.Host}");
+                            IsVerifyAddress = false;
+                            Close();
+                            PSocket = null;
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        // 获取IP失败
-                        Log.Error($"IP address is invalid.{address.Host}");
-                        isVerify = false;
+                        Log.Error($"IP address is invalid.{address.Host} {e.Message}");
+                        IsVerifyAddress = false;
                         Close();
                         PSocket = null;
                     }
                 }
 
-                if (isVerify)
+                if (IsVerifyAddress && ConnectEndPoint != null)
                 {
-                    switch (endPoint.AddressFamily)
+                    switch (ConnectEndPoint.AddressFamily)
                     {
                         case System.Net.Sockets.AddressFamily.InterNetwork:
                             PAddressFamily = AddressFamily.IPv4;
@@ -592,7 +605,7 @@ namespace GameFrameX.Network.Runtime
                             break;
 
                         default:
-                            string errorMessage = Utility.Text.Format("Not supported address family '{0}'.", endPoint.AddressFamily);
+                            string errorMessage = Utility.Text.Format("Not supported address family '{0}'.", ConnectEndPoint.AddressFamily);
                             if (NetworkChannelError != null)
                             {
                                 NetworkChannelError(this, NetworkErrorCode.AddressFamilyError, SocketError.Success, errorMessage);
