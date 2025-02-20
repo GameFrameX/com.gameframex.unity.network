@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using GameFrameX.Runtime;
 
@@ -544,12 +545,10 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 连接到远程主机。
             /// </summary>
-            /// <param name="ipAddress">远程主机的 IP 地址。</param>
-            /// <param name="port">远程主机的端口号。</param>
+            /// <param name="address">远程主机的地址。</param>
             /// <param name="userData">用户自定义数据。</param>
-            /// <param name="isSsl">是否加密</param>
             [UnityEngine.Scripting.Preserve]
-            public virtual void Connect(IPAddress ipAddress, int port, object userData = null, bool isSsl = false)
+            public virtual void Connect(Uri address, object userData = null)
             {
                 if (PSocket != null)
                 {
@@ -557,7 +556,8 @@ namespace GameFrameX.Network.Runtime
                     PSocket = null;
                 }
 
-                switch (ipAddress.AddressFamily)
+                EndPoint endPoint = new IPEndPoint(IPAddress.Parse(address.Host), address.Port);
+                switch (endPoint.AddressFamily)
                 {
                     case System.Net.Sockets.AddressFamily.InterNetwork:
                         PAddressFamily = AddressFamily.IPv4;
@@ -568,7 +568,7 @@ namespace GameFrameX.Network.Runtime
                         break;
 
                     default:
-                        string errorMessage = Utility.Text.Format("Not supported address family '{0}'.", ipAddress.AddressFamily);
+                        string errorMessage = Utility.Text.Format("Not supported address family '{0}'.", endPoint.AddressFamily);
                         if (NetworkChannelError != null)
                         {
                             NetworkChannelError(this, NetworkErrorCode.AddressFamilyError, SocketError.Success, errorMessage);

@@ -38,19 +38,18 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 连接到远程主机。
             /// </summary>
-            /// <param name="ipAddress">远程主机的 IP 地址。</param>
-            /// <param name="port">远程主机的端口号。</param>
+            /// <param name="address">远程主机的地址。</param>
             /// <param name="userData">用户自定义数据。</param>
             /// <param name="isSsl">是否是加密</param>
-            public override void Connect(IPAddress ipAddress, int port, object userData = null, bool isSsl = false)
+            public override void Connect(Uri address, object userData = null)
             {
                 if (PIsConnecting)
                 {
                     return;
                 }
 
-                base.Connect(ipAddress, port, userData, isSsl);
-                PSocket = new WebSocketNetSocket(ipAddress, port, isSsl, ReceiveCallback, CloseCallback);
+                base.Connect(address, userData);
+                PSocket = new WebSocketNetSocket(address.ToString(), ReceiveCallback, CloseCallback);
                 if (PSocket == null)
                 {
                     const string errorMessage = "Initialize network channel failure.";

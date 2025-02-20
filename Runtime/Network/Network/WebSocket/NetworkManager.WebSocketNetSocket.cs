@@ -15,11 +15,6 @@ namespace GameFrameX.Network.Runtime
             private readonly IWebSocket _client;
 
             /// <summary>
-            /// 是否是加密协议
-            /// </summary>
-            private readonly bool _isSSL = false;
-
-            /// <summary>
             /// 是否正在连接
             /// </summary>
             private bool _isConnecting = false;
@@ -28,10 +23,9 @@ namespace GameFrameX.Network.Runtime
             private Action<byte[]> _action;
             private Action<string> _onCloseAction;
 
-            public WebSocketNetSocket(IPAddress ipAddress, int port, bool isSSL, Action<byte[]> action, Action<string> onCloseAction)
+            public WebSocketNetSocket(string url, Action<byte[]> action, Action<string> onCloseAction)
             {
-                _isSSL = isSSL;
-                _client = new UnityWebSocket.WebSocket("ws://" + ipAddress + ":" + port + "/" + (_isSSL ? "wss" : "ws"));
+                _client = new UnityWebSocket.WebSocket(url);
                 _action = action;
                 _onCloseAction = onCloseAction;
                 _client.OnOpen += OnOpen;

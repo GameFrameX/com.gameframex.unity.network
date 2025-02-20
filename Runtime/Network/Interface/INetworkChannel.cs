@@ -177,11 +177,9 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 连接到远程主机。
         /// </summary>
-        /// <param name="ipAddress">远程主机的 IP 地址。</param>
-        /// <param name="port">远程主机的端口号。</param>
+        /// <param name="address">远程主机的地址。</param>
         /// <param name="userData">用户自定义数据。</param>
-        /// <param name="isSsl">是否是加密</param>
-        void Connect(IPAddress ipAddress, int port, object userData = null, bool isSsl = false);
+        void Connect(Uri address, object userData = null);
 
         /// <summary>
         /// 设置忽略指定的消息包的发送和接收ID列表
