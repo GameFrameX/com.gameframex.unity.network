@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0](https://github.com/GameFrameX/com.gameframex.unity.network/tree/2.3.0) (2025-02-20)
+
+[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/2.2.2...2.3.0)
+
+## [2.2.2](https://github.com/GameFrameX/com.gameframex.unity.network/tree/2.2.2) (2025-02-18)
+
+[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/2.2.1...2.2.2)
+
 ## [2.2.1](https://github.com/GameFrameX/com.gameframex.unity.network/tree/2.2.1) (2025-02-07)
 
 [Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/2.2.0...2.2.1)
