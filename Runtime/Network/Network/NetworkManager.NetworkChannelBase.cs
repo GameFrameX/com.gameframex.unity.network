@@ -22,7 +22,14 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         public abstract class NetworkChannelBase : INetworkChannel, IDisposable
         {
+            /// <summary>
+            /// 默认心跳间隔
+            /// </summary>
             private const float DefaultHeartBeatInterval = 30f;
+
+            /// <summary>
+            /// 默认心跳丢失断开次数
+            /// </summary>
             private const int DefaultMissHeartBeatCountByClose = 10;
 
             protected readonly GameFrameworkLinkedList<MessageObject> PSendPacketPool;
@@ -44,20 +51,57 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             protected int MissHeartBeatCountByClose;
 
+            /// <summary>
+            /// 发送消息ID忽略列表
+            /// </summary>
             protected List<int> IgnoreSendIds = new List<int>();
+
+            /// <summary>
+            /// 接收消息ID忽略列表
+            /// </summary>
             protected List<int> IgnoreReceiveIds = new List<int>();
 
+            /// <summary>
+            /// 网络Socket 对象
+            /// </summary>
             protected INetworkSocket PSocket;
+
             protected readonly SendState PSendState;
             protected readonly ReceiveState PReceiveState;
             protected readonly HeartBeatState PHeartBeatState;
             protected readonly RpcState PRpcState;
+
+            /// <summary>
+            /// 是否验证地址
+            /// </summary>
+            protected bool IsVerifyAddress = true;
+
+            /// <summary>
+            /// 链接目标地址
+            /// </summary>
+            protected IPEndPoint ConnectEndPoint;
+
+            /// <summary>
+            /// 发送数据包的数量
+            /// </summary>
             protected int PSentPacketCount;
+
+            /// <summary>
+            /// 接收数据包数量
+            /// </summary>
             protected int PReceivedPacketCount;
+
+            /// <summary>
+            /// 是否正在连接中
+            /// </summary>
             protected bool PIsConnecting = false;
+
             private bool m_Disposed;
             private bool m_PActive;
 
+            /// <summary>
+            /// 网络是否激活
+            /// </summary>
             protected bool PActive
             {
                 get { return m_PActive; }
@@ -113,7 +157,6 @@ namespace GameFrameX.Network.Runtime
                 PActive = false;
                 PIsConnecting = false;
                 m_Disposed = false;
-
                 NetworkChannelConnected = null;
                 NetworkChannelClosed = null;
                 NetworkChannelMissHeartBeat = null;
@@ -314,7 +357,7 @@ namespace GameFrameX.Network.Runtime
             }
 
             /// <summary>
-            /// 
+            /// 处理接收到的消息
             /// </summary>
             private void ProcessReceivedMessage()
             {
@@ -541,8 +584,6 @@ namespace GameFrameX.Network.Runtime
                 PRpcState.SetRPCEndHandler(handler);
             }
 
-            protected bool IsVerifyAddress = true;
-            protected IPEndPoint ConnectEndPoint;
 
             /// <summary>
             /// 连接到远程主机。
@@ -647,7 +688,6 @@ namespace GameFrameX.Network.Runtime
                     {
                         PSocket.Close();
                         PSocket = null;
-
                         NetworkChannelClosed?.Invoke(this);
                     }
 
