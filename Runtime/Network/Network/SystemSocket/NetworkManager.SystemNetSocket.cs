@@ -21,6 +21,8 @@ namespace GameFrameX.Network.Runtime
                 get { return m_Socket.Connected; }
             }
 
+            public bool IsClosed { get; private set; }
+
             public Socket Socket
             {
                 get { return m_Socket; }
@@ -71,12 +73,24 @@ namespace GameFrameX.Network.Runtime
 
             public void Shutdown()
             {
+                if (IsClosed)
+                {
+                    return;
+                }
+
                 m_Socket.Shutdown(SocketShutdown.Both);
             }
 
             public void Close()
             {
+                if (IsClosed)
+                {
+                    return;
+                }
+
                 m_Socket.Close();
+                m_Socket.Dispose();
+                IsClosed = true;
             }
 
 

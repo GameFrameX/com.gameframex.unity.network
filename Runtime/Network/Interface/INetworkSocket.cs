@@ -14,6 +14,11 @@ namespace GameFrameX.Network.Runtime
         bool IsConnected { get; }
 
         /// <summary>
+        /// 获取是否已关闭。
+        /// </summary>
+        bool IsClosed { get; }
+
+        /// <summary>
         /// 获取本地终结点。
         /// </summary>
         EndPoint LocalEndPoint { get; }

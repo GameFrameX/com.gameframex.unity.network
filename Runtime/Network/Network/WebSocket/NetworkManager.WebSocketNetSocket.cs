@@ -20,8 +20,8 @@ namespace GameFrameX.Network.Runtime
             private bool _isConnecting = false;
 
             TaskCompletionSource<bool> _connectTask = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            private Action<byte[]> _action;
-            private Action<string> _onCloseAction;
+            private readonly Action<byte[]> _action;
+            private readonly Action<string> _onCloseAction;
 
             public WebSocketNetSocket(string url, Action<byte[]> action, Action<string> onCloseAction)
             {
@@ -88,6 +88,8 @@ namespace GameFrameX.Network.Runtime
                 get { return _client.IsConnected; }
             }
 
+            public bool IsClosed { get; private set; }
+
             public EndPoint LocalEndPoint
             {
                 get { return null; }
@@ -103,12 +105,23 @@ namespace GameFrameX.Network.Runtime
 
             public void Shutdown()
             {
+                if (IsClosed)
+                {
+                    return;
+                }
+
                 _client.CloseAsync();
             }
 
             public void Close()
             {
+                if (IsClosed)
+                {
+                    return;
+                }
+
                 _client.CloseAsync();
+                IsClosed = true;
             }
         }
     }
