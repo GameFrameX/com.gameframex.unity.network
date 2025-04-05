@@ -100,18 +100,18 @@ namespace GameFrameX.Network.Runtime
                 }
             }
 
-            Event.Subscribe(NetworkConnectedEventArgs.EventId, OnNetConnected);
-            Event.Subscribe(NetworkClosedEventArgs.EventId, OnNetClosed);
-            Event.Subscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetMissHeartBeat);
-            Event.Subscribe(NetworkErrorEventArgs.EventId, OnNetError);
+            Event.CheckSubscribe(NetworkConnectedEventArgs.EventId, OnNetworkConnectedEventArgs);
+            Event.CheckSubscribe(NetworkClosedEventArgs.EventId, OnNetworkClosedEventArgs);
+            Event.CheckSubscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetworkMissHeartBeatEventArgs);
+            Event.CheckSubscribe(NetworkErrorEventArgs.EventId, OnNetworkErrorEventArgs);
         }
 
         public void Shutdown()
         {
-            Event.Unsubscribe(NetworkConnectedEventArgs.EventId, OnNetConnected);
-            Event.Unsubscribe(NetworkClosedEventArgs.EventId, OnNetClosed);
-            Event.Unsubscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetMissHeartBeat);
-            Event.Unsubscribe(NetworkErrorEventArgs.EventId, OnNetError);
+            Event.Unsubscribe(NetworkConnectedEventArgs.EventId, OnNetworkConnectedEventArgs);
+            Event.Unsubscribe(NetworkClosedEventArgs.EventId, OnNetworkClosedEventArgs);
+            Event.Unsubscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetworkMissHeartBeatEventArgs);
+            Event.Unsubscribe(NetworkErrorEventArgs.EventId, OnNetworkErrorEventArgs);
             m_NetworkChannel = null;
         }
 
@@ -169,7 +169,7 @@ namespace GameFrameX.Network.Runtime
             m_NetworkChannel = null;
         }
 
-        private void OnNetConnected(object sender, GameEventArgs e)
+        private void OnNetworkConnectedEventArgs(object sender, GameEventArgs e)
         {
             if (!(e is NetworkConnectedEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
             {
@@ -179,7 +179,7 @@ namespace GameFrameX.Network.Runtime
             Log.Debug($"网络连接成功......{ne.NetworkChannel.Name}");
         }
 
-        private void OnNetClosed(object sender, GameEventArgs e)
+        private void OnNetworkClosedEventArgs(object sender, GameEventArgs e)
         {
             if (!(e is NetworkClosedEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
             {
@@ -189,7 +189,7 @@ namespace GameFrameX.Network.Runtime
             Log.Debug($"网络连接关闭......{ne.NetworkChannel.Name}");
         }
 
-        private void OnNetMissHeartBeat(object sender, GameEventArgs e)
+        private void OnNetworkMissHeartBeatEventArgs(object sender, GameEventArgs e)
         {
             if (!(e is NetworkMissHeartBeatEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
             {
@@ -199,7 +199,7 @@ namespace GameFrameX.Network.Runtime
             Log.Warning(Utility.Text.Format("Network channel '{0}' miss heart beat '{1}' times.", ne.NetworkChannel.Name, ne.MissCount));
         }
 
-        private void OnNetError(object sender, GameEventArgs e)
+        private void OnNetworkErrorEventArgs(object sender, GameEventArgs e)
         {
             if (!(e is NetworkErrorEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
             {
