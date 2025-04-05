@@ -157,6 +157,12 @@ namespace GameFrameX.Network.Runtime
         void RegisterHandler(IPacketHeartBeatHandler handler);
 
         /// <summary>
+        /// 设置RPC 的 ErrorCode 不为 0 的时候的处理函数
+        /// </summary>
+        /// <param name="handler"></param>
+        void SetRPCErrorCodeHandler(EventHandler<MessageObject> handler);
+
+        /// <summary>
         /// 设置RPC错误的处理函数
         /// </summary>
         /// <param name="handler"></param>

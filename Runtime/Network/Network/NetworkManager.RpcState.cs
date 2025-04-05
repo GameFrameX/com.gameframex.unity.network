@@ -30,6 +30,7 @@ namespace GameFrameX.Network.Runtime
             private EventHandler<MessageObject> _rpcStartHandler;
             private EventHandler<MessageObject> _rpcEndHandler;
             private EventHandler<MessageObject> _rpcErrorHandler;
+            private EventHandler<MessageObject> _rpcErrorCodeHandler;
             private readonly int _rpcTimeout;
             private bool _disposed;
 
@@ -69,8 +70,13 @@ namespace GameFrameX.Network.Runtime
                     {
                         try
                         {
-                            messageActorObject.Reply(message as IResponseMessage);
+                            var responseMessage = message as IResponseMessage;
+                            messageActorObject.Reply(responseMessage);
                             _rpcEndHandler?.Invoke(this, message);
+                            if (responseMessage?.ErrorCode != default)
+                            {
+                                _rpcErrorCodeHandler?.Invoke(this, message);
+                            }
                         }
                         catch (Exception e)
                         {
@@ -150,6 +156,17 @@ namespace GameFrameX.Network.Runtime
 
                     _removeReplyHandlingObjectIds.Clear();
                 }
+            }
+
+            /// <summary>
+            /// 设置RPC错误Code的处理函数
+            /// </summary>
+            /// <param name="handler">处理函数</param>
+            [UnityEngine.Scripting.Preserve]
+            public void SetRPCErrorCodeHandler(EventHandler<MessageObject> handler)
+            {
+                GameFrameworkGuard.NotNull(handler, nameof(handler));
+                _rpcErrorCodeHandler = handler;
             }
 
             /// <summary>

@@ -552,6 +552,17 @@ namespace GameFrameX.Network.Runtime
             }
 
             /// <summary>
+            /// 设置RPC 的 ErrorCode 不为 0 的时候的处理函数
+            /// </summary>
+            /// <param name="handler"></param>
+            [UnityEngine.Scripting.Preserve]
+            public void SetRPCErrorCodeHandler(EventHandler<MessageObject> handler)
+            {
+                GameFrameworkGuard.NotNull(handler, nameof(handler));
+                PRpcState.SetRPCErrorCodeHandler(handler);
+            }
+
+            /// <summary>
             /// 设置RPC错误的处理函数
             /// </summary>
             /// <param name="handler"></param>
