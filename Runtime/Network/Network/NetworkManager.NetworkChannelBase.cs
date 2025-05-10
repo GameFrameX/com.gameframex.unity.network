@@ -715,6 +715,7 @@ namespace GameFrameX.Network.Runtime
                         PHeartBeatState.Reset(true);
                     }
 
+                    PRpcState.Dispose();
                     m_ExecutionMessageLinkedList.Clear();
                 }
             }
