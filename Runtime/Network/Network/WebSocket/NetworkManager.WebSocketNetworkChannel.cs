@@ -40,7 +40,6 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="address">远程主机的地址。</param>
             /// <param name="userData">用户自定义数据。</param>
-            /// <param name="isSsl">是否是加密</param>
             public override void Connect(Uri address, object userData = null)
             {
                 if (PIsConnecting)
