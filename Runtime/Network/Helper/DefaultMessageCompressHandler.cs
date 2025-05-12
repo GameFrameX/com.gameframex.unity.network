@@ -26,12 +26,18 @@ namespace GameFrameX.Network.Runtime
         /// <returns></returns>
         static byte[] Compress(byte[] bytes)
         {
-            var uncompressed = new MemoryStream(bytes);
-            var compressed = new MemoryStream();
-            var deflateStream = new DeflateStream(compressed, CompressionMode.Compress);
-            uncompressed.CopyTo(deflateStream);
-            deflateStream.Close();
-            return compressed.ToArray();
+            using (var uncompressed = new MemoryStream(bytes))
+            {
+                using (var compressed = new MemoryStream())
+                {
+                    using (var gZipStream = new GZipStream(compressed, CompressionMode.Compress, true))
+                    {
+                        uncompressed.CopyTo(gZipStream);
+                    }
+
+                    return compressed.ToArray();
+                }
+            }
         }
     }
 }
