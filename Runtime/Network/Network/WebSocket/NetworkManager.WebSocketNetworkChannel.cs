@@ -275,7 +275,7 @@ namespace GameFrameX.Network.Runtime
                         {
                             // 解压
                             GameFrameworkGuard.NotNull(MessageDecompressHandler, nameof(MessageDecompressHandler));
-                            body = MessageDecompressHandler.Handler(buffer);
+                            body = MessageDecompressHandler.Handler(body);
                         }
 
                         // 反序列化数据
