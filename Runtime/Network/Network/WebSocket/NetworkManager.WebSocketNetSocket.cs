@@ -20,13 +20,13 @@ namespace GameFrameX.Network.Runtime
             private bool _isConnecting = false;
 
             TaskCompletionSource<bool> _connectTask = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            private readonly Action<byte[]> _action;
+            private readonly Action<byte[]> _onReceiveAction;
             private readonly Action<string> _onCloseAction;
 
-            public WebSocketNetSocket(string url, Action<byte[]> action, Action<string> onCloseAction)
+            public WebSocketNetSocket(string url, Action<byte[]> onReceiveAction, Action<string> onCloseAction)
             {
                 _client = new UnityWebSocket.WebSocket(url);
-                _action = action;
+                _onReceiveAction = onReceiveAction;
                 _onCloseAction = onCloseAction;
                 _client.OnOpen += OnOpen;
                 _client.OnError += OnError;
@@ -38,7 +38,7 @@ namespace GameFrameX.Network.Runtime
             {
                 if (e.IsBinary)
                 {
-                    _action.Invoke(e.RawData);
+                    _onReceiveAction.Invoke(e.RawData);
                 }
             }
 
