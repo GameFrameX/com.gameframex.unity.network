@@ -45,7 +45,6 @@ namespace GameFrameX.Network.Runtime
             private void OnClose(object sender, CloseEventArgs e)
             {
                 _onCloseAction?.Invoke(e.Reason + " " + e.Code);
-                Log.Error(e.Code + " " + e.Reason);
             }
 
             private void OnError(object sender, ErrorEventArgs e)
