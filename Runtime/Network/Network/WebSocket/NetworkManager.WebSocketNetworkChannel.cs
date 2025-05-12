@@ -67,8 +67,7 @@ namespace GameFrameX.Network.Runtime
 
             private void CloseCallback(string errorMessage)
             {
-                NetworkChannelClosed?.Invoke(this);
-                NetworkChannelError?.Invoke(this, NetworkErrorCode.SocketError, SocketError.SocketError, errorMessage);
+                Close();
             }
 
             public override void Close()
