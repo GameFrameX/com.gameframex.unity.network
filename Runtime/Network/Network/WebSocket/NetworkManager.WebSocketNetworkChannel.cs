@@ -307,7 +307,7 @@ namespace GameFrameX.Network.Runtime
                 }
                 catch (Exception e)
                 {
-                    NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid." + e.Message);
+                    NetworkChannelError?.Invoke(this, NetworkErrorCode.DeserializePacketError, SocketError.Success, "Packet body is invalid." + e.Message + "\n" + e.StackTrace);
                 }
             }
         }
