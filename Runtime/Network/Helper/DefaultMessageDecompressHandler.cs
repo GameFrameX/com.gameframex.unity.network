@@ -1,5 +1,6 @@
-﻿using System.IO;
-using System.IO.Compression;
+﻿using System.Buffers;
+using System.IO;
+using ICSharpCode.SharpZipLib.GZip;
 
 namespace GameFrameX.Network.Runtime
 {
@@ -26,18 +27,29 @@ namespace GameFrameX.Network.Runtime
         /// <returns></returns>
         static byte[] Decompress(byte[] bytes)
         {
-            using (var compressed = new MemoryStream(bytes))
+            using (var compressedStream = new MemoryStream(bytes))
             {
-                using (var decompressed = new MemoryStream())
+                using (var gZipInputStream = new GZipInputStream(compressedStream))
                 {
-                    // 注意： 这里第一个参数同样是填写压缩的数据，但是这次是作为输入的数据
-                    using (var gZipStream = new GZipStream(compressed, CompressionMode.Decompress))
+                    using (var decompressedStream = new MemoryStream())
                     {
-                        gZipStream.CopyTo(decompressed);
-                    }
+                        var buffer = ArrayPool<byte>.Shared.Rent(8192);
+                        try
+                        {
+                            int count;
+                            while ((count = gZipInputStream.Read(buffer, 0, buffer.Length)) != 0)
+                            {
+                                decompressedStream.Write(buffer, 0, count);
+                            }
+                        }
+                        finally
+                        {
+                            ArrayPool<byte>.Shared.Return(buffer);
+                        }
 
-                    var result = decompressed.ToArray();
-                    return result;
+                        var array = decompressedStream.ToArray();
+                        return array;
+                    }
                 }
             }
         }
