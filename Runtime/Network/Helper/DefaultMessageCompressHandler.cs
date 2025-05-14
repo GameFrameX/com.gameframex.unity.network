@@ -1,5 +1,4 @@
-﻿using System.IO;
-using ICSharpCode.SharpZipLib.GZip;
+﻿using GameFrameX.Runtime;
 
 namespace GameFrameX.Network.Runtime
 {
@@ -16,25 +15,7 @@ namespace GameFrameX.Network.Runtime
         /// <returns></returns>
         public byte[] Handler(byte[] message)
         {
-            return Compress(message);
-        }
-
-        /// <summary>
-        /// 压缩数据。
-        /// </summary>
-        /// <param name="inputBytes"></param>
-        /// <returns></returns>
-        static byte[] Compress(byte[] inputBytes)
-        {
-            using (var compressStream = new MemoryStream())
-            {
-                using (var gZipOutputStream = new GZipOutputStream(compressStream))
-                {
-                    gZipOutputStream.Write(inputBytes, 0, inputBytes.Length);
-                    var press = compressStream.ToArray();
-                    return press;
-                }
-            }
+            return ZipHelper.Compress(message);
         }
     }
 }
