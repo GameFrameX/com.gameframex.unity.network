@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.3.3](https://github.com/GameFrameX/com.gameframex.unity.network/tree/2.3.3) (2025-05-19)
+
+[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/2.3.2...2.3.3)
+
 ## [2.3.2](https://github.com/GameFrameX/com.gameframex.unity.network/tree/2.3.2) (2025-05-13)
 
 [Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/2.3.1...2.3.2)
