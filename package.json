@@ -3,7 +3,7 @@
   "displayName": "Game Frame X Network",
   "category": "Game Framework X",
   "description": "独立游戏前后端一体化解决方案,独立游戏开发者的圆梦大使。\n文档地址: https://gameframex.doc.alianblank.com \n Game Frame X Network组件 - Unity网络功能包，提供网络功能，使网络功能的使用更加简单高效。",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "unity": "2019.4",
   "keywords": [
     "Game Framework X"
