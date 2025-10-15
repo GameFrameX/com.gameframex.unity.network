@@ -12,7 +12,7 @@ namespace GameFrameX.Network.Runtime
 #if ENABLE_GAME_FRAME_X_PROTOBUF
     [ProtoContract]
 #endif
-    public class MessageObject
+    public class MessageObject : IReference
     {
         /// <summary>
         /// 消息唯一编号
@@ -44,6 +44,13 @@ namespace GameFrameX.Network.Runtime
         public override string ToString()
         {
             return Utility.Json.ToJson(this);
+        }
+
+        /// <summary>
+        /// 清理引用。
+        /// </summary>
+        public virtual void Clear()
+        {
         }
     }
 }
