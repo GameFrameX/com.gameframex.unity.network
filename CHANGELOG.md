@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.4.0](https://github.com/GameFrameX/com.gameframex.unity.network/tree/2.4.0) (2025-10-15)
+
+[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/2.3.4...2.4.0)
+
 ## [2.3.4](https://github.com/GameFrameX/com.gameframex.unity.network/tree/2.3.4) (2025-05-31)
 
 [Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/2.3.3...2.3.4)
@@ -114,19 +118,19 @@
 
 ## [1.0.4](https://github.com/GameFrameX/com.gameframex.unity.network/tree/1.0.4) (2024-06-19)
 
-[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/v1.0.3...1.0.4)
+[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/1.0.3...1.0.4)
 
-## [v1.0.3](https://github.com/GameFrameX/com.gameframex.unity.network/tree/v1.0.3) (2024-05-26)
+## [1.0.3](https://github.com/GameFrameX/com.gameframex.unity.network/tree/1.0.3) (2024-05-26)
 
-[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/v1.0.2...v1.0.3)
+[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/1.0.2...1.0.3)
 
-## [v1.0.2](https://github.com/GameFrameX/com.gameframex.unity.network/tree/v1.0.2) (2024-05-25)
+## [1.0.2](https://github.com/GameFrameX/com.gameframex.unity.network/tree/1.0.2) (2024-05-25)
 
-[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/v1.0.1...v1.0.2)
+[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/1.0.1...1.0.2)
 
-## [v1.0.1](https://github.com/GameFrameX/com.gameframex.unity.network/tree/v1.0.1) (2024-05-20)
+## [1.0.1](https://github.com/GameFrameX/com.gameframex.unity.network/tree/1.0.1) (2024-05-20)
 
-[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/1.0.0...v1.0.1)
+[Full Changelog](https://github.com/GameFrameX/com.gameframex.unity.network/compare/1.0.0...1.0.1)
 
 ## [1.0.0](https://github.com/GameFrameX/com.gameframex.unity.network/tree/1.0.0) (2024-04-10)
 
