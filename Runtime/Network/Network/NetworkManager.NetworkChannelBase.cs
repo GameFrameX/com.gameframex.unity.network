@@ -834,6 +834,7 @@ namespace GameFrameX.Network.Runtime
                     throw new InvalidOperationException(errorMessage);
                 }
 
+                ReferencePool.Release(messageObject);
                 return serializeResult;
             }
 
