@@ -859,8 +859,8 @@ namespace GameFrameX.Network.Runtime
                         bool serializeResult;
                         try
                         {
-                            serializeResult = ProcessSendMessage(messageObject);
                             DebugSendLog(messageObject);
+                            serializeResult = ProcessSendMessage(messageObject);
                         }
                         catch (Exception exception)
                         {
