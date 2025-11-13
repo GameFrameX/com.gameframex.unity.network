@@ -127,35 +127,39 @@ namespace GameFrameX.Network.Runtime
             {
                 if (_waitingReplyHandlingObjects.Count > 0)
                 {
-                    var elapseSecondsTime = (long)(elapseSeconds * 1000);
+                    var elapseSecondsTime = (long)(realElapseSeconds * 1000);
                     _removeReplyHandlingObjectIds.Clear();
                     foreach (var handlingObject in _waitingReplyHandlingObjects)
                     {
                         bool isTimeout = handlingObject.Value.IncrementalElapseTime(elapseSecondsTime);
-                        if (isTimeout)
+                        if (!isTimeout)
                         {
-                            _removeReplyHandlingObjectIds.Add(handlingObject.Key);
-                            try
-                            {
-                                _rpcErrorHandler?.Invoke(this, handlingObject.Value.RequestMessage as MessageObject);
-                            }
-                            catch (Exception e)
-                            {
-                                Log.Fatal(e);
-                            }
+                            continue;
+                        }
+
+                        _removeReplyHandlingObjectIds.Add(handlingObject.Key);
+                        try
+                        {
+                            _rpcErrorHandler?.Invoke(this, handlingObject.Value.RequestMessage as MessageObject);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Fatal(e);
                         }
                     }
                 }
 
-                if (_removeReplyHandlingObjectIds.Count > 0)
+                if (_removeReplyHandlingObjectIds.Count <= 0)
                 {
-                    foreach (var objectId in _removeReplyHandlingObjectIds)
-                    {
-                        _waitingReplyHandlingObjects.TryRemove(objectId, out _);
-                    }
-
-                    _removeReplyHandlingObjectIds.Clear();
+                    return;
                 }
+
+                foreach (var objectId in _removeReplyHandlingObjectIds)
+                {
+                    _waitingReplyHandlingObjects.TryRemove(objectId, out _);
+                }
+
+                _removeReplyHandlingObjectIds.Clear();
             }
 
             /// <summary>
