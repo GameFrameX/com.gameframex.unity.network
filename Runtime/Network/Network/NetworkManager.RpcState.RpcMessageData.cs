@@ -61,7 +61,7 @@ namespace GameFrameX.Network.Runtime
                     ElapseTime += time;
                     if (ElapseTime >= Timeout)
                     {
-                        m_Tcs.TrySetException(new TimeoutException("Rpc call timeout! Message is :" + RequestMessage));
+                        m_Tcs.TrySetException(new TimeoutException($"Rpc call timeout! Message FullName:{RequestMessage.GetType().FullName} is :{RequestMessage}"));
                         return true;
                     }
 
