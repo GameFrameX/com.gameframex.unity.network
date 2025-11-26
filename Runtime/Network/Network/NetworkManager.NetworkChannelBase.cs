@@ -930,9 +930,10 @@ namespace GameFrameX.Network.Runtime
             protected void DebugSendLog(MessageObject messageObject)
             {
 #if ENABLE_GAMEFRAMEX_NETWORK_SEND_LOG
-                if (!IgnoreSendIds.Contains(PacketSendHeaderHandler.Id))
+                var messageId = ProtoMessageIdHandler.GetReqMessageIdByType(messageObject.GetType());
+                if (!IgnoreSendIds.Contains(messageId))
                 {
-                    Log.Debug($"发送消息 ID:[{PacketSendHeaderHandler.Id},{messageObject.UniqueId},{messageObject.GetType().Name}] 消息内容:{Utility.Json.ToJson(messageObject)}");
+                    Log.Debug($"发送消息 ID:[{messageId},{messageObject.UniqueId},{messageObject.GetType().Name}] 消息内容:{Utility.Json.ToJson(messageObject)}");
                 }
 #endif
             }
@@ -940,9 +941,10 @@ namespace GameFrameX.Network.Runtime
             protected void DebugReceiveLog(MessageObject messageObject)
             {
 #if ENABLE_GAMEFRAMEX_NETWORK_RECEIVE_LOG
-                if (!IgnoreReceiveIds.Contains(PacketReceiveHeaderHandler.Id))
+                var messageId = ProtoMessageIdHandler.GetReqMessageIdByType(messageObject.GetType());
+                if (!IgnoreReceiveIds.Contains(messageId))
                 {
-                    Log.Debug($"收到消息 ID:[{PacketReceiveHeaderHandler.Id},{messageObject.UniqueId},{messageObject.GetType().Name}] 消息内容:{Utility.Json.ToJson(messageObject)}");
+                    Log.Debug($"收到消息 ID:[{messageId},{messageObject.UniqueId},{messageObject.GetType().Name}] 消息内容:{Utility.Json.ToJson(messageObject)}");
                 }
 #endif
             }
