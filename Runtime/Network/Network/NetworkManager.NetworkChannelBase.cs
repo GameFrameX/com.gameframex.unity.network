@@ -418,6 +418,7 @@ namespace GameFrameX.Network.Runtime
                     }
                     finally
                     {
+                        ReferencePool.Release(messageObject);
                         m_ExecutionMessageLinkedList.RemoveFirst();
                     }
                 }
