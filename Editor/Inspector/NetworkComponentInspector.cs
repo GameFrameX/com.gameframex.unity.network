@@ -43,10 +43,12 @@ namespace GameFrameX.Network.Editor
         private SerializedProperty m_IgnoredSendNetworkIds;
         private SerializedProperty m_IgnoredReceiveNetworkIds;
         private SerializedProperty m_rpcTimeout;
+        private SerializedProperty m_FocusHeartbeat;
 
         private readonly GUIContent m_IgnoredSendNetworkIdsGUIContent = new GUIContent("Ignore Log Printing For Sent Message IDs");
         private readonly GUIContent m_IgnoredReceiveNetworkIdsGUIContent = new GUIContent("Ignore Log Printing Of Received Message IDs");
         private readonly GUIContent m_rpcTimeoutGUIContent = new GUIContent("RPC Timeout Time In Milliseconds");
+        private readonly GUIContent m_FocusHeartbeatGUIContent = new GUIContent("Focus Send Heartbeat");
 
         public override void OnInspectorGUI()
         {
@@ -56,6 +58,7 @@ namespace GameFrameX.Network.Editor
             {
                 GUI.enabled = !EditorApplication.isPlaying;
                 EditorGUILayout.IntSlider(m_rpcTimeout, 3000, 50000, m_rpcTimeoutGUIContent);
+                EditorGUILayout.PropertyField(m_FocusHeartbeat, m_FocusHeartbeatGUIContent);
                 EditorGUILayout.PropertyField(m_IgnoredSendNetworkIds, m_IgnoredSendNetworkIdsGUIContent);
                 EditorGUILayout.PropertyField(m_IgnoredReceiveNetworkIds, m_IgnoredReceiveNetworkIdsGUIContent);
                 GUI.enabled = false;
@@ -121,6 +124,7 @@ namespace GameFrameX.Network.Editor
             m_IgnoredSendNetworkIds = serializedObject.FindProperty("m_IgnoredSendNetworkIds");
             m_IgnoredReceiveNetworkIds = serializedObject.FindProperty("m_IgnoredReceiveNetworkIds");
             m_rpcTimeout = serializedObject.FindProperty("m_rpcTimeout");
+            m_FocusHeartbeat = serializedObject.FindProperty("m_FocusHeartbeat");
         }
     }
 }

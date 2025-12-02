@@ -63,11 +63,32 @@ namespace GameFrameX.Network.Runtime
         [SerializeField] private int m_rpcTimeout = 5000;
 
         /// <summary>
+        /// 是否在应用程序获得焦点时发送心跳包,默认为true
+        /// </summary>
+        [SerializeField] private bool m_FocusHeartbeat = true;
+
+        /// <summary>
         /// 获取网络频道数量。
         /// </summary>
         public int NetworkChannelCount
         {
             get { return m_NetworkManager.NetworkChannelCount; }
+        }
+
+        /// <summary>
+        /// 是否正在游戏中。
+        /// </summary>
+        private bool _isGaming = true;
+
+        /// <summary>
+        /// 应用程序获得或失去焦点时调用。
+        /// </summary>
+        /// <param name="hasFocus">应用程序是否获得焦点。</param>
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            _isGaming = hasFocus;
+            m_NetworkManager.SetFocusHeartbeat(hasFocus);
+            Log.Info($"SetFocusHeartbeat: {hasFocus}");
         }
 
         /// <summary>

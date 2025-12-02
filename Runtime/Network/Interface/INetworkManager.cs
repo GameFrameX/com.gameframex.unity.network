@@ -105,5 +105,11 @@ namespace GameFrameX.Network.Runtime
         /// <param name="channelName">网络频道名称。</param>
         /// <returns>是否销毁网络频道成功。</returns>
         bool DestroyNetworkChannel(string channelName);
+
+        /// <summary>
+        /// 设置是否在应用程序获得焦点时发送心跳包。
+        /// </summary>
+        /// <param name="hasFocus">是否在应用程序获得焦点时发送心跳包。</param>
+        void SetFocusHeartbeat(bool hasFocus);
     }
 }

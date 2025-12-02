@@ -116,6 +116,11 @@ namespace GameFrameX.Network.Runtime
             protected int PReceivedPacketCount;
 
             /// <summary>
+            /// 是否在应用程序获得焦点时发送心跳包
+            /// </summary>
+            protected bool PFocusHeartbeat;
+
+            /// <summary>
             /// 是否正在连接中
             /// </summary>
             protected bool PIsConnecting = false;
@@ -179,6 +184,7 @@ namespace GameFrameX.Network.Runtime
                 PSentPacketCount = 0;
                 PReceivedPacketCount = 0;
                 PActive = false;
+                PFocusHeartbeat = true;
                 PIsConnecting = false;
                 m_Disposed = false;
                 NetworkChannelConnected = null;
@@ -449,15 +455,18 @@ namespace GameFrameX.Network.Runtime
                             PHeartBeatState.MissHeartBeatCount++;
                         }
 
-                        if (sendHeartBeat && PNetworkChannelHelper.SendHeartBeat())
+                        if (sendHeartBeat && PFocusHeartbeat)
                         {
-                            if (missHeartBeatCount > 0 && NetworkChannelMissHeartBeat != null)
+                            if (PNetworkChannelHelper.SendHeartBeat())
                             {
-                                NetworkChannelMissHeartBeat(this, missHeartBeatCount);
-                            }
+                                if (missHeartBeatCount > 0 && NetworkChannelMissHeartBeat != null)
+                                {
+                                    NetworkChannelMissHeartBeat(this, missHeartBeatCount);
+                                }
 
-                            // PHeartBeatState.Reset(this.ResetHeartBeatElapseSecondsWhenReceivePacket);
-                            return;
+                                // PHeartBeatState.Reset(this.ResetHeartBeatElapseSecondsWhenReceivePacket);
+                                return;
+                            }
                         }
 
                         if (PHeartBeatState.MissHeartBeatCount > MissHeartBeatCountByClose)
@@ -966,6 +975,11 @@ namespace GameFrameX.Network.Runtime
             {
                 IgnoreSendIds = sendIds;
                 IgnoreReceiveIds = receiveIds;
+            }
+
+            public void SetFocusHeartbeat(bool hasFocus)
+            {
+                PFocusHeartbeat = hasFocus;
             }
         }
     }

@@ -246,6 +246,14 @@ namespace GameFrameX.Network.Runtime
             return false;
         }
 
+        public void SetFocusHeartbeat(bool hasFocus)
+        {
+            foreach (var networkChannel in m_NetworkChannels.Values)
+            {
+                networkChannel.SetFocusHeartbeat(hasFocus);
+            }
+        }
+
         private void OnNetworkChannelConnected(NetworkChannelBase networkChannel, object userData)
         {
             if (m_NetworkConnectedEventHandler != null)
