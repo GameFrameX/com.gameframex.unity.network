@@ -376,7 +376,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     SocketException socketException = exception as SocketException;
                     NetworkChannelError?.Invoke(this, NetworkErrorCode.ConnectError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
-                    Close();
+                    Close(NetworkCloseReason.ConnectClose, (ushort)(socketException?.SocketErrorCode ?? SocketError.Success));
                     return;
                 }
 

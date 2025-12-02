@@ -769,11 +769,6 @@ namespace GameFrameX.Network.Runtime
                 return result as TResult;
             }
 
-            public void Close()
-            {
-                throw new NotImplementedException();
-            }
-
             /// <summary>
             /// 向远程主机发送消息包。
             /// </summary>
