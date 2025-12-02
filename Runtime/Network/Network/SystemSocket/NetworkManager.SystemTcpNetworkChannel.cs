@@ -156,7 +156,7 @@ namespace GameFrameX.Network.Runtime
 
                 if (bytesReceived <= 0)
                 {
-                    Close();
+                    Close("Receive error.", (ushort)NetworkErrorCode.ReceiveError);
                     return;
                 }
 

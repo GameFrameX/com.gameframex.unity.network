@@ -165,7 +165,7 @@ namespace GameFrameX.Network.Runtime
 
         public void Clear()
         {
-            m_NetworkChannel?.Close();
+            m_NetworkChannel?.Close(NetworkCloseReason.Dispose, (ushort)NetworkErrorCode.DisposeError);
             m_NetworkChannel = null;
         }
 
@@ -186,7 +186,7 @@ namespace GameFrameX.Network.Runtime
                 return;
             }
 
-            Log.Debug($"网络连接关闭......{ne.NetworkChannel.Name}");
+            Log.Debug($"网络连接关闭......{ne.NetworkChannel.Name}, 关闭原因: {ne.Reason}, 错误码: {ne.ErrorCode}");
         }
 
         private void OnNetworkMissHeartBeatEventArgs(object sender, GameEventArgs e)
@@ -207,7 +207,7 @@ namespace GameFrameX.Network.Runtime
             }
 
             Log.Error(Utility.Text.Format("Network channel '{0}' error, error code is '{1}', error message is '{2}'.", ne.NetworkChannel.Name, ne.ErrorCode, ne.ErrorMessage));
-            ne.NetworkChannel.Close();
+            ne.NetworkChannel.Close(ne.ErrorMessage, (ushort)ne.ErrorCode);
         }
     }
 }

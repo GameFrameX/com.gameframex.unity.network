@@ -70,13 +70,28 @@ namespace GameFrameX.Network.Runtime
         /// 创建网络连接关闭事件。
         /// </summary>
         /// <param name="networkChannel">网络频道。</param>
+        /// <param name="reason">关闭原因。</param>
+        /// <param name="errorCode">错误码。</param>
         /// <returns>创建的网络连接关闭事件。</returns>
-        public static NetworkClosedEventArgs Create(INetworkChannel networkChannel)
+        public static NetworkClosedEventArgs Create(INetworkChannel networkChannel, string reason, ushort errorCode)
         {
             NetworkClosedEventArgs networkClosedEventArgs = ReferencePool.Acquire<NetworkClosedEventArgs>();
             networkClosedEventArgs.NetworkChannel = networkChannel;
+            networkClosedEventArgs.Reason = reason;
+            networkClosedEventArgs.ErrorCode = errorCode;
             return networkClosedEventArgs;
         }
+
+        /// <summary>
+        /// 获取关闭原因。
+        /// </summary>
+        public string Reason { get; private set; }
+
+        /// <summary>
+        /// 获取错误码。
+        /// </summary>
+        public ushort ErrorCode { get; private set; }
+
 
         /// <summary>
         /// 清理网络连接关闭事件。

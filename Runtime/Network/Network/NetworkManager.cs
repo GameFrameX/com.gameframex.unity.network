@@ -259,13 +259,13 @@ namespace GameFrameX.Network.Runtime
             }
         }
 
-        private void OnNetworkChannelClosed(NetworkChannelBase networkChannel)
+        private void OnNetworkChannelClosed(NetworkChannelBase networkChannel, string reason, ushort errorCode)
         {
             if (m_NetworkClosedEventHandler != null)
             {
                 lock (m_NetworkClosedEventHandler)
                 {
-                    NetworkClosedEventArgs networkClosedEventArgs = NetworkClosedEventArgs.Create(networkChannel);
+                    NetworkClosedEventArgs networkClosedEventArgs = NetworkClosedEventArgs.Create(networkChannel, reason, errorCode);
                     m_NetworkClosedEventHandler(this, networkClosedEventArgs);
                     // ReferencePool.Release(networkClosedEventArgs);
                 }

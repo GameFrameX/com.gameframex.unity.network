@@ -105,7 +105,7 @@ namespace GameFrameX.Network.Editor
                 {
                     if (GUILayout.Button("Disconnect"))
                     {
-                        networkChannel.Close();
+                        networkChannel.Close(NetworkCloseReason.ConnectClose, (ushort)NetworkErrorCode.DisposeError);
                     }
                 }
                 EditorGUI.EndDisabledGroup();

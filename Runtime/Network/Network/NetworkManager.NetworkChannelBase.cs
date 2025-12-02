@@ -150,7 +150,7 @@ namespace GameFrameX.Network.Runtime
             protected readonly GameFrameworkLinkedList<MessageObject> m_ExecutionMessageLinkedList = new GameFrameworkLinkedList<MessageObject>();
 
             public Action<NetworkChannelBase, object> NetworkChannelConnected;
-            public Action<NetworkChannelBase> NetworkChannelClosed;
+            public Action<NetworkChannelBase, string, ushort> NetworkChannelClosed;
             public Action<NetworkChannelBase, bool> NetworkChannelActiveChanged;
             public Action<NetworkChannelBase, int> NetworkChannelMissHeartBeat;
             public Action<NetworkChannelBase, NetworkErrorCode, SocketError, string> NetworkChannelError;
@@ -463,7 +463,7 @@ namespace GameFrameX.Network.Runtime
                         if (PHeartBeatState.MissHeartBeatCount > MissHeartBeatCountByClose)
                         {
                             // 心跳丢失达到上线。触发断开
-                            Close();
+                            Close(NetworkCloseReason.MissHeartBeat, (ushort)NetworkErrorCode.MissHeartBeatError);
                         }
                     }
                 }
@@ -474,7 +474,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             public virtual void Shutdown()
             {
-                Close();
+                Close(NetworkCloseReason.Normal);
                 PSendState.Reset();
                 PNetworkChannelHelper.Shutdown();
             }
@@ -630,7 +630,7 @@ namespace GameFrameX.Network.Runtime
             {
                 if (PSocket != null)
                 {
-                    Close();
+                    Close(NetworkCloseReason.ConnectClose, (ushort)NetworkErrorCode.DisposeError);
                     PSocket = null;
                 }
 
@@ -654,7 +654,7 @@ namespace GameFrameX.Network.Runtime
                             // 获取IP失败
                             Log.Error($"IP address is invalid.{address.Host}");
                             IsVerifyAddress = false;
-                            Close();
+                            Close(NetworkCloseReason.ConnectAddressError, (ushort)NetworkErrorCode.ConnectError);
                             PSocket = null;
                         }
                     }
@@ -662,7 +662,7 @@ namespace GameFrameX.Network.Runtime
                     {
                         Log.Error($"IP address is invalid.{address.Host} {e.Message}");
                         IsVerifyAddress = false;
-                        Close();
+                        Close(NetworkCloseReason.ConnectAddressExceptionError, (ushort)NetworkErrorCode.ConnectError);
                         PSocket = null;
                     }
                 }
@@ -699,8 +699,10 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 关闭连接并释放所有相关资源。
             /// </summary>
+            /// <param name="reason">关闭原因。</param>
+            /// <param name="code">关闭错误码。</param>
             [UnityEngine.Scripting.Preserve]
-            public virtual void Close()
+            public virtual void Close(string reason, ushort code = 0)
             {
                 lock (this)
                 {
@@ -723,7 +725,7 @@ namespace GameFrameX.Network.Runtime
                     {
                         PSocket.Close();
                         PSocket = null;
-                        NetworkChannelClosed?.Invoke(this);
+                        NetworkChannelClosed?.Invoke(this, reason, code);
                     }
 
                     PSentPacketCount = 0;
@@ -756,6 +758,11 @@ namespace GameFrameX.Network.Runtime
                 Send(messageObject);
                 var result = await PRpcState.Call(messageObject);
                 return result as TResult;
+            }
+
+            public void Close()
+            {
+                throw new NotImplementedException();
             }
 
             /// <summary>
@@ -829,14 +836,13 @@ namespace GameFrameX.Network.Runtime
                     return;
                 }
 
+                m_Disposed = true;
                 if (disposing)
                 {
-                    Close();
+                    Close(NetworkCloseReason.Dispose, (ushort)NetworkErrorCode.DisposeError);
                     PSendState.Dispose();
                     PReceiveState.Dispose();
                 }
-
-                m_Disposed = true;
             }
 
             /// <summary>

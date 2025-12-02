@@ -32,6 +32,48 @@
 namespace GameFrameX.Network.Runtime
 {
     /// <summary>
+    /// 网络关闭原因。
+    /// </summary>
+    [UnityEngine.Scripting.Preserve]
+    public static class NetworkCloseReason
+    {
+        /// <summary>
+        /// 正常关闭。
+        /// </summary>
+        public const string Normal = "Normal";
+
+        /// <summary>
+        /// 超时关闭。
+        /// </summary>
+        public const string Timeout = "Timeout";
+
+        /// <summary>
+        /// 资源释放关闭。
+        /// </summary>
+        public const string Dispose = "Dispose";
+
+        /// <summary>
+        /// 连接关闭。
+        /// </summary>
+        public const string ConnectClose = "ConnectClose";
+
+        /// <summary>
+        /// 连接地址错误关闭。
+        /// </summary>
+        public const string ConnectAddressError = "ConnectAddressError";
+
+        /// <summary>
+        /// 连接地址异常错误关闭。
+        /// </summary>
+        public const string ConnectAddressExceptionError = "ConnectAddressExceptionError";
+
+        /// <summary>
+        /// 缺失心跳关闭。
+        /// </summary>
+        public const string MissHeartBeat = "MissHeartBeat";
+    }
+
+    /// <summary>
     /// 网络错误码。
     /// </summary>
     [UnityEngine.Scripting.Preserve]
@@ -80,6 +122,16 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 反序列化消息包错误。
         /// </summary>
-        DeserializePacketError
+        DeserializePacketError,
+
+        /// <summary>
+        /// 缺失心跳错误。
+        /// </summary>
+        MissHeartBeatError,
+
+        /// <summary>
+        /// 资源释放错误。
+        /// </summary>
+        DisposeError,
     }
 }

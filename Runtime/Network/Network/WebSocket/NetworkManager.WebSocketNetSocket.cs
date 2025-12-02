@@ -19,13 +19,13 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             private bool _isConnecting = false;
 
-            TaskCompletionSource<bool> _connectTask = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            private TaskCompletionSource<bool> _connectTask = new(TaskCreationOptions.RunContinuationsAsynchronously);
             private readonly Action<byte[]> _onReceiveAction;
-            private readonly Action<string> _onCloseAction;
+            private readonly Action<string, ushort> _onCloseAction;
 
-            public WebSocketNetSocket(string url, Action<byte[]> onReceiveAction, Action<string> onCloseAction)
+            public WebSocketNetSocket(string url, Action<byte[]> onReceiveAction, Action<string, ushort> onCloseAction)
             {
-                _client = new UnityWebSocket.WebSocket(url);
+                _client = new WebSocket(url);
                 _onReceiveAction = onReceiveAction;
                 _onCloseAction = onCloseAction;
                 _client.OnOpen += OnOpen;
@@ -44,7 +44,7 @@ namespace GameFrameX.Network.Runtime
 
             private void OnClose(object sender, CloseEventArgs e)
             {
-                _onCloseAction?.Invoke(e.Reason + " " + e.Code);
+                _onCloseAction?.Invoke(e.Reason, e.Code);
             }
 
             private void OnError(object sender, ErrorEventArgs e)

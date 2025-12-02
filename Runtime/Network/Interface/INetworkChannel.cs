@@ -221,7 +221,9 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 关闭网络频道。
         /// </summary>
-        void Close();
+        /// <param name="reason">关闭原因</param>
+        /// <param name="code">关闭错误码</param>
+        void Close(string reason, ushort code = 0);
 
         /// <summary>
         /// 向远程主机发送消息包。

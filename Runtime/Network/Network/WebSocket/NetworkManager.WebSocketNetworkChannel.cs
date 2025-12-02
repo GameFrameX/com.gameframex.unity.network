@@ -89,14 +89,14 @@ namespace GameFrameX.Network.Runtime
                 ConnectAsync(userData);
             }
 
-            private void CloseCallback(string errorMessage)
+            private void CloseCallback(string reason, ushort code)
             {
-                Close();
+                Close(reason, code);
             }
 
-            public override void Close()
+            public override void Close(string reason, ushort code = 0)
             {
-                base.Close();
+                base.Close(reason, code);
                 m_CancellationTokenSource.Cancel();
             }
 
