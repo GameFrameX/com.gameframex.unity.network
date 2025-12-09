@@ -97,7 +97,7 @@ namespace GameFrameX.Network.Runtime
                             var responseMessage = message as IResponseMessage;
                             messageActorObject.Reply(responseMessage);
                             _rpcEndHandler?.Invoke(this, message);
-                            if (responseMessage?.ErrorCode != default)
+                            if (responseMessage?.ErrorCode != 0)
                             {
                                 _rpcErrorCodeHandler?.Invoke(this, message);
                             }
