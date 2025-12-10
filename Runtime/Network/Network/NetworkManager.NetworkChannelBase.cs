@@ -951,7 +951,7 @@ namespace GameFrameX.Network.Runtime
             protected void DebugReceiveLog(MessageObject messageObject)
             {
 #if ENABLE_GAMEFRAMEX_NETWORK_RECEIVE_LOG
-                var messageId = ProtoMessageIdHandler.GetReqMessageIdByType(messageObject.GetType());
+                var messageId = ProtoMessageIdHandler.GetRespMessageIdByType(messageObject.GetType());
                 if (!IgnoreReceiveIds.Contains(messageId))
                 {
                     Log.Debug($"收到消息 ID:[{messageId},{messageObject.UniqueId},{messageObject.GetType().Name}] 消息内容:{Utility.Json.ToJson(messageObject)}");
