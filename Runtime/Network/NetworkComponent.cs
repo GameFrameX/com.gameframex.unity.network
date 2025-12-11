@@ -75,10 +75,6 @@ namespace GameFrameX.Network.Runtime
             get { return m_NetworkManager.NetworkChannelCount; }
         }
 
-        /// <summary>
-        /// 是否正在游戏中。
-        /// </summary>
-        private bool _isGaming = true;
 
         /// <summary>
         /// 应用程序获得或失去焦点时调用。
@@ -86,7 +82,6 @@ namespace GameFrameX.Network.Runtime
         /// <param name="hasFocus">应用程序是否获得焦点。</param>
         private void OnApplicationFocus(bool hasFocus)
         {
-            _isGaming = hasFocus;
             if (!m_FocusHeartbeat)
             {
                 return;

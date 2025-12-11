@@ -972,6 +972,10 @@ namespace GameFrameX.Network.Runtime
                 IgnoreReceiveIds = receiveIds;
             }
 
+            /// <summary>
+            /// 设置是否开启心跳包失去焦点时也发送心跳包
+            /// </summary>
+            /// <param name="hasFocus">是否开启心跳包失去焦点时也发送心跳包</param>
             public void SetFocusHeartbeat(bool hasFocus)
             {
                 PFocusHeartbeat = hasFocus;
