@@ -6,7 +6,7 @@
   "version": "2.4.0",
   "unity": "2019.4",
   "keywords": [
-    "Game Framework X"
+    "GameFrameX"
   ],
   "repository": {
     "name": "com.gameframex.unity.network",
@@ -21,5 +21,14 @@
   "dependencies": {
     "com.gameframex.unity": "1.1.1",
     "com.gameframex.unity.event": "1.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.cnb.cool/GameFrameX/npm/-/packages/"
+  },
+  "devDependencies": {
+    "semantic-release": "^24.2.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1"
   }
 }
