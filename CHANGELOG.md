@@ -1,3 +1,26 @@
+# [2.5.0](https://github.com/gameframex/com.gameframex.unity.network/compare/2.4.0...2.5.0) (2025-12-23)
+
+
+### Bug Fixes
+
+* **Network:** 优化RPC超时错误信息，包含消息类型全名 ([ce4fb0d](https://github.com/gameframex/com.gameframex.unity.network/commit/ce4fb0d704f04b9536ca0ba776a1cc4addae2322))
+* **Network:** 修复RPC超时处理逻辑错误并优化性能 ([213b99d](https://github.com/gameframex/com.gameframex.unity.network/commit/213b99dac04baba62fd5225abfc86d33a9e54e31))
+* **Network:** 修复RPC错误码处理条件判断错误 ([37c2cb1](https://github.com/gameframex/com.gameframex.unity.network/commit/37c2cb10484381a57de27c79a33d8c34f6fa503a))
+* **Network:** 修正应用获得焦点时心跳包的默认行为 ([b5840f6](https://github.com/gameframex/com.gameframex.unity.network/commit/b5840f62295458cf37a87db9dafbe6b4dfafdf20))
+* **Network:** 修正接收消息日志中使用错误的MessageId获取方法 ([09c5853](https://github.com/gameframex/com.gameframex.unity.network/commit/09c58538831507e8d1e4f69cb552c7605cf3bc75))
+* **Network:** 修正网络日志中消息ID的获取方式 ([d60741a](https://github.com/gameframex/com.gameframex.unity.network/commit/d60741af11e2d9594b9d3f1ecea703ff5f18a2b7))
+* **Network:** 移除未实现的Close方法并修正SystemTcpNetworkChannel中的Close调用 ([c07dee1](https://github.com/gameframex/com.gameframex.unity.network/commit/c07dee1191f8f5f42982de7c94b2e0dbd77384c9))
+* **Network:** 调整消息发送和日志记录顺序以避免潜在问题 ([38a77c7](https://github.com/gameframex/com.gameframex.unity.network/commit/38a77c7598ee0f503c0ff1cf0b986aef8d478d63))
+* 在NetworkChannelBase中释放messageObject引用 ([d8634ec](https://github.com/gameframex/com.gameframex.unity.network/commit/d8634ecd9cf8d32851d83f30d53e650b9a00bdcb))
+
+
+### Features
+
+* **network:** 为网络关闭添加原因和错误码参数 ([688de90](https://github.com/gameframex/com.gameframex.unity.network/commit/688de90357b6b053ae4d382d147f97397319bbb7))
+* **网络:** 为RPC调用添加忽略错误码选项 ([f50f845](https://github.com/gameframex/com.gameframex.unity.network/commit/f50f84505f8cf20d78cdac9e31e61344795b7a8b))
+* **网络:** 添加失去焦点时发送心跳包的功能 ([1927396](https://github.com/gameframex/com.gameframex.unity.network/commit/1927396e6eadd9180636f252ba2ab867c01bea25))
+* **网络:** 添加应用获得焦点时发送心跳包的功能 ([ccc8504](https://github.com/gameframex/com.gameframex.unity.network/commit/ccc8504dffd6ac81023244c1d5d217650891afc9))
+
 # Changelog
 
 ## [2.4.0](https://github.com/GameFrameX/com.gameframex.unity.network/tree/2.4.0) (2025-10-15)
