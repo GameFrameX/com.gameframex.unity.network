@@ -758,14 +758,15 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 向远程主机发送消息包
             /// </summary>
-            /// <param name="messageObject"></param>
+            /// <param name="messageObject">要发送的消息包。</param>
+            /// <param name="isIgnoreErrorCode">是否忽略错误码，默认值为 false。如果为 true，则在调用时不会抛出异常。和RPC的错误码回调也会忽略错误码。</param>
             /// <typeparam name="TResult"></typeparam>
             [UnityEngine.Scripting.Preserve]
-            public async Task<TResult> Call<TResult>(MessageObject messageObject) where TResult : MessageObject, IResponseMessage
+            public async Task<TResult> Call<TResult>(MessageObject messageObject, bool isIgnoreErrorCode = false) where TResult : MessageObject, IResponseMessage
             {
                 GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
                 Send(messageObject);
-                var result = await PRpcState.Call(messageObject);
+                var result = await PRpcState.Call(messageObject, isIgnoreErrorCode);
                 return result as TResult;
             }
 

@@ -97,7 +97,7 @@ namespace GameFrameX.Network.Runtime
                             var responseMessage = message as IResponseMessage;
                             messageActorObject.Reply(responseMessage);
                             _rpcEndHandler?.Invoke(this, message);
-                            if (responseMessage?.ErrorCode != 0)
+                            if (responseMessage?.ErrorCode != 0 && !messageActorObject.IsIgnoreErrorCode)
                             {
                                 _rpcErrorCodeHandler?.Invoke(this, message);
                             }
@@ -120,15 +120,16 @@ namespace GameFrameX.Network.Runtime
             /// 可能会引发超时异常。
             /// </summary>
             /// <param name="messageObject">要发送的消息对象，必须实现IRequestMessage接口。</param>
+            /// <param name="isIgnoreErrorCode"></param>
             /// <returns>返回一个任务，该任务在收到响应时完成，并返回IResponseMessage。</returns>
-            public Task<IResponseMessage> Call(MessageObject messageObject)
+            public Task<IResponseMessage> Call(MessageObject messageObject, bool isIgnoreErrorCode)
             {
                 if (_waitingReplyHandlingObjects.TryGetValue(messageObject.UniqueId, out var messageActorObject))
                 {
                     return messageActorObject.Task;
                 }
 
-                var defaultMessageActorObject = RpcMessageData.Create(messageObject as IRequestMessage, _rpcTimeout);
+                var defaultMessageActorObject = RpcMessageData.Create(messageObject as IRequestMessage, _rpcTimeout, isIgnoreErrorCode);
                 _waitingReplyHandlingObjects.TryAdd(messageObject.UniqueId, defaultMessageActorObject);
                 try
                 {

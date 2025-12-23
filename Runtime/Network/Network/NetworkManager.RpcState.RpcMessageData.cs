@@ -27,6 +27,11 @@ namespace GameFrameX.Network.Runtime
                 public long ElapseTime { get; private set; }
 
                 /// <summary>
+                /// 是否忽略错误码
+                /// </summary>
+                public bool IsIgnoreErrorCode { get; private set; }
+
+                /// <summary>
                 /// 请求消息
                 /// </summary>
                 public IRequestMessage RequestMessage { get; private set; }
@@ -73,22 +78,25 @@ namespace GameFrameX.Network.Runtime
                 /// </summary>
                 /// <param name="actorRequestMessage"></param>
                 /// <param name="timeout"></param>
+                /// <param name="isIgnoreErrorCode"></param>
                 /// <returns></returns>
                 [UnityEngine.Scripting.Preserve]
-                internal static RpcMessageData Create(IRequestMessage actorRequestMessage, int timeout = 5000)
+                internal static RpcMessageData Create(IRequestMessage actorRequestMessage, int timeout = 5000, bool isIgnoreErrorCode = false)
                 {
-                    var defaultMessageActorObject = new RpcMessageData(actorRequestMessage, timeout);
+                    var defaultMessageActorObject = new RpcMessageData(actorRequestMessage, timeout, isIgnoreErrorCode);
                     return defaultMessageActorObject;
                 }
 
-                private RpcMessageData(IRequestMessage requestMessage, int timeout)
+                private RpcMessageData(IRequestMessage requestMessage, int timeout, bool isIgnoreErrorCode)
                 {
                     CreatedTime = TimerHelper.UnixTimeMilliseconds();
                     RequestMessage = requestMessage;
                     Timeout = timeout;
+                    IsIgnoreErrorCode = isIgnoreErrorCode;
                     UniqueId = ((MessageObject)requestMessage).UniqueId;
                     m_Tcs = new TaskCompletionSource<IResponseMessage>();
                 }
+
 
                 private readonly TaskCompletionSource<IResponseMessage> m_Tcs;
 
