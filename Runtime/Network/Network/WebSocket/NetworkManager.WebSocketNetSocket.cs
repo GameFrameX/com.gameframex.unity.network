@@ -19,7 +19,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             private bool _isConnecting = false;
 
-            private TaskCompletionSource<bool> _connectTask = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            private TaskCompletionSource<bool> _connectTask = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             private readonly Action<byte[]> _onReceiveAction;
             private readonly Action<string, ushort> _onCloseAction;
 
