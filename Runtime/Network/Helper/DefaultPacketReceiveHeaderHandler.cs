@@ -1,3 +1,5 @@
+using GameFrameX.Runtime;
+
 namespace GameFrameX.Network.Runtime
 {
     /// <summary>

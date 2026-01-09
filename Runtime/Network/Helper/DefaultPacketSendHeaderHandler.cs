@@ -1,4 +1,5 @@
 using System.IO;
+using GameFrameX.Runtime;
 using ProtoBuf;
 
 namespace GameFrameX.Network.Runtime
