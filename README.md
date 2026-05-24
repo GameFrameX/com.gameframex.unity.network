@@ -1,19 +1,92 @@
-﻿## HOMEPAGE
+<p align="center">
+  <img src="https://download.alianblank.com/gameframex/gameframex_logo_320.png" alt="GameFrameX Logo" width="160" />
+</p>
 
-GameFrameX 的 Network 长连接网络组件
+<h1 align="center">Game Frame X Network</h1>
 
-**Network 长连接网络组件 (Network Component)** - 提供长连接网络组件相关的接口。
+<p align="center">
+  <a href="https://github.com/gameframex/com.gameframex.unity.network/releases">
+    <img src="https://img.shields.io/github/v/release/gameframex/com.gameframex.unity.network" alt="Version" />
+  </a>
+  <a href="https://github.com/gameframex/com.gameframex.unity.network/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/gameframex/com.gameframex.unity.network" alt="License" />
+  </a>
+  <a href="https://gameframex.doc.alianblank.com">
+    <img src="https://img.shields.io/badge/Documentation-online-blue" alt="Documentation" />
+  </a>
+</p>
 
-# 使用文档(文档编写于GPT4)
+<p align="center">
+  All-in-One Solution for Indie Game Development · Empowering Indie Developers' Dreams
+</p>
 
-## 注意事项
+<p align="center">
+  <a href="https://gameframex.doc.alianblank.com">Documentation</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="https://qm.qq.com/cgi-bin/qm/qr?k=ikT9gA5m2sKwOyNOfYmQvSAPK_c3GmD6">QQ Group</a> ·
+  Language: <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-TW.md">繁體中文</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a>
+</p>
 
-# 使用方式(任选其一)
+---
 
-1. 直接在 `manifest.json` 的文件中的 `dependencies` 节点下添加以下内容
+## Project Overview
+
+**Network Component** - A long-connection network component for Unity that provides network interfaces including TCP, WebSocket, and custom protocol support, making network functionality simpler and more efficient.
+
+### Features
+
+- Long-connection network support (TCP / WebSocket)
+- RPC call mechanism with timeout handling
+- Heartbeat packet mechanism (configurable on focus lost/gained)
+- Network message serialization and deserialization
+- Network channel management
+- Network event system
+
+## Quick Start
+
+### Installation
+
+Choose one of the following methods:
+
+1. Add the following to the `dependencies` section of your project's `manifest.json`:
    ```json
-      {"com.gameframex.unity.network": "https://github.com/AlianBlank/com.gameframex.unity.network.git"}
-    ```
-2. 在Unity 的`Packages Manager` 中使用`Git URL` 的方式添加库,地址为：https://github.com/AlianBlank/com.gameframex.unity.network.git
+   {"com.gameframex.unity.network": "https://github.com/AlianBlank/com.gameframex.unity.network.git"}
+   ```
+2. Use `Git URL` in Unity's Package Manager: https://github.com/AlianBlank/com.gameframex.unity.network.git
+3. Download the repository and place it in your Unity project's `Packages` directory.
 
-3. 直接下载仓库放置到Unity 项目的`Packages` 目录下。会自动加载识别
+### Usage Examples
+
+```csharp
+// Standard: via GameEntry (no dependency on com.gameframex.unity.entry)
+var networkComponent = GameEntry.GetComponent<NetworkComponent>();
+networkComponent.Connect("127.0.0.1", 8080);
+```
+
+## Platform Support
+
+| Platform | Supported |
+|----------|-----------|
+| Windows | Yes |
+| macOS | Yes |
+| Linux | Yes |
+| Android | Yes |
+| iOS | Yes |
+| WebGL | Yes |
+
+## Documentation & Resources
+
+- [Documentation](https://gameframex.doc.alianblank.com)
+- [GitHub Repository](https://github.com/gameframex/com.gameframex.unity.network)
+
+## Community & Support
+
+- QQ Group: Join via [QR Code](https://qm.qq.com/cgi-bin/qm/qr?k=ikT9gA5m2sKwOyNOfYmQvSAPK_c3GmD6)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for details.
+
+## License
+
+This project is licensed under the terms of the [LICENSE](LICENSE) file.
