@@ -1,3 +1,10 @@
+## [2.5.1](https://github.com/gameframex/com.gameframex.unity.network/compare/2.5.0...2.5.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* **network:** 添加缺失的GameFrameX.Runtime命名空间引用 ([8b136bd](https://github.com/gameframex/com.gameframex.unity.network/commit/8b136bd19cd01721b92df83c61972f59c42112fa))
+
 # [2.5.0](https://github.com/gameframex/com.gameframex.unity.network/compare/2.4.0...2.5.0) (2025-12-23)
 
 
