@@ -21,6 +21,14 @@ namespace GameFrameX.Network.Runtime
             m_ChannelSerializer = null;
         }
 
+        /// <summary>
+        /// 设置通道级别的消息序列化器，必须在 <see cref="Initialize"/> 之前调用。
+        /// </summary>
+        /// <remarks>
+        /// Sets the channel-level message serializer; must be called before <see cref="Initialize"/>.
+        /// </remarks>
+        /// <param name="serializer">消息序列化器实例 / The message serializer instance</param>
+        /// <exception cref="InvalidOperationException">当 <see cref="Initialize"/> 已调用后调用时抛出 / Thrown when called after <see cref="Initialize"/> has been invoked</exception>
         public void SetChannelSerializer(IMessageSerializer serializer)
         {
             if (m_NetworkChannel != null)

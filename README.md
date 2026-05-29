@@ -38,6 +38,7 @@
 - Long-connection network support (TCP / WebSocket)
 - RPC call mechanism with timeout handling
 - Heartbeat packet mechanism (configurable on focus lost/gained)
+- Pluggable message serialization (`IMessageSerializer` interface) with two-level registration (global default + per-channel override)
 - Network message serialization and deserialization
 - Network channel management
 - Network event system
@@ -62,6 +63,26 @@ Choose one of the following methods:
 var networkComponent = GameEntry.GetComponent<NetworkComponent>();
 networkComponent.Connect("127.0.0.1", 8080);
 ```
+
+#### Pluggable Serialization
+
+The network package defines the `IMessageSerializer` interface for message serialization/deserialization. You can register a custom serializer at two levels:
+
+**Global registration** — sets the default serializer for all channels:
+
+```csharp
+// Register a global serializer (e.g. at app startup)
+MessageSerializerRegistry.RegisterGlobal(new MyCustomSerializer());
+```
+
+**Per-channel override** — overrides the serializer for a specific channel (must be called before `Initialize`):
+
+```csharp
+var helper = new DefaultNetworkChannelHelper();
+helper.SetChannelSerializer(new MyCustomSerializer()); // Must be called before Initialize()
+```
+
+If no serializer is registered, a `DefaultMessageSerializer` is used that throws an `InvalidOperationException` to remind you to register one. The `com.gameframex.unity.google.protobuf` package auto-registers `ProtobufMessageSerializer` as the global default on load, providing zero-config backward compatibility.
 
 ## Platform Support
 

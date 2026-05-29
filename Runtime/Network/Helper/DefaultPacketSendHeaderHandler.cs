@@ -9,6 +9,12 @@ namespace GameFrameX.Network.Runtime
     [UnityEngine.Scripting.Preserve]
     public class DefaultPacketSendHeaderHandler : IPacketSendHeaderHandler, IPacketHandler
     {
+        /// <summary>
+        /// 通道级别的消息序列化器，为空时回退使用全局序列化器。
+        /// </summary>
+        /// <remarks>
+        /// Channel-level message serializer; falls back to the global serializer when null.
+        /// </remarks>
         internal IMessageSerializer ChannelSerializer { get; set; }
         /// <summary>
         /// 网络包长度
