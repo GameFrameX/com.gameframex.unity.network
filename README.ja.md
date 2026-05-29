@@ -38,6 +38,7 @@
 - 長接続ネットワークサポート（TCP / WebSocket）
 - RPC 呼び出しメカニズムとタイムアウト処理
 - ハートビートパケットメカニズム（フォーカス取得/喪失時の送信設定対応）
+- プラグイン可能なメッセージシリアライズ（`IMessageSerializer` インターフェース）、2 レベル登録（グローバルデフォルト + チャネルごとの上書き）対応
 - ネットワークメッセージのシリアライズ/デシリアライズ
 - ネットワークチャネル管理
 - ネットワークイベントシステム
@@ -62,6 +63,26 @@
 var networkComponent = GameEntry.GetComponent<NetworkComponent>();
 networkComponent.Connect("127.0.0.1", 8080);
 ```
+
+#### プラグイン可能なシリアライズ
+
+ネットワークパッケージは `IMessageSerializer` インターフェースを定義し、メッセージのシリアライズ/デシリアライズを扱います。カスタムシリアライザを 2 つのレベルで登録できます：
+
+**グローバル登録** — すべてのチャネルのデフォルトシリアライザを設定します：
+
+```csharp
+// グローバルシリアライザを登録（例：アプリ起動時）
+MessageSerializerRegistry.RegisterGlobal(new MyCustomSerializer());
+```
+
+**チャネルごとの上書き** — 特定のチャネルにシリアライザを指定します（`Initialize` の前に呼び出す必要があります）：
+
+```csharp
+var helper = new DefaultNetworkChannelHelper();
+helper.SetChannelSerializer(new MyCustomSerializer()); // Initialize() の前に呼び出す必要があります
+```
+
+シリアライザが登録されていない場合、`DefaultMessageSerializer` が使用されます。このデフォルト実装は登録を促すために `InvalidOperationException` をスローします。`com.gameframex.unity.google.protobuf` パッケージは読み込み時に `ProtobufMessageSerializer` をグローバルデフォルトとして自動登録し、設定不要の後方互換性を提供します。
 
 ## プラットフォーム対応
 

@@ -38,6 +38,7 @@
 - 长连接网络支持（TCP / WebSocket）
 - RPC 调用机制及超时处理
 - 心跳包机制（支持应用获得/失去焦点时发送配置）
+- 可插拔的消息序列化（`IMessageSerializer` 接口），支持两级注册（全局默认 + 按频道覆盖）
 - 网络消息序列化与反序列化
 - 网络频道管理
 - 网络事件系统
@@ -62,6 +63,26 @@
 var networkComponent = GameEntry.GetComponent<NetworkComponent>();
 networkComponent.Connect("127.0.0.1", 8080);
 ```
+
+#### 可插拔序列化
+
+网络包通过 `IMessageSerializer` 接口定义消息的序列化与反序列化行为。支持在两个层级注册自定义序列化器：
+
+**全局注册** — 设置所有频道的默认序列化器：
+
+```csharp
+// 注册全局序列化器（例如在应用启动时）
+MessageSerializerRegistry.RegisterGlobal(new MyCustomSerializer());
+```
+
+**按频道覆盖** — 为特定频道指定序列化器（必须在 `Initialize` 之前调用）：
+
+```csharp
+var helper = new DefaultNetworkChannelHelper();
+helper.SetChannelSerializer(new MyCustomSerializer()); // 必须在 Initialize() 之前调用
+```
+
+如果未注册任何序列化器，将使用 `DefaultMessageSerializer`，该默认实现会抛出 `InvalidOperationException` 以提醒开发者进行注册。`com.gameframex.unity.google.protobuf` 包在加载时会自动将 `ProtobufMessageSerializer` 注册为全局默认序列化器，提供零配置的向后兼容性。
 
 ## 平台支持
 

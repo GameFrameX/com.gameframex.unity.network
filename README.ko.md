@@ -38,6 +38,7 @@
 - 장기 연결 네트워크 지원 (TCP / WebSocket)
 - RPC 호출 메커니즘 및 타임아웃 처리
 - 하트비트 패킷 메커니즘 (포커스 획득/손실 시 전송 설정 지원)
+- 플러그형 메시지 직렬화 (`IMessageSerializer` 인터페이스), 2단계 등록 (전역 기본값 + 채널별 재정의) 지원
 - 네트워크 메시지 직렬화 및 역직렬화
 - 네트워크 채널 관리
 - 네트워크 이벤트 시스템
@@ -62,6 +63,26 @@
 var networkComponent = GameEntry.GetComponent<NetworkComponent>();
 networkComponent.Connect("127.0.0.1", 8080);
 ```
+
+#### 플러그형 직렬화
+
+네트워크 패키지는 메시지 직렬화/역직렬화를 위해 `IMessageSerializer` 인터페이스를 정의합니다. 두 가지 수준에서 커스텀 직렬화기를 등록할 수 있습니다:
+
+**전역 등록** — 모든 채널의 기본 직렬화기를 설정합니다:
+
+```csharp
+// 전역 직렬화기 등록 (예: 앱 시작 시)
+MessageSerializerRegistry.RegisterGlobal(new MyCustomSerializer());
+```
+
+**채널별 재정의** — 특정 채널에 직렬화기를 지정합니다 (`Initialize` 전에 호출해야 함):
+
+```csharp
+var helper = new DefaultNetworkChannelHelper();
+helper.SetChannelSerializer(new MyCustomSerializer()); // Initialize() 전에 호출해야 합니다
+```
+
+등록된 직렬화기가 없으면 `DefaultMessageSerializer`가 사용됩니다. 이 기본 구현은 등록을 알리기 위해 `InvalidOperationException`을 발생시킵니다. `com.gameframex.unity.google.protobuf` 패키지는 로드 시 `ProtobufMessageSerializer`를 전역 기본값으로 자동 등록하여, 설정 없이도 기존과의 호환성을 제공합니다.
 
 ## 플랫폼 지원
 
