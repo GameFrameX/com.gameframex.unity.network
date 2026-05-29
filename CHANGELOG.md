@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/gameframex/com.gameframex.unity.network/compare/2.5.1...2.6.0) (2026-05-29)
+
+
+### Features
+
+* **serializer:** 新增 IMessageSerializer 可插拔序列化接口 ([8307320](https://github.com/gameframex/com.gameframex.unity.network/commit/830732097338b28f485f0d0236472b0edce024ec))
+
 ## [2.5.1](https://github.com/gameframex/com.gameframex.unity.network/compare/2.5.0...2.5.1) (2026-05-27)
 
 
