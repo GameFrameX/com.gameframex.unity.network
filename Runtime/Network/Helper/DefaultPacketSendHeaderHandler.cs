@@ -1,6 +1,5 @@
 using System.IO;
 using GameFrameX.Runtime;
-using ProtoBuf;
 
 namespace GameFrameX.Network.Runtime
 {
@@ -10,6 +9,7 @@ namespace GameFrameX.Network.Runtime
     [UnityEngine.Scripting.Preserve]
     public class DefaultPacketSendHeaderHandler : IPacketSendHeaderHandler, IPacketHandler
     {
+        internal IMessageSerializer ChannelSerializer { get; set; }
         /// <summary>
         /// 网络包长度
         /// </summary>
@@ -85,7 +85,7 @@ namespace GameFrameX.Network.Runtime
             m_Offset = 0;
             var messageType = messageObject.GetType();
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
-            messageBodyBuffer = SerializerHelper.Serialize(messageObject);
+            messageBodyBuffer = (ChannelSerializer ?? MessageSerializerRegistry.Global).Serialize(messageObject);
             if (messageCompressHandler != null && messageBodyBuffer.Length > LimitCompressLength)
             {
                 IsZip = true;

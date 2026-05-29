@@ -10,12 +10,14 @@ namespace GameFrameX.Network.Runtime
             _ = typeof(GameFrameX.Network.Runtime.BasePacketHeartBeatHandler);
             _ = typeof(GameFrameX.Network.Runtime.DefaultMessageCompressHandler);
             _ = typeof(GameFrameX.Network.Runtime.DefaultMessageDecompressHandler);
+            _ = typeof(GameFrameX.Network.Runtime.DefaultMessageSerializer);
             _ = typeof(GameFrameX.Network.Runtime.DefaultNetworkChannelHelper);
             _ = typeof(GameFrameX.Network.Runtime.DefaultPacketReceiveBodyHandler);
             _ = typeof(GameFrameX.Network.Runtime.DefaultPacketReceiveHeaderHandler);
             _ = typeof(GameFrameX.Network.Runtime.DefaultPacketSendBodyHandler);
             _ = typeof(GameFrameX.Network.Runtime.DefaultPacketSendHeaderHandler);
             _ = typeof(GameFrameX.Network.Runtime.GameFrameXNetworkCroppingHelper);
+            _ = typeof(GameFrameX.Network.Runtime.IMessageSerializer);
             _ = typeof(GameFrameX.Network.Runtime.IHeartBeatMessage);
             _ = typeof(GameFrameX.Network.Runtime.IMessageCompressHandler);
             _ = typeof(GameFrameX.Network.Runtime.IMessageDecompressHandler);
@@ -35,6 +37,7 @@ namespace GameFrameX.Network.Runtime
             _ = typeof(GameFrameX.Network.Runtime.IResponseMessage);
             _ = typeof(GameFrameX.Network.Runtime.MessageHandlerAttribute);
             _ = typeof(GameFrameX.Network.Runtime.MessageHttpObject);
+            _ = typeof(GameFrameX.Network.Runtime.MessageSerializerRegistry);
             _ = typeof(GameFrameX.Network.Runtime.MessageObject);
             _ = typeof(GameFrameX.Network.Runtime.MessageTypeHandlerAttribute);
             _ = typeof(GameFrameX.Network.Runtime.NetworkClosedEventArgs);

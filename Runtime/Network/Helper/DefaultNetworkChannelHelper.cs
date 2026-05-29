@@ -13,10 +13,22 @@ namespace GameFrameX.Network.Runtime
     public class DefaultNetworkChannelHelper : INetworkChannelHelper, IReference
     {
         private INetworkChannel m_NetworkChannel;
+        private IMessageSerializer m_ChannelSerializer;
 
         public DefaultNetworkChannelHelper()
         {
             m_NetworkChannel = null;
+            m_ChannelSerializer = null;
+        }
+
+        public void SetChannelSerializer(IMessageSerializer serializer)
+        {
+            if (m_NetworkChannel != null)
+            {
+                throw new InvalidOperationException(
+                    "SetChannelSerializer must be called before Initialize().");
+            }
+            m_ChannelSerializer = serializer;
         }
 
         /// <summary>
@@ -71,11 +83,13 @@ namespace GameFrameX.Network.Runtime
                 else if (type.IsImplWithInterface(packetReceiveBodyHandlerBaseType))
                 {
                     var handler = (IPacketReceiveBodyHandler)Activator.CreateInstance(type);
+                    InjectChannelSerializer(handler, type);
                     m_NetworkChannel.RegisterHandler(handler);
                 }
                 else if (type.IsImplWithInterface(packetSendHeaderHandlerBaseType))
                 {
                     var handler = (IPacketSendHeaderHandler)Activator.CreateInstance(type);
+                    InjectChannelSerializer(handler, type);
                     m_NetworkChannel.RegisterHandler(handler);
                 }
                 else if (type.IsImplWithInterface(packetSendBodyHandlerBaseType))
@@ -167,6 +181,20 @@ namespace GameFrameX.Network.Runtime
         {
             m_NetworkChannel?.Close(NetworkCloseReason.Dispose, (ushort)NetworkErrorCode.DisposeError);
             m_NetworkChannel = null;
+            m_ChannelSerializer = null;
+        }
+
+        private void InjectChannelSerializer(object handler, Type type)
+        {
+            if (m_ChannelSerializer == null)
+            {
+                return;
+            }
+            var prop = type.GetProperty("ChannelSerializer", typeof(IMessageSerializer));
+            if (prop != null && prop.CanWrite)
+            {
+                prop.SetValue(handler, m_ChannelSerializer);
+            }
         }
 
         private void OnNetworkConnectedEventArgs(object sender, GameEventArgs e)

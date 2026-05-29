@@ -1,5 +1,3 @@
-using ProtoBuf;
-
 namespace GameFrameX.Network.Runtime
 {
     /// <summary>
@@ -8,10 +6,12 @@ namespace GameFrameX.Network.Runtime
     [UnityEngine.Scripting.Preserve]
     public sealed class DefaultPacketReceiveBodyHandler : IPacketReceiveBodyHandler, IPacketHandler
     {
+        internal IMessageSerializer ChannelSerializer { get; set; }
+
         public bool Handler<T>(byte[] source, int messageId, out T messageObject) where T : MessageObject
         {
             var messageType = ProtoMessageIdHandler.GetRespTypeById(messageId);
-            messageObject = (T)SerializerHelper.Deserialize(source, messageType);
+            messageObject = (T)(ChannelSerializer ?? MessageSerializerRegistry.Global).Deserialize(source, messageType);
             return true;
         }
     }

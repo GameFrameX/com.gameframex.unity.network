@@ -3,8 +3,7 @@
     "references": [
         "GameFrameX.Runtime",
         "GameFrameX.Event.Runtime",
-        "UnityWebSocket.Runtime",
-        "ProtoBuffer.Runtime"
+        "UnityWebSocket.Runtime"
     ],
     "rootNamespace": "GameFrameX.Network.Runtime",
     "includePlatforms": [],
@@ -19,11 +18,6 @@
             "name": "com.gameframex.unity.psygames.unitywebsocket",
             "expression": "",
             "define": "ENABLE_GAME_FRAME_X_WEB_SOCKET"
-        },
-        {
-            "name": "com.gameframex.unity.google.protobuf",
-            "expression": "",
-            "define": "ENABLE_GAME_FRAME_X_PROTOBUF"
         },
         {
             "name": "com.gameframex.unity.neuecc.messagepack",
