@@ -74,9 +74,29 @@ namespace GameFrameX.Network.Runtime
                     return;
                 }
 
+                foreach (var kvp in _waitingReplyHandlingObjects)
+                {
+                    kvp.Value.Dispose();
+                }
+
                 _waitingReplyHandlingObjects.Clear();
                 _removeReplyHandlingObjectIds.Clear();
                 _disposed = true;
+            }
+
+            /// <summary>
+            /// 重置 RPC 状态，用于重连场景。
+            /// </summary>
+            public void Reset()
+            {
+                foreach (var kvp in _waitingReplyHandlingObjects)
+                {
+                    kvp.Value.Dispose();
+                }
+
+                _waitingReplyHandlingObjects.Clear();
+                _removeReplyHandlingObjectIds.Clear();
+                _disposed = false;
             }
 
 
