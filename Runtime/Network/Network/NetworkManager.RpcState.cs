@@ -46,10 +46,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             private readonly ConcurrentDictionary<long, RpcMessageData> _waitingReplyHandlingObjects = new ConcurrentDictionary<long, RpcMessageData>();
 
-            /// <summary>
-            /// 删除等待中的处理器ID列表,由于超时导致的删除
-            /// </summary>
-            private readonly HashSet<long> _removeReplyHandlingObjectIds = new HashSet<long>();
+            private readonly List<long> _timeoutIds = new List<long>(16);
 
             private EventHandler<MessageObject> _rpcStartHandler;
             private EventHandler<MessageObject> _rpcEndHandler;
@@ -80,7 +77,6 @@ namespace GameFrameX.Network.Runtime
                 }
 
                 _waitingReplyHandlingObjects.Clear();
-                _removeReplyHandlingObjectIds.Clear();
                 _disposed = true;
             }
 
@@ -95,7 +91,6 @@ namespace GameFrameX.Network.Runtime
                 }
 
                 _waitingReplyHandlingObjects.Clear();
-                _removeReplyHandlingObjectIds.Clear();
                 _disposed = false;
             }
 
@@ -173,41 +168,41 @@ namespace GameFrameX.Network.Runtime
             /// <param name="realElapseSeconds"></param>
             public void Update(float elapseSeconds, float realElapseSeconds)
             {
-                if (_waitingReplyHandlingObjects.Count > 0)
-                {
-                    var elapseSecondsTime = (long)(realElapseSeconds * 1000);
-                    _removeReplyHandlingObjectIds.Clear();
-                    foreach (var handlingObject in _waitingReplyHandlingObjects)
-                    {
-                        bool isTimeout = handlingObject.Value.IncrementalElapseTime(elapseSecondsTime);
-                        if (!isTimeout)
-                        {
-                            continue;
-                        }
-
-                        _removeReplyHandlingObjectIds.Add(handlingObject.Key);
-                        try
-                        {
-                            _rpcErrorHandler?.Invoke(this, handlingObject.Value.RequestMessage as MessageObject);
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Fatal(e);
-                        }
-                    }
-                }
-
-                if (_removeReplyHandlingObjectIds.Count <= 0)
+                if (_waitingReplyHandlingObjects.Count <= 0)
                 {
                     return;
                 }
 
-                foreach (var objectId in _removeReplyHandlingObjectIds)
+                var elapseSecondsTime = (long)(realElapseSeconds * 1000);
+                _timeoutIds.Clear();
+                foreach (var handlingObject in _waitingReplyHandlingObjects)
+                {
+                    bool isTimeout = handlingObject.Value.IncrementalElapseTime(elapseSecondsTime);
+                    if (!isTimeout)
+                    {
+                        continue;
+                    }
+
+                    _timeoutIds.Add(handlingObject.Key);
+                    try
+                    {
+                        _rpcErrorHandler?.Invoke(this, handlingObject.Value.RequestMessage as MessageObject);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Fatal(e);
+                    }
+                }
+
+                if (_timeoutIds.Count <= 0)
+                {
+                    return;
+                }
+
+                foreach (var objectId in _timeoutIds)
                 {
                     _waitingReplyHandlingObjects.TryRemove(objectId, out _);
                 }
-
-                _removeReplyHandlingObjectIds.Clear();
             }
 
             /// <summary>
