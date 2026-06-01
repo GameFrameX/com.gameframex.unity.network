@@ -195,6 +195,8 @@ namespace GameFrameX.Network.Runtime
                     ReceiveAsync();
                     return;
                 }
+
+                Close("Packet process error.", (ushort)NetworkErrorCode.DeserializePacketError);
             }
 
             /// <summary>
@@ -208,6 +210,10 @@ namespace GameFrameX.Network.Runtime
                 _ = PReceiveState.Stream.Read(buffer, 0, headerLength);
                 var processSuccess = PNetworkChannelHelper.DeserializePacketHeader(buffer);
                 var bodyLength = (int)(PacketReceiveHeaderHandler.PacketLength - PacketReceiveHeaderHandler.PacketHeaderLength);
+                if (bodyLength < 0)
+                {
+                    return false;
+                }
                 PReceiveState.Reset(bodyLength, PacketReceiveHeaderHandler);
                 return processSuccess;
             }
@@ -233,14 +239,12 @@ namespace GameFrameX.Network.Runtime
                 if (processSuccess)
                 {
                     messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
+                    DebugReceiveLog(messageObject);
+                    m_ExecutionMessageLinkedList.AddLast(messageObject);
+                    PReceivedPacketCount++;
+                    PReceiveState.PrepareForPacketHeader();
                 }
 
-                DebugReceiveLog(messageObject);
-                // 将收到的消息加入到链表最后
-                m_ExecutionMessageLinkedList.AddLast(messageObject);
-
-                PReceivedPacketCount++;
-                PReceiveState.PrepareForPacketHeader();
                 return processSuccess;
             }
 
@@ -250,9 +254,8 @@ namespace GameFrameX.Network.Runtime
 
             protected override bool ProcessSendMessage(MessageObject messageObject)
             {
-                if (PActive == false)
+                if (!PActive)
                 {
-                    PActive = false;
                     if (NetworkChannelError != null)
                     {
                         NetworkChannelError(this, NetworkErrorCode.SocketError, SocketError.Disconnecting, "Network channel is closing.");
@@ -394,8 +397,8 @@ namespace GameFrameX.Network.Runtime
                     PHeartBeatState.Reset(true);
                 }
 
-                NetworkChannelConnected?.Invoke(this, m_ConnectState.UserData);
                 PActive = true;
+                NetworkChannelConnected?.Invoke(this, m_ConnectState.UserData);
                 ReceiveAsync();
             }
 
