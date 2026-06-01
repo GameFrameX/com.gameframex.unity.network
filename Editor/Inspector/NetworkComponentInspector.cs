@@ -99,8 +99,12 @@ namespace GameFrameX.Network.Editor
                 EditorGUILayout.LabelField(networkChannel.Name, networkChannel.Connected ? "Connected" : "Disconnected");
                 // EditorGUILayout.LabelField("Service Type", networkChannel.ServiceType.ToString());
                 EditorGUILayout.LabelField("Address Family", networkChannel.AddressFamily.ToString());
-                EditorGUILayout.LabelField("Local Address", networkChannel.Connected ? networkChannel.Socket.LocalEndPoint.ToString() : "Unavailable");
-                EditorGUILayout.LabelField("Remote Address", networkChannel.Connected ? networkChannel.Socket.RemoteEndPoint.ToString() : "Unavailable");
+                EditorGUILayout.LabelField("Local Address", networkChannel.Connected && networkChannel.Socket != null
+                    ? (networkChannel.Socket.LocalEndPoint?.ToString() ?? "Unavailable")
+                    : "Unavailable");
+                EditorGUILayout.LabelField("Remote Address", networkChannel.Connected && networkChannel.Socket != null
+                    ? (networkChannel.Socket.RemoteEndPoint?.ToString() ?? "Unavailable")
+                    : "Unavailable");
                 EditorGUILayout.LabelField("Send Packet", Utility.Text.Format("{0} / {1}", networkChannel.SendPacketCount, networkChannel.SentPacketCount));
                 EditorGUILayout.LabelField("Miss Heart Beat Count", networkChannel.MissHeartBeatCount.ToString());
                 EditorGUILayout.LabelField("Heart Beat", Utility.Text.Format("{0:F2} / {1:F2}", networkChannel.HeartBeatElapseSeconds, networkChannel.HeartBeatInterval));
