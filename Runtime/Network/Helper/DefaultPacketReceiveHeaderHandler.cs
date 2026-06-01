@@ -42,15 +42,15 @@ namespace GameFrameX.Network.Runtime
         public bool Handler(object source)
         {
             byte[] reader = source as byte[];
-            if (reader == null)
+            if (reader == null || reader.Length < PacketHeaderLength)
             {
                 return false;
             }
 
             // packetLength
             int offset = 0;
-            var packetLength = reader.ReadUInt(ref offset); //4
-            PacketLength = packetLength;
+            var readPacketLength = reader.ReadUInt(ref offset); //4
+            PacketLength = readPacketLength;
             // operationType
             OperationType = reader.ReadByte(ref offset); //1
             // zipFlag
