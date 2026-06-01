@@ -15,7 +15,7 @@ namespace GameFrameX.Network.Runtime
     {
         private static readonly BidirectionalDictionary<int, Type> ReqDictionary = new BidirectionalDictionary<int, Type>();
         private static readonly BidirectionalDictionary<int, Type> RespDictionary = new BidirectionalDictionary<int, Type>();
-        private static readonly List<Type> HeartBeatList = new List<Type>();
+        private static readonly List<Type> HeartBeatList = new List<Type>(4);
 
         /// <summary>
         /// 根据消息ID获取请求的类型

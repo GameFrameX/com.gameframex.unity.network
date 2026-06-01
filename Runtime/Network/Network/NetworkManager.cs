@@ -43,7 +43,7 @@ namespace GameFrameX.Network.Runtime
     public sealed partial class NetworkManager : GameFrameworkModule, INetworkManager
     {
         private readonly Dictionary<string, NetworkChannelBase> m_NetworkChannels;
-        private readonly List<NetworkChannelBase> m_NetworkChannelSnapshot = new List<NetworkChannelBase>();
+        private readonly List<NetworkChannelBase> m_NetworkChannelSnapshot = new List<NetworkChannelBase>(4);
 
         private EventHandler<NetworkConnectedEventArgs> m_NetworkConnectedEventHandler;
         private EventHandler<NetworkClosedEventArgs> m_NetworkClosedEventHandler;
