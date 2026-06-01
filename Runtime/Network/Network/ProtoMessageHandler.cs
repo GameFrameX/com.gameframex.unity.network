@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using GameFrameX.Runtime;
 
@@ -134,7 +133,7 @@ namespace GameFrameX.Network.Runtime
         {
             if (MessageHandlerDictionary.TryGetValue(messageType, out var list))
             {
-                return list?.ToList();
+                return list ?? EmptyList;
             }
 
             Log.Warning("没有找到消息处理器消息类型：" + messageType.Name);
