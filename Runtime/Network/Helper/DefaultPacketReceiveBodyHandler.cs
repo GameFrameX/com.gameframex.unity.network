@@ -17,8 +17,15 @@ namespace GameFrameX.Network.Runtime
         public bool Handler<T>(byte[] source, int messageId, out T messageObject) where T : MessageObject
         {
             var messageType = ProtoMessageIdHandler.GetRespTypeById(messageId);
-            messageObject = (T)(ChannelSerializer ?? MessageSerializerRegistry.Global).Deserialize(source, messageType);
-            return true;
+            if (messageType == null)
+            {
+                messageObject = default(T);
+                return false;
+            }
+
+            var deserialized = (ChannelSerializer ?? MessageSerializerRegistry.Global).Deserialize(source, messageType);
+            messageObject = (T)deserialized;
+            return messageObject != null;
         }
     }
 }
