@@ -324,8 +324,8 @@ namespace GameFrameX.Network.Runtime
                             }
                         }
 
-                        // 将收到的消息加入到链表最后
-                        m_ExecutionMessageLinkedList.AddLast(messageObject);
+                        // 将收到的消息加入到队列
+                        m_ExecutionMessageQueue.Enqueue(messageObject);
                     }
                     else
                     {

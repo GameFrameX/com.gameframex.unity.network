@@ -152,7 +152,7 @@ namespace GameFrameX.Network.Runtime
             private IPacketReceiveBodyHandler m_PacketReceiveBodyHandler;
             private IPacketHeartBeatHandler m_PacketHeartBeatHandler;
 
-            protected readonly GameFrameworkLinkedList<MessageObject> m_ExecutionMessageLinkedList = new GameFrameworkLinkedList<MessageObject>();
+            protected readonly ConcurrentQueue<MessageObject> m_ExecutionMessageQueue = new ConcurrentQueue<MessageObject>();
 
             public Action<NetworkChannelBase, object> NetworkChannelConnected;
             public Action<NetworkChannelBase, string, ushort> NetworkChannelClosed;
@@ -398,9 +398,8 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             private void ProcessReceivedMessage()
             {
-                while (m_ExecutionMessageLinkedList.First != null)
+                while (m_ExecutionMessageQueue.TryDequeue(out var messageObject))
                 {
-                    var messageObject = m_ExecutionMessageLinkedList.First.Value;
                     try
                     {
                         // 执行RPC匹配
@@ -428,10 +427,6 @@ namespace GameFrameX.Network.Runtime
                     catch (Exception e)
                     {
                         Log.Fatal(e);
-                    }
-                    finally
-                    {
-                        m_ExecutionMessageLinkedList.RemoveFirst();
                     }
                 }
             }
@@ -764,7 +759,7 @@ namespace GameFrameX.Network.Runtime
                     }
 
                     PRpcState.Reset();
-                    m_ExecutionMessageLinkedList.Clear();
+                    m_ExecutionMessageQueue.Clear();
                 }
             }
 

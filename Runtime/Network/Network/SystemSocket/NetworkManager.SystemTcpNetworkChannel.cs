@@ -240,7 +240,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     messageObject.SetUpdateUniqueId(PacketReceiveHeaderHandler.UniqueId);
                     DebugReceiveLog(messageObject);
-                    m_ExecutionMessageLinkedList.AddLast(messageObject);
+                    m_ExecutionMessageQueue.Enqueue(messageObject);
                     PReceivedPacketCount++;
                     PReceiveState.PrepareForPacketHeader();
                 }
