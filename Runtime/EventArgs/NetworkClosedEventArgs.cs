@@ -99,6 +99,8 @@ namespace GameFrameX.Network.Runtime
         public override void Clear()
         {
             NetworkChannel = null;
+            Reason = null;
+            ErrorCode = 0;
         }
     }
 }
