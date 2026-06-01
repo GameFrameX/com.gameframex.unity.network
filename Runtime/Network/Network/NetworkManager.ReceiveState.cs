@@ -91,6 +91,11 @@ namespace GameFrameX.Network.Runtime
 
             public void Reset(int targetLength, IPacketReceiveHeaderHandler packetHeader)
             {
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(nameof(ReceiveState));
+                }
+
                 if (targetLength < 0)
                 {
                     throw new GameFrameworkException("Target length is invalid.");

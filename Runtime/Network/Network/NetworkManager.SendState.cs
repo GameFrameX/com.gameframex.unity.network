@@ -51,6 +51,11 @@ namespace GameFrameX.Network.Runtime
 
             public void Reset()
             {
+                if (m_Disposed)
+                {
+                    throw new ObjectDisposedException(nameof(SendState));
+                }
+
                 Stream.Position = 0L;
                 Stream.SetLength(0L);
             }
