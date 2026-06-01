@@ -108,12 +108,12 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 发送数据包的数量
             /// </summary>
-            protected int PSentPacketCount;
+            private int m_SentPacketCount;
 
             /// <summary>
             /// 接收数据包数量
             /// </summary>
-            protected int PReceivedPacketCount;
+            private int m_ReceivedPacketCount;
 
             /// <summary>
             /// 是否在应用程序获得焦点时发送心跳包
@@ -181,8 +181,8 @@ namespace GameFrameX.Network.Runtime
                 PReceiveState = new ReceiveState();
                 PHeartBeatState = new HeartBeatState();
                 PRpcState = new RpcState(rpcTimeout);
-                PSentPacketCount = 0;
-                PReceivedPacketCount = 0;
+                m_SentPacketCount = 0;
+                m_ReceivedPacketCount = 0;
                 PActive = false;
                 PFocusHeartbeat = true;
                 PIsConnecting = false;
@@ -253,7 +253,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             public int SentPacketCount
             {
-                get { return PSentPacketCount; }
+                get { return System.Threading.Interlocked.CompareExchange(ref m_SentPacketCount, 0, 0); }
             }
 
             /// <summary>
@@ -261,7 +261,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             public int ReceivedPacketCount
             {
-                get { return PReceivedPacketCount; }
+                get { return System.Threading.Interlocked.CompareExchange(ref m_ReceivedPacketCount, 0, 0); }
             }
 
             /// <summary>
@@ -745,8 +745,8 @@ namespace GameFrameX.Network.Runtime
                         NetworkChannelClosed?.Invoke(this, reason, code);
                     }
 
-                    PSentPacketCount = 0;
-                    PReceivedPacketCount = 0;
+                    m_SentPacketCount = 0;
+                    m_ReceivedPacketCount = 0;
 
                     lock (PSendPacketPool)
                     {

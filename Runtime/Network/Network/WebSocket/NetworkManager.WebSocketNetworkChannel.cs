@@ -256,8 +256,8 @@ namespace GameFrameX.Network.Runtime
                     throw;
                 }
 
-                PSentPacketCount = 0;
-                PReceivedPacketCount = 0;
+                m_SentPacketCount = 0;
+                m_ReceivedPacketCount = 0;
 
                 lock (PSendPacketPool)
                 {
@@ -282,7 +282,7 @@ namespace GameFrameX.Network.Runtime
                         PHeartBeatState.Reset(PResetHeartBeatElapseSecondsWhenReceivePacket);
                     }
 
-                    PReceivedPacketCount++;
+                    System.Threading.Interlocked.Increment(ref m_ReceivedPacketCount);
 
                     if (buffer.Length < PacketReceiveHeaderHandler.PacketHeaderLength)
                     {
