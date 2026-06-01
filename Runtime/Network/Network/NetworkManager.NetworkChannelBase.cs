@@ -439,6 +439,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     bool sendHeartBeat = false;
                     int missHeartBeatCount = 0;
+                    bool shouldClose = false;
                     lock (PHeartBeatState)
                     {
                         if (PSocket == null || !PActive)
@@ -472,8 +473,13 @@ namespace GameFrameX.Network.Runtime
                         if (PHeartBeatState.MissHeartBeatCount > MissHeartBeatCountByClose)
                         {
                             // 心跳丢失达到上线。触发断开
-                            Close(NetworkCloseReason.MissHeartBeat, (ushort)NetworkErrorCode.MissHeartBeatError);
+                            shouldClose = true;
                         }
+                    }
+
+                    if (shouldClose)
+                    {
+                        Close(NetworkCloseReason.MissHeartBeat, (ushort)NetworkErrorCode.MissHeartBeatError);
                     }
                 }
             }
