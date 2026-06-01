@@ -49,11 +49,22 @@ namespace GameFrameX.Network.Runtime
         private EventHandler<NetworkClosedEventArgs> m_NetworkClosedEventHandler;
         private EventHandler<NetworkMissHeartBeatEventArgs> m_NetworkMissHeartBeatEventHandler;
         private EventHandler<NetworkErrorEventArgs> m_NetworkErrorEventHandler;
+        private EventHandler<NetworkReconnectingEventArgs> m_NetworkReconnectingEventHandler;
+        private EventHandler<NetworkReconnectedEventArgs> m_NetworkReconnectedEventHandler;
+        private EventHandler<NetworkReconnectFailedEventArgs> m_NetworkReconnectFailedEventHandler;
 
         private readonly object m_NetworkConnectedLock = new object();
         private readonly object m_NetworkClosedLock = new object();
         private readonly object m_NetworkMissHeartBeatLock = new object();
         private readonly object m_NetworkErrorLock = new object();
+        private readonly object m_NetworkReconnectingLock = new object();
+        private readonly object m_NetworkReconnectedLock = new object();
+        private readonly object m_NetworkReconnectFailedLock = new object();
+
+        private readonly Dictionary<string, ReconnectState> m_ReconnectStates = new Dictionary<string, ReconnectState>(StringComparer.Ordinal);
+        private readonly Dictionary<string, ConnectInfo> m_ChannelConnectInfos = new Dictionary<string, ConnectInfo>(StringComparer.Ordinal);
+        private bool m_AutoReconnectEnabled;
+        private int m_AutoReconnectMaxRetryCount = 5;
 
         /// <summary>
         /// 初始化网络管理器的新实例。
@@ -66,6 +77,11 @@ namespace GameFrameX.Network.Runtime
             m_NetworkClosedEventHandler = null;
             m_NetworkMissHeartBeatEventHandler = null;
             m_NetworkErrorEventHandler = null;
+            m_NetworkReconnectingEventHandler = null;
+            m_NetworkReconnectedEventHandler = null;
+            m_NetworkReconnectFailedEventHandler = null;
+            m_AutoReconnectEnabled = false;
+            m_AutoReconnectMaxRetryCount = 5;
         }
 
         /// <summary>
@@ -113,6 +129,33 @@ namespace GameFrameX.Network.Runtime
         }
 
         /// <summary>
+        /// 网络重连中事件。
+        /// </summary>
+        public event EventHandler<NetworkReconnectingEventArgs> NetworkReconnecting
+        {
+            add { m_NetworkReconnectingEventHandler += value; }
+            remove { m_NetworkReconnectingEventHandler -= value; }
+        }
+
+        /// <summary>
+        /// 网络重连成功事件。
+        /// </summary>
+        public event EventHandler<NetworkReconnectedEventArgs> NetworkReconnected
+        {
+            add { m_NetworkReconnectedEventHandler += value; }
+            remove { m_NetworkReconnectedEventHandler -= value; }
+        }
+
+        /// <summary>
+        /// 网络重连失败事件。
+        /// </summary>
+        public event EventHandler<NetworkReconnectFailedEventArgs> NetworkReconnectFailed
+        {
+            add { m_NetworkReconnectFailedEventHandler += value; }
+            remove { m_NetworkReconnectFailedEventHandler -= value; }
+        }
+
+        /// <summary>
         /// 网络管理器轮询。
         /// </summary>
         /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
@@ -125,6 +168,8 @@ namespace GameFrameX.Network.Runtime
             {
                 m_NetworkChannelSnapshot[i].Update(elapseSeconds, realElapseSeconds);
             }
+
+            ProcessReconnectStates(realElapseSeconds);
         }
 
         /// <summary>
@@ -143,6 +188,8 @@ namespace GameFrameX.Network.Runtime
             }
 
             m_NetworkChannels.Clear();
+            m_ReconnectStates.Clear();
+            m_ChannelConnectInfos.Clear();
         }
 
         /// <summary>
@@ -265,6 +312,22 @@ namespace GameFrameX.Network.Runtime
 
         private void OnNetworkChannelConnected(NetworkChannelBase networkChannel, object userData)
         {
+            // 存储连接信息，用于后续可能的重连
+            m_ChannelConnectInfos[networkChannel.Name] = new ConnectInfo
+            {
+                Address = networkChannel.PLastConnectAddress,
+                UserData = networkChannel.PLastConnectUserData
+            };
+
+            // 检测重连成功
+            if (m_ReconnectStates.TryGetValue(networkChannel.Name, out var reconnectState))
+            {
+                int retryCount = reconnectState.RetryCount;
+                reconnectState.Reset();
+                m_ReconnectStates.Remove(networkChannel.Name);
+                OnNetworkReconnected(networkChannel, retryCount);
+            }
+
             if (m_NetworkConnectedEventHandler != null)
             {
                 lock (m_NetworkConnectedLock)
@@ -287,6 +350,49 @@ namespace GameFrameX.Network.Runtime
                     // ReferencePool.Release(networkClosedEventArgs);
                 }
             }
+
+            // 判断是否需要自动重连
+            if (!m_AutoReconnectEnabled)
+            {
+                return;
+            }
+
+            if (reason == NetworkCloseReason.ServerKick ||
+                reason == NetworkCloseReason.Dispose ||
+                reason == NetworkCloseReason.Normal)
+            {
+                return;
+            }
+
+            // 通道已销毁则不重连
+            if (!m_NetworkChannels.ContainsKey(networkChannel.Name))
+            {
+                return;
+            }
+
+            // 已在重连中，说明本次关闭是重连失败
+            if (m_ReconnectStates.TryGetValue(networkChannel.Name, out var existingState))
+            {
+                bool canRetry = existingState.PrepareNextRetry();
+                if (!canRetry)
+                {
+                    OnNetworkReconnectFailed(networkChannel, existingState.RetryCount, "Max retry count reached.");
+                    existingState.Reset();
+                    m_ReconnectStates.Remove(networkChannel.Name);
+                }
+
+                return;
+            }
+
+            // 首次触发重连
+            if (!m_ChannelConnectInfos.TryGetValue(networkChannel.Name, out var connectInfo))
+            {
+                return;
+            }
+
+            var newReconnectState = new ReconnectState();
+            newReconnectState.Start(m_AutoReconnectMaxRetryCount);
+            m_ReconnectStates[networkChannel.Name] = newReconnectState;
         }
 
         private void OnNetworkChannelMissHeartBeat(NetworkChannelBase networkChannel, int missHeartBeatCount)
@@ -313,6 +419,180 @@ namespace GameFrameX.Network.Runtime
                     // ReferencePool.Release(networkErrorEventArgs);
                 }
             }
+        }
+
+        /// <summary>
+        /// 设置是否启用自动重连。
+        /// </summary>
+        /// <param name="enabled">是否启用自动重连。</param>
+        public void SetAutoReconnect(bool enabled)
+        {
+            m_AutoReconnectEnabled = enabled;
+        }
+
+        /// <summary>
+        /// 设置自动重连最大重试次数。
+        /// </summary>
+        /// <param name="maxRetryCount">最大重试次数。</param>
+        public void SetAutoReconnectMaxRetryCount(int maxRetryCount)
+        {
+            m_AutoReconnectMaxRetryCount = maxRetryCount;
+        }
+
+        /// <summary>
+        /// 手动触发重连指定的网络频道。
+        /// </summary>
+        /// <param name="channelName">网络频道名称。</param>
+        public void ManualReconnect(string channelName)
+        {
+            if (!m_NetworkChannels.TryGetValue(channelName, out var channel))
+            {
+                return;
+            }
+
+            if (!m_ChannelConnectInfos.TryGetValue(channelName, out var connectInfo))
+            {
+                return;
+            }
+
+            // 取消已有的重连状态
+            if (m_ReconnectStates.TryGetValue(channelName, out var existingState))
+            {
+                existingState.Reset();
+                m_ReconnectStates.Remove(channelName);
+            }
+
+            var newReconnectState = new ReconnectState();
+            newReconnectState.Start(m_AutoReconnectMaxRetryCount);
+            m_ReconnectStates[channelName] = newReconnectState;
+        }
+
+        /// <summary>
+        /// 取消指定网络频道的重连。
+        /// </summary>
+        /// <param name="channelName">网络频道名称。</param>
+        public void CancelReconnect(string channelName)
+        {
+            if (m_ReconnectStates.TryGetValue(channelName, out var state))
+            {
+                state.Cancel();
+                state.Reset();
+                m_ReconnectStates.Remove(channelName);
+            }
+        }
+
+        private void ProcessReconnectStates(float realElapseSeconds)
+        {
+            if (m_ReconnectStates.Count <= 0)
+            {
+                return;
+            }
+
+            var snapshot = new List<string>(m_ReconnectStates.Keys);
+            for (int i = 0; i < snapshot.Count; i++)
+            {
+                string channelName = snapshot[i];
+                if (!m_ReconnectStates.TryGetValue(channelName, out var reconnectState))
+                {
+                    continue;
+                }
+
+                if (!reconnectState.IsWaiting)
+                {
+                    continue;
+                }
+
+                bool delayElapsed = reconnectState.Update(realElapseSeconds);
+                if (!delayElapsed)
+                {
+                    continue;
+                }
+
+                if (!m_ChannelConnectInfos.TryGetValue(channelName, out var connectInfo))
+                {
+                    OnNetworkReconnectFailed(channelName, reconnectState.RetryCount, "No connect address stored.");
+                    reconnectState.Reset();
+                    m_ReconnectStates.Remove(channelName);
+                    continue;
+                }
+
+                if (!m_NetworkChannels.TryGetValue(channelName, out var channel))
+                {
+                    m_ReconnectStates.Remove(channelName);
+                    continue;
+                }
+
+                // 触发重连中事件
+                OnNetworkReconnecting(channel, reconnectState);
+
+                // 尝试连接
+                channel.Connect(connectInfo.Address, connectInfo.UserData);
+            }
+        }
+
+        private void OnNetworkReconnecting(NetworkChannelBase networkChannel, ReconnectState reconnectState)
+        {
+            if (m_NetworkReconnectingEventHandler != null)
+            {
+                lock (m_NetworkReconnectingLock)
+                {
+                    NetworkReconnectingEventArgs args = NetworkReconnectingEventArgs.Create(
+                        networkChannel, reconnectState.RetryCount, reconnectState.MaxRetryCount, reconnectState.TargetDelaySeconds);
+                    m_NetworkReconnectingEventHandler(this, args);
+                }
+            }
+        }
+
+        private void OnNetworkReconnected(NetworkChannelBase networkChannel, int retryCount)
+        {
+            if (m_NetworkReconnectedEventHandler != null)
+            {
+                lock (m_NetworkReconnectedLock)
+                {
+                    NetworkReconnectedEventArgs args = NetworkReconnectedEventArgs.Create(networkChannel, retryCount);
+                    m_NetworkReconnectedEventHandler(this, args);
+                }
+            }
+        }
+
+        private void OnNetworkReconnectFailed(string channelName, int retryCount, string reason)
+        {
+            if (m_NetworkReconnectFailedEventHandler == null)
+            {
+                return;
+            }
+
+            if (!m_NetworkChannels.TryGetValue(channelName, out var channel))
+            {
+                return;
+            }
+
+            lock (m_NetworkReconnectFailedLock)
+            {
+                NetworkReconnectFailedEventArgs args = NetworkReconnectFailedEventArgs.Create(channel, retryCount, reason);
+                m_NetworkReconnectFailedEventHandler(this, args);
+            }
+        }
+
+        private void OnNetworkReconnectFailed(NetworkChannelBase networkChannel, int retryCount, string reason)
+        {
+            if (m_NetworkReconnectFailedEventHandler != null)
+            {
+                lock (m_NetworkReconnectFailedLock)
+                {
+                    NetworkReconnectFailedEventArgs args = NetworkReconnectFailedEventArgs.Create(networkChannel, retryCount, reason);
+                    m_NetworkReconnectFailedEventHandler(this, args);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 连接信息。
+        /// </summary>
+        private sealed class ConnectInfo
+        {
+            public Uri Address { get; set; }
+            public object UserData { get; set; }
         }
     }
 }

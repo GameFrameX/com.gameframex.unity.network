@@ -49,11 +49,15 @@ namespace GameFrameX.Network.Runtime
             _ = typeof(GameFrameX.Network.Runtime.NetworkManager.ConnectState);
             _ = typeof(GameFrameX.Network.Runtime.NetworkManager.HeartBeatState);
             _ = typeof(GameFrameX.Network.Runtime.NetworkManager.NetworkChannelBase);
+            _ = typeof(GameFrameX.Network.Runtime.NetworkManager.ReconnectState);
             _ = typeof(GameFrameX.Network.Runtime.NetworkManager.ReceiveState);
             _ = typeof(GameFrameX.Network.Runtime.NetworkManager.RpcState);
             _ = typeof(GameFrameX.Network.Runtime.NetworkManager.RpcState.RpcMessageData);
             _ = typeof(GameFrameX.Network.Runtime.NetworkManager.SendState);
             _ = typeof(GameFrameX.Network.Runtime.NetworkMissHeartBeatEventArgs);
+            _ = typeof(GameFrameX.Network.Runtime.NetworkReconnectedEventArgs);
+            _ = typeof(GameFrameX.Network.Runtime.NetworkReconnectFailedEventArgs);
+            _ = typeof(GameFrameX.Network.Runtime.NetworkReconnectingEventArgs);
             _ = typeof(GameFrameX.Network.Runtime.ProtoMessageHandler);
             _ = typeof(GameFrameX.Network.Runtime.ProtoMessageIdHandler);
             _ = typeof(GameFrameX.Network.Runtime.ServiceType);

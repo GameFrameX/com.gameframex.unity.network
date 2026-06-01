@@ -126,6 +126,9 @@ namespace GameFrameX.Network.Runtime
             Event.CheckSubscribe(NetworkClosedEventArgs.EventId, OnNetworkClosedEventArgs);
             Event.CheckSubscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetworkMissHeartBeatEventArgs);
             Event.CheckSubscribe(NetworkErrorEventArgs.EventId, OnNetworkErrorEventArgs);
+            Event.CheckSubscribe(NetworkReconnectingEventArgs.EventId, OnNetworkReconnectingEventArgs);
+            Event.CheckSubscribe(NetworkReconnectedEventArgs.EventId, OnNetworkReconnectedEventArgs);
+            Event.CheckSubscribe(NetworkReconnectFailedEventArgs.EventId, OnNetworkReconnectFailedEventArgs);
         }
 
         public void Shutdown()
@@ -134,6 +137,9 @@ namespace GameFrameX.Network.Runtime
             Event.Unsubscribe(NetworkClosedEventArgs.EventId, OnNetworkClosedEventArgs);
             Event.Unsubscribe(NetworkMissHeartBeatEventArgs.EventId, OnNetworkMissHeartBeatEventArgs);
             Event.Unsubscribe(NetworkErrorEventArgs.EventId, OnNetworkErrorEventArgs);
+            Event.Unsubscribe(NetworkReconnectingEventArgs.EventId, OnNetworkReconnectingEventArgs);
+            Event.Unsubscribe(NetworkReconnectedEventArgs.EventId, OnNetworkReconnectedEventArgs);
+            Event.Unsubscribe(NetworkReconnectFailedEventArgs.EventId, OnNetworkReconnectFailedEventArgs);
             m_NetworkChannel = null;
         }
 
@@ -250,6 +256,36 @@ namespace GameFrameX.Network.Runtime
 
             Log.Error(Utility.Text.Format("Network channel '{0}' error, error code is '{1}', error message is '{2}'.", ne.NetworkChannel.Name, ne.ErrorCode, ne.ErrorMessage));
             ne.NetworkChannel.Close(ne.ErrorMessage, (ushort)ne.ErrorCode);
+        }
+
+        private void OnNetworkReconnectingEventArgs(object sender, GameEventArgs e)
+        {
+            if (!(e is NetworkReconnectingEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
+            {
+                return;
+            }
+
+            Log.Info(Utility.Text.Format("网络重连中... 通道: {0}, 重试: {1}/{2}, 延迟: {3:F1}s", ne.NetworkChannel.Name, ne.RetryCount, ne.MaxRetryCount, ne.DelaySeconds));
+        }
+
+        private void OnNetworkReconnectedEventArgs(object sender, GameEventArgs e)
+        {
+            if (!(e is NetworkReconnectedEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
+            {
+                return;
+            }
+
+            Log.Info(Utility.Text.Format("网络重连成功 通道: {0}, 重试次数: {1}", ne.NetworkChannel.Name, ne.RetryCount));
+        }
+
+        private void OnNetworkReconnectFailedEventArgs(object sender, GameEventArgs e)
+        {
+            if (!(e is NetworkReconnectFailedEventArgs ne) || ne.NetworkChannel != m_NetworkChannel)
+            {
+                return;
+            }
+
+            Log.Error(Utility.Text.Format("网络重连失败 通道: {0}, 重试次数: {1}, 原因: {2}", ne.NetworkChannel.Name, ne.RetryCount, ne.Reason));
         }
     }
 }

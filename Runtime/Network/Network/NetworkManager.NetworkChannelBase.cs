@@ -154,6 +154,16 @@ namespace GameFrameX.Network.Runtime
 
             protected readonly GameFrameworkLinkedList<MessageObject> m_ExecutionMessageLinkedList = new GameFrameworkLinkedList<MessageObject>();
 
+            /// <summary>
+            /// 最后一次连接的目标地址。
+            /// </summary>
+            protected Uri PLastConnectAddress;
+
+            /// <summary>
+            /// 最后一次连接的用户自定义数据。
+            /// </summary>
+            protected object PLastConnectUserData;
+
             public Action<NetworkChannelBase, object> NetworkChannelConnected;
             public Action<NetworkChannelBase, string, ushort> NetworkChannelClosed;
             public Action<NetworkChannelBase, bool> NetworkChannelActiveChanged;
@@ -650,6 +660,9 @@ namespace GameFrameX.Network.Runtime
             [UnityEngine.Scripting.Preserve]
             public virtual void Connect(Uri address, object userData = null)
             {
+                PLastConnectAddress = address;
+                PLastConnectUserData = userData;
+
                 if (PSocket != null)
                 {
                     Close(NetworkCloseReason.ConnectClose, (ushort)NetworkErrorCode.DisposeError);

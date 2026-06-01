@@ -65,6 +65,21 @@ namespace GameFrameX.Network.Runtime
         event EventHandler<NetworkErrorEventArgs> NetworkError;
 
         /// <summary>
+        /// 网络重连中事件。
+        /// </summary>
+        event EventHandler<NetworkReconnectingEventArgs> NetworkReconnecting;
+
+        /// <summary>
+        /// 网络重连成功事件。
+        /// </summary>
+        event EventHandler<NetworkReconnectedEventArgs> NetworkReconnected;
+
+        /// <summary>
+        /// 网络重连失败事件。
+        /// </summary>
+        event EventHandler<NetworkReconnectFailedEventArgs> NetworkReconnectFailed;
+
+        /// <summary>
         /// 检查是否存在网络频道。
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
@@ -111,5 +126,29 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="hasFocus">是否在应用程序获得焦点时发送心跳包。</param>
         void SetFocusHeartbeat(bool hasFocus);
+
+        /// <summary>
+        /// 设置是否启用自动重连。
+        /// </summary>
+        /// <param name="enabled">是否启用自动重连。</param>
+        void SetAutoReconnect(bool enabled);
+
+        /// <summary>
+        /// 设置自动重连最大重试次数。
+        /// </summary>
+        /// <param name="maxRetryCount">最大重试次数。</param>
+        void SetAutoReconnectMaxRetryCount(int maxRetryCount);
+
+        /// <summary>
+        /// 手动触发重连指定的网络频道。
+        /// </summary>
+        /// <param name="channelName">网络频道名称。</param>
+        void ManualReconnect(string channelName);
+
+        /// <summary>
+        /// 取消指定网络频道的重连。
+        /// </summary>
+        /// <param name="channelName">网络频道名称。</param>
+        void CancelReconnect(string channelName);
     }
 }

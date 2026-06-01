@@ -110,6 +110,9 @@ namespace GameFrameX.Network.Runtime
             m_NetworkManager.NetworkClosed += OnNetworkClosed;
             m_NetworkManager.NetworkMissHeartBeat += OnNetworkMissHeartBeat;
             m_NetworkManager.NetworkError += OnNetworkError;
+            m_NetworkManager.NetworkReconnecting += OnNetworkReconnecting;
+            m_NetworkManager.NetworkReconnected += OnNetworkReconnected;
+            m_NetworkManager.NetworkReconnectFailed += OnNetworkReconnectFailed;
         }
 
         private void Start()
@@ -223,6 +226,72 @@ namespace GameFrameX.Network.Runtime
             {
                 m_EventComponent.Fire(this, eventArgs);
             }
+        }
+
+        private void OnNetworkReconnecting(object sender, NetworkReconnectingEventArgs eventArgs)
+        {
+            if (m_EventComponent != null)
+            {
+                m_EventComponent.Fire(this, eventArgs);
+            }
+        }
+
+        private void OnNetworkReconnected(object sender, NetworkReconnectedEventArgs eventArgs)
+        {
+            if (m_EventComponent != null)
+            {
+                m_EventComponent.Fire(this, eventArgs);
+            }
+        }
+
+        private void OnNetworkReconnectFailed(object sender, NetworkReconnectFailedEventArgs eventArgs)
+        {
+            if (m_EventComponent != null)
+            {
+                m_EventComponent.Fire(this, eventArgs);
+            }
+        }
+
+        /// <summary>
+        /// 设置是否启用自动重连。
+        /// </summary>
+        /// <param name="enabled">是否启用自动重连。</param>
+        [UnityEngine.Scripting.Preserve]
+        public void SetAutoReconnect(bool enabled)
+        {
+            m_NetworkManager.SetAutoReconnect(enabled);
+        }
+
+        /// <summary>
+        /// 设置自动重连最大重试次数。
+        /// </summary>
+        /// <param name="maxRetryCount">最大重试次数。</param>
+        [UnityEngine.Scripting.Preserve]
+        public void SetAutoReconnectMaxRetryCount(int maxRetryCount)
+        {
+            m_NetworkManager.SetAutoReconnectMaxRetryCount(maxRetryCount);
+        }
+
+        /// <summary>
+        /// 手动触发重连指定的网络频道。
+        /// </summary>
+        /// <param name="channelName">网络频道名称。</param>
+        [UnityEngine.Scripting.Preserve]
+        public void ManualReconnect(string channelName)
+        {
+            GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
+            m_NetworkManager.ManualReconnect(channelName);
+        }
+
+        /// <summary>
+        /// 取消指定网络频道的重连。
+        /// </summary>
+        /// <param name="channelName">网络频道名称。</param>
+        [UnityEngine.Scripting.Preserve]
+        public void CancelReconnect(string channelName)
+        {
+            GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
+            m_NetworkManager.CancelReconnect(channelName);
         }
     }
 }

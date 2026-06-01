@@ -1,17 +1,17 @@
-﻿// ==========================================================================================
+// ==========================================================================================
 //  GameFrameX 组织及其衍生项目的版权、商标、专利及其他相关权利
 //  GameFrameX organization and its derivative projects' copyrights, trademarks, patents, and related rights
 //  均受中华人民共和国及相关国际法律法规保护。
 //  are protected by the laws of the People's Republic of China and relevant international regulations.
-// 
+//
 //  使用本项目须严格遵守相应法律法规及开源许可证之规定。
 //  Usage of this project must strictly comply with applicable laws, regulations, and open-source licenses.
-// 
+//
 //  本项目采用 MIT 许可证与 Apache License 2.0 双许可证分发，
 //  This project is dual-licensed under the MIT License and Apache License 2.0,
 //  完整许可证文本请参见源代码根目录下的 LICENSE 文件。
 //  please refer to the LICENSE file in the root directory of the source code for the full license text.
-// 
+//
 //  禁止利用本项目实施任何危害国家安全、破坏社会秩序、
 //  It is prohibited to use this project to engage in any activities that endanger national security, disrupt social order,
 //  侵犯他人合法权益等法律法规所禁止的行为！
@@ -20,7 +20,7 @@
 //  Any legal disputes and liabilities arising from secondary development based on this project
 //  本项目组织与贡献者概不承担。
 //  shall be borne solely by the developer; the project organization and contributors assume no responsibility.
-// 
+//
 //  GitHub 仓库：https://github.com/GameFrameX
 //  GitHub Repository: https://github.com/GameFrameX
 //  Gitee  仓库：https://gitee.com/GameFrameX
@@ -29,119 +29,79 @@
 //  Official Documentation: https://gameframex.doc.alianblank.com/
 // ==========================================================================================
 
+using GameFrameX.Event.Runtime;
+using GameFrameX.Runtime;
+
 namespace GameFrameX.Network.Runtime
 {
     /// <summary>
-    /// 网络关闭原因。
+    /// 网络重连失败事件。
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public static class NetworkCloseReason
+    public sealed class NetworkReconnectFailedEventArgs : GameEventArgs
     {
         /// <summary>
-        /// 正常关闭。
+        /// 网络重连失败事件编号。
         /// </summary>
-        public const string Normal = "Normal";
+        public static readonly string EventId = typeof(NetworkReconnectFailedEventArgs).FullName;
 
         /// <summary>
-        /// 超时关闭。
+        /// 获取网络重连失败事件编号。
         /// </summary>
-        public const string Timeout = "Timeout";
+        public override string Id
+        {
+            get { return EventId; }
+        }
 
         /// <summary>
-        /// 资源释放关闭。
+        /// 初始化网络重连失败事件的新实例。
         /// </summary>
-        public const string Dispose = "Dispose";
+        public NetworkReconnectFailedEventArgs()
+        {
+            NetworkChannel = null;
+            RetryCount = 0;
+            Reason = null;
+        }
 
         /// <summary>
-        /// 连接关闭。
+        /// 获取网络频道。
         /// </summary>
-        public const string ConnectClose = "ConnectClose";
+        public INetworkChannel NetworkChannel { get; private set; }
 
         /// <summary>
-        /// 连接地址错误关闭。
+        /// 获取已尝试的重连次数。
         /// </summary>
-        public const string ConnectAddressError = "ConnectAddressError";
+        public int RetryCount { get; private set; }
 
         /// <summary>
-        /// 连接地址异常错误关闭。
+        /// 获取重连失败原因。
         /// </summary>
-        public const string ConnectAddressExceptionError = "ConnectAddressExceptionError";
+        public string Reason { get; private set; }
 
         /// <summary>
-        /// 缺失心跳关闭。
+        /// 创建网络重连失败事件。
         /// </summary>
-        public const string MissHeartBeat = "MissHeartBeat";
+        /// <param name="networkChannel">网络频道。</param>
+        /// <param name="retryCount">已尝试的重连次数。</param>
+        /// <param name="reason">重连失败原因。</param>
+        /// <returns>创建的网络重连失败事件。</returns>
+        public static NetworkReconnectFailedEventArgs Create(INetworkChannel networkChannel, int retryCount, string reason)
+        {
+            NetworkReconnectFailedEventArgs networkReconnectFailedEventArgs = ReferencePool.Acquire<NetworkReconnectFailedEventArgs>();
+            networkReconnectFailedEventArgs.NetworkChannel = networkChannel;
+            networkReconnectFailedEventArgs.RetryCount = retryCount;
+            networkReconnectFailedEventArgs.Reason = reason;
+            return networkReconnectFailedEventArgs;
+        }
 
         /// <summary>
-        /// 服务器踢人关闭。
+        /// 清理网络重连失败事件。
         /// </summary>
-        public const string ServerKick = "ServerKick";
-    }
-
-    /// <summary>
-    /// 网络错误码。
-    /// </summary>
-    [UnityEngine.Scripting.Preserve]
-    public enum NetworkErrorCode : byte
-    {
-        /// <summary>
-        /// 未知错误。
-        /// </summary>
-        Unknown = 0,
-
-        /// <summary>
-        /// 地址族错误。
-        /// </summary>
-        AddressFamilyError,
-
-        /// <summary>
-        /// Socket 错误。
-        /// </summary>
-        SocketError,
-
-        /// <summary>
-        /// 连接错误。
-        /// </summary>
-        ConnectError,
-
-        /// <summary>
-        /// 发送错误。
-        /// </summary>
-        SendError,
-
-        /// <summary>
-        /// 接收错误。
-        /// </summary>
-        ReceiveError,
-
-        /// <summary>
-        /// 序列化错误。
-        /// </summary>
-        SerializeError,
-
-        /// <summary>
-        /// 反序列化消息包头错误。
-        /// </summary>
-        DeserializePacketHeaderError,
-
-        /// <summary>
-        /// 反序列化消息包错误。
-        /// </summary>
-        DeserializePacketError,
-
-        /// <summary>
-        /// 缺失心跳错误。
-        /// </summary>
-        MissHeartBeatError,
-
-        /// <summary>
-        /// 资源释放错误。
-        /// </summary>
-        DisposeError,
-
-        /// <summary>
-        /// 服务器踢人错误。
-        /// </summary>
-        ServerKickError,
+        public override void Clear()
+        {
+            NetworkChannel = null;
+            RetryCount = 0;
+            Reason = null;
+        }
     }
 }
