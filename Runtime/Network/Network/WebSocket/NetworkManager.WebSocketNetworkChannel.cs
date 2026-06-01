@@ -97,7 +97,10 @@ namespace GameFrameX.Network.Runtime
             public override void Close(string reason, ushort code = 0)
             {
                 base.Close(reason, code);
-                m_CancellationTokenSource.Cancel();
+                if (!m_CancellationTokenSource.IsCancellationRequested)
+                {
+                    m_CancellationTokenSource.Cancel();
+                }
             }
 
             private bool IsClose()
@@ -213,10 +216,14 @@ namespace GameFrameX.Network.Runtime
                     {
                         SocketException socketException = exception as SocketException;
                         NetworkChannelError(this, NetworkErrorCode.ConnectError, socketException?.SocketErrorCode ?? SocketError.Success, exception.ToString());
+                        PIsConnecting = false;
+                        PActive = false;
                         return;
                     }
 
-                    throw;
+                    PIsConnecting = false;
+                    PActive = false;
+                    Log.Fatal(exception);
                 }
             }
 
@@ -262,9 +269,8 @@ namespace GameFrameX.Network.Runtime
                     PHeartBeatState.Reset(true);
                 }
 
-                NetworkChannelConnected?.Invoke(this, connectState.UserData);
-
                 PActive = true;
+                NetworkChannelConnected?.Invoke(this, connectState.UserData);
             }
 
             private void ReceiveCallback(byte[] buffer)
@@ -320,8 +326,6 @@ namespace GameFrameX.Network.Runtime
 
                         // 将收到的消息加入到链表最后
                         m_ExecutionMessageLinkedList.AddLast(messageObject);
-
-                        PReceivedPacketCount++;
                     }
                     else
                     {

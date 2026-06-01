@@ -72,9 +72,21 @@ namespace GameFrameX.Network.Runtime
             public async Task ConnectAsync()
             {
                 _isConnecting = true;
-                _connectTask = new TaskCompletionSource<bool>();
+                _connectTask = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 _client.ConnectAsync();
-                await _connectTask.Task;
+                var timeoutTask = System.Threading.Tasks.Task.Delay(System.TimeSpan.FromSeconds(30));
+                var completedTask = await System.Threading.Tasks.Task.WhenAny(_connectTask.Task, timeoutTask);
+
+                if (completedTask == timeoutTask)
+                {
+                    _isConnecting = false;
+                    throw new TimeoutException("WebSocket connection timed out after 30 seconds.");
+                }
+
+                if (!_connectTask.Task.Result)
+                {
+                    throw new GameFrameworkException("WebSocket connection failed.");
+                }
             }
 
             public IWebSocket Client
@@ -119,8 +131,8 @@ namespace GameFrameX.Network.Runtime
                     return;
                 }
 
-                _client.CloseAsync();
                 IsClosed = true;
+                _client.CloseAsync();
             }
         }
     }
