@@ -195,22 +195,34 @@ namespace GameFrameX.Network.Runtime
 
         private void OnNetworkConnected(object sender, NetworkConnectedEventArgs eventArgs)
         {
-            m_EventComponent.Fire(this, eventArgs);
+            if (m_EventComponent != null)
+            {
+                m_EventComponent.Fire(this, eventArgs);
+            }
         }
 
         private void OnNetworkClosed(object sender, NetworkClosedEventArgs eventArgs)
         {
-            m_EventComponent.Fire(this, eventArgs);
+            if (m_EventComponent != null)
+            {
+                m_EventComponent.Fire(this, eventArgs);
+            }
         }
 
         private void OnNetworkMissHeartBeat(object sender, NetworkMissHeartBeatEventArgs eventArgs)
         {
-            m_EventComponent.Fire(this, eventArgs);
+            if (m_EventComponent != null)
+            {
+                m_EventComponent.Fire(this, eventArgs);
+            }
         }
 
         private void OnNetworkError(object sender, NetworkErrorEventArgs eventArgs)
         {
-            m_EventComponent.Fire(this, eventArgs);
+            if (m_EventComponent != null)
+            {
+                m_EventComponent.Fire(this, eventArgs);
+            }
         }
     }
 }
