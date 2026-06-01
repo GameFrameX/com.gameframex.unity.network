@@ -10,7 +10,7 @@ namespace GameFrameX.Network.Runtime
     /// </remarks>
     public static class MessageSerializerRegistry
     {
-        private static IMessageSerializer _global;
+        private static volatile IMessageSerializer _global;
 
         /// <summary>
         /// 获取全局消息序列化器，若未注册则返回默认兜底实现。
