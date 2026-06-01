@@ -74,7 +74,6 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         public virtual uint LimitCompressLength { get; } = 512;
 
-        private int m_Offset;
         private readonly byte[] m_CachedByte;
 
         /// <summary>
@@ -88,10 +87,14 @@ namespace GameFrameX.Network.Runtime
         /// <returns></returns>
         public bool Handler<T>(T messageObject, IMessageCompressHandler messageCompressHandler, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject
         {
-            m_Offset = 0;
+            int offset = 0;
             var messageType = messageObject.GetType();
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
             messageBodyBuffer = (ChannelSerializer ?? MessageSerializerRegistry.Global).Serialize(messageObject);
+            if (messageBodyBuffer == null || messageBodyBuffer.Length == 0)
+            {
+                return false;
+            }
             if (messageCompressHandler != null && messageBodyBuffer.Length > LimitCompressLength)
             {
                 IsZip = true;
@@ -105,15 +108,15 @@ namespace GameFrameX.Network.Runtime
             var messageLength = messageBodyBuffer.Length;
             PacketLength = (uint)(PacketHeaderLength + messageLength);
             // 数据包总大小
-            m_CachedByte.WriteUInt(PacketLength, ref m_Offset);
+            m_CachedByte.WriteUInt(PacketLength, ref offset);
             // 消息操作类型
-            m_CachedByte.WriteByte((byte)(ProtoMessageIdHandler.IsHeartbeat(messageType) ? 1 : 4), ref m_Offset);
+            m_CachedByte.WriteByte((byte)(ProtoMessageIdHandler.IsHeartbeat(messageType) ? 1 : 4), ref offset);
             // 消息压缩标记
-            m_CachedByte.WriteByte((byte)(IsZip ? 1 : 0), ref m_Offset);
+            m_CachedByte.WriteByte((byte)(IsZip ? 1 : 0), ref offset);
             // 消息编号
-            m_CachedByte.WriteInt(messageObject.UniqueId, ref m_Offset);
+            m_CachedByte.WriteInt(messageObject.UniqueId, ref offset);
             // 消息ID
-            m_CachedByte.WriteInt(Id, ref m_Offset);
+            m_CachedByte.WriteInt(Id, ref offset);
             destination.Write(m_CachedByte, 0, PacketHeaderLength);
             return true;
         }
