@@ -21,7 +21,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="messageHandler">消息接收对象</param>
         [UnityEngine.Scripting.Preserve]
-        [Obsolete("请使用Add方法")]
+        [Obsolete("请使用Add方法", true)]
         public static void Init(IMessageHandler messageHandler)
         {
             Add(messageHandler);

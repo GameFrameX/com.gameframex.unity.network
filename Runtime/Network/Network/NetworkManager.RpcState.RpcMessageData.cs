@@ -17,7 +17,7 @@ namespace GameFrameX.Network.Runtime
                 public long UniqueId { get; }
 
                 /// <summary>
-                /// 创建时间
+                /// 创建时间（毫秒级 Unix 时间戳）
                 /// </summary>
                 public long CreatedTime { get; }
 

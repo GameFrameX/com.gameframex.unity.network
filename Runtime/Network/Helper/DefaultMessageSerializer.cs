@@ -19,6 +19,8 @@ namespace GameFrameX.Network.Runtime
         /// </remarks>
         public static readonly DefaultMessageSerializer Instance = new DefaultMessageSerializer();
 
+        private DefaultMessageSerializer() { }
+
         /// <summary>
         /// 序列化消息对象，未注册实际序列化器时始终抛出异常。
         /// </summary>

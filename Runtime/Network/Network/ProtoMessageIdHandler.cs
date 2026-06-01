@@ -108,6 +108,7 @@ namespace GameFrameX.Network.Runtime
         {
             ReqDictionary.Clear();
             RespDictionary.Clear();
+            HeartBeatList.Clear();
             var types = assembly.GetTypes();
             // StringBuilder stringBuilder = new StringBuilder(1024);
             foreach (var type in types)
