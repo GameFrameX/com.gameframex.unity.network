@@ -107,6 +107,7 @@ namespace GameFrameX.Network.Runtime
 
                 public void Dispose()
                 {
+                    m_Tcs.TrySetCanceled();
                     GC.SuppressFinalize(this);
                 }
             }
