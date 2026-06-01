@@ -41,6 +41,11 @@ namespace GameFrameX.Network.Runtime
         private readonly ConcurrentQueue<MessageObject> m_MessageObjects = new ConcurrentQueue<MessageObject>();
 
         /// <summary>
+        /// 反射调用参数缓存，避免每次 Invoke 分配 object[]
+        /// </summary>
+        private readonly object[] m_InvokeArgs = new object[1];
+
+        /// <summary>
         /// 网络消息处理器
         /// </summary>
         /// <param name="message">注册的消息对象。需要继承MessageObject和实现IResponseMessage</param>
@@ -94,11 +99,13 @@ namespace GameFrameX.Network.Runtime
 
             if (m_InvokeMethod.IsStatic)
             {
-                m_InvokeMethod.Invoke(null, new object[] { messageObject });
+                m_InvokeArgs[0] = messageObject;
+                m_InvokeMethod.Invoke(null, m_InvokeArgs);
             }
             else
             {
-                m_InvokeMethod.Invoke(m_MessageHandler, new object[] { messageObject });
+                m_InvokeArgs[0] = messageObject;
+                m_InvokeMethod.Invoke(m_MessageHandler, m_InvokeArgs);
             }
         }
 
