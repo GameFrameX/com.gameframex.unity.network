@@ -49,6 +49,11 @@ namespace GameFrameX.Network.Runtime
         private EventHandler<NetworkMissHeartBeatEventArgs> m_NetworkMissHeartBeatEventHandler;
         private EventHandler<NetworkErrorEventArgs> m_NetworkErrorEventHandler;
 
+        private readonly object m_NetworkConnectedLock = new object();
+        private readonly object m_NetworkClosedLock = new object();
+        private readonly object m_NetworkMissHeartBeatLock = new object();
+        private readonly object m_NetworkErrorLock = new object();
+
         /// <summary>
         /// 初始化网络管理器的新实例。
         /// </summary>
@@ -262,7 +267,7 @@ namespace GameFrameX.Network.Runtime
         {
             if (m_NetworkConnectedEventHandler != null)
             {
-                lock (m_NetworkConnectedEventHandler)
+                lock (m_NetworkConnectedLock)
                 {
                     NetworkConnectedEventArgs networkConnectedEventArgs = NetworkConnectedEventArgs.Create(networkChannel, userData);
                     m_NetworkConnectedEventHandler(this, networkConnectedEventArgs);
@@ -275,7 +280,7 @@ namespace GameFrameX.Network.Runtime
         {
             if (m_NetworkClosedEventHandler != null)
             {
-                lock (m_NetworkClosedEventHandler)
+                lock (m_NetworkClosedLock)
                 {
                     NetworkClosedEventArgs networkClosedEventArgs = NetworkClosedEventArgs.Create(networkChannel, reason, errorCode);
                     m_NetworkClosedEventHandler(this, networkClosedEventArgs);
@@ -288,7 +293,7 @@ namespace GameFrameX.Network.Runtime
         {
             if (m_NetworkMissHeartBeatEventHandler != null)
             {
-                lock (m_NetworkMissHeartBeatEventHandler)
+                lock (m_NetworkMissHeartBeatLock)
                 {
                     NetworkMissHeartBeatEventArgs networkMissHeartBeatEventArgs = NetworkMissHeartBeatEventArgs.Create(networkChannel, missHeartBeatCount);
                     m_NetworkMissHeartBeatEventHandler(this, networkMissHeartBeatEventArgs);
@@ -301,7 +306,7 @@ namespace GameFrameX.Network.Runtime
         {
             if (m_NetworkErrorEventHandler != null)
             {
-                lock (m_NetworkErrorEventHandler)
+                lock (m_NetworkErrorLock)
                 {
                     NetworkErrorEventArgs networkErrorEventArgs = NetworkErrorEventArgs.Create(networkChannel, errorCode, socketErrorCode, errorMessage);
                     m_NetworkErrorEventHandler(this, networkErrorEventArgs);
