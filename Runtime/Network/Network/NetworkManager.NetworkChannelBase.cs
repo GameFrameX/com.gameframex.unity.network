@@ -123,10 +123,10 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 是否正在连接中
             /// </summary>
-            protected bool PIsConnecting = false;
+            protected volatile bool PIsConnecting = false;
 
             private bool m_Disposed;
-            private bool m_PActive;
+            private volatile bool m_PActive;
 
             /// <summary>
             /// 网络是否激活
