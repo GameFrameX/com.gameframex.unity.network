@@ -10,6 +10,10 @@ namespace GameFrameX.Network.Runtime
     {
         public bool Handler(byte[] messageBodyBuffer, MemoryStream destination)
         {
+            if (messageBodyBuffer == null || destination == null)
+            {
+                return false;
+            }
             destination.Write(messageBodyBuffer, 0, messageBodyBuffer.Length);
             return true;
         }

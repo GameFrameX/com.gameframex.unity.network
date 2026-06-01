@@ -1,4 +1,5 @@
-﻿using GameFrameX.Runtime;
+﻿using System;
+using GameFrameX.Runtime;
 
 namespace GameFrameX.Network.Runtime
 {
@@ -15,6 +16,10 @@ namespace GameFrameX.Network.Runtime
         /// <returns></returns>
         public byte[] Handler(byte[] message)
         {
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
             return ZipHelper.Decompress(message);
         }
     }
