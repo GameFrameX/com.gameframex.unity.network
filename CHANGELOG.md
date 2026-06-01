@@ -1,3 +1,38 @@
+## [2.6.1](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.0...2.6.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* **network:** Call 添加类型不匹配异常；移除 Send 重复 null 检查；HeartBeatInterval 添加负值校验 ([375372b](https://github.com/gameframex/com.gameframex.unity.network/commit/375372b7ef6ec5fe9c0241ff94c71db8452e97b6))
+* **network:** Close 使用 RpcState.Reset 替代 Dispose，允许重连后 RPC 正常工作 ([2d0e7e2](https://github.com/gameframex/com.gameframex.unity.network/commit/2d0e7e29fd2fe52d39f0d03d39156badb3c8be1d))
+* **network:** DefaultMessageSerializer 私有构造函数、IPacketHandler 文档、ProtoMessageHandler Obsolete 标记为错误、ProtoMessageIdHandler 清理 HeartBeatList、RpcMessageData 时间单位注释 ([29a2883](https://github.com/gameframex/com.gameframex.unity.network/commit/29a2883e4b91214e8f59a2611977052b9f97f32b))
+* **network:** DefaultNetworkChannelHelper _event 改为实例字段；添加 null 检查 ([052f27d](https://github.com/gameframex/com.gameframex.unity.network/commit/052f27df5e0709481866731f9024d394403d3238))
+* **network:** DefaultPacketReceiveBodyHandler 检查 GetRespTypeById 返回 null ([8bd3272](https://github.com/gameframex/com.gameframex.unity.network/commit/8bd3272483cb1c7153dc4a0b5a125661afd59b07))
+* **network:** DefaultPacketReceiveHeaderHandler 添加入参长度校验；重命名局部变量避免与属性混淆 ([dd1577f](https://github.com/gameframex/com.gameframex.unity.network/commit/dd1577f482e55f6cb4526cd22b8b71c5a6850910))
+* **network:** DefaultPacketSendBodyHandler/CompressHandler/DecompressHandler 添加参数 null 检查 ([f599f95](https://github.com/gameframex/com.gameframex.unity.network/commit/f599f95ed427e0e2cabc890414e4b4b87a34052a))
+* **network:** DefaultPacketSendHeaderHandler 添加序列化结果 null 检查；m_Offset 改为局部变量防止重入 ([ad5e664](https://github.com/gameframex/com.gameframex.unity.network/commit/ad5e6642fa5925792602837271eb99f12580f435))
+* **network:** MessageHandlerAttribute 移除 ?. 静默吞异常；改用 Type 直接比较替代 FullName；修正 typo ([42f5c22](https://github.com/gameframex/com.gameframex.unity.network/commit/42f5c22d332c0120e6eba61660ebf242743968d4))
+* **network:** MessageSerializerRegistry._global 添加 volatile 保证多线程可见性 ([eebe735](https://github.com/gameframex/com.gameframex.unity.network/commit/eebe735754976990f4a5d3520411c934ffee4479))
+* **network:** NetworkClosedEventArgs.Clear 补充重置 Reason 和 ErrorCode，修复引用池脏数据 ([958ca04](https://github.com/gameframex/com.gameframex.unity.network/commit/958ca04d238fd7a3ac023a18dc6ceb286b7ff14b))
+* **network:** NetworkComponent 事件处理器添加 m_EventComponent null 检查，防止 Awake/Start 间触发 NRE ([4d839e4](https://github.com/gameframex/com.gameframex.unity.network/commit/4d839e4ee67633ca6878003877423a5ea6a5251e))
+* **network:** NetworkComponentInspector 访问 Socket 端点时添加 null 保护，防止 Inspector 崩溃 ([8bb5f4d](https://github.com/gameframex/com.gameframex.unity.network/commit/8bb5f4d6ee70eab0e50287f9c8604292c57fb735))
+* **network:** ReceiveState/SendState.Reset 添加 disposed 检查，防止 Dispose 后 NRE ([45b8f38](https://github.com/gameframex/com.gameframex.unity.network/commit/45b8f38e8c7e34c3b7b0a642a7dd7d4b111f23c0))
+* **network:** RpcMessageData.Dispose 取消等待中 TaskCompletionSource，防止 await 永久挂起 ([489edec](https://github.com/gameframex/com.gameframex.unity.network/commit/489edec33ec4107ed3bce2c945d814ed93261b04))
+* **network:** RpcState Dispose 时取消等待中 TCS；新增 Reset 方法支持重连场景 ([b69157c](https://github.com/gameframex/com.gameframex.unity.network/commit/b69157cf00a431de5dba40243d4a74603205b074))
+* **network:** RpcState.Call 处理 TryAdd 返回 false 的情况，修复 TOCTOU 问题 ([c8cefc2](https://github.com/gameframex/com.gameframex.unity.network/commit/c8cefc2060a1a4c09721bd0d7bbf3078b39f9407))
+* **network:** SystemTcpNetworkChannel 修复接收失败处理、反序列化入队、连接事件顺序、bodyLength 校验 ([6b743db](https://github.com/gameframex/com.gameframex.unity.network/commit/6b743db57857f6d69004472861ed3fec720aa6ef))
+* **network:** Update 使用快照遍历防止回调中修改集合；移除 DestroyNetworkChannel 冗余 null 检查 ([9c7c6d6](https://github.com/gameframex/com.gameframex.unity.network/commit/9c7c6d68203f6be552cd57e8b36951f8a331a3d2))
+* **network:** WebSocket 连接超时保护、CTS 释放、async void 异常保护、连接事件顺序、重复计数修复 ([e6dc9c4](https://github.com/gameframex/com.gameframex.unity.network/commit/e6dc9c4e8bfcfae85786c761592ba8bd09046130))
+* **network:** 使用专用锁对象替代 EventHandler 委托实例作为 lock 目标，修复多线程竞态 ([b50b51f](https://github.com/gameframex/com.gameframex.unity.network/commit/b50b51f4b53a438a5b1ac8506a7af7c31669d06b))
+* **network:** 将 ProcessHeartBeat 中 Close 调用移到锁外，避免嵌套锁死锁风险 ([3594aea](https://github.com/gameframex/com.gameframex.unity.network/commit/3594aeac7cf592900c11b785e61fc7f1bb454a03))
+
+
+### Performance Improvements
+
+* **network:** MessageHandlerAttribute.Invoke 预分配反射参数数组 ([54de39a](https://github.com/gameframex/com.gameframex.unity.network/commit/54de39af1c2fbe86da03ce976ee8f8a9d54169e8))
+* **network:** ProtoMessageHandler.GetHandlers 去掉 ToList 复制 ([34c445d](https://github.com/gameframex/com.gameframex.unity.network/commit/34c445d6ab845b480d9765cfc1334ce0a3e2d5a3))
+* **network:** Update 使用预分配列表快照遍历，消除每帧 GC 分配 ([dae5463](https://github.com/gameframex/com.gameframex.unity.network/commit/dae54639aaee149dd62a7969e897ed16df30ea12))
+
 # [2.6.0](https://github.com/gameframex/com.gameframex.unity.network/compare/2.5.1...2.6.0) (2026-05-29)
 
 
