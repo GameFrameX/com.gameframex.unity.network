@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using GameFrameX.Runtime;
@@ -37,7 +38,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息处理对象队列
         /// </summary>
-        private readonly Queue<MessageObject> m_MessageObjects = new Queue<MessageObject>();
+        private readonly ConcurrentQueue<MessageObject> m_MessageObjects = new ConcurrentQueue<MessageObject>();
 
         /// <summary>
         /// 网络消息处理器
@@ -85,7 +86,11 @@ namespace GameFrameX.Network.Runtime
                 return;
             }
 
-            var messageObject = m_MessageObjects.Dequeue();
+            if (!m_MessageObjects.TryDequeue(out var messageObject))
+            {
+                Log.Warning($"没有消息对象转发到方法：{m_InvokeMethodName}");
+                return;
+            }
 
             if (m_InvokeMethod.IsStatic)
             {
