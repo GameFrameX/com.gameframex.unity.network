@@ -108,12 +108,12 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 发送数据包的数量
             /// </summary>
-            private int m_SentPacketCount;
+            protected int m_SentPacketCount;
 
             /// <summary>
             /// 接收数据包数量
             /// </summary>
-            private int m_ReceivedPacketCount;
+            protected int m_ReceivedPacketCount;
 
             /// <summary>
             /// 是否在应用程序获得焦点时发送心跳包

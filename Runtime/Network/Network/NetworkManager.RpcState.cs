@@ -44,7 +44,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 等待回复处理对象字典
             /// </summary>
-            private readonly ConcurrentDictionary<long, RpcMessageData> _waitingReplyHandlingObjects = new ConcurrentDictionary<long, RpcMessageData>(16);
+            private readonly ConcurrentDictionary<long, RpcMessageData> _waitingReplyHandlingObjects = new ConcurrentDictionary<long, RpcMessageData>();
 
             private readonly List<long> _timeoutIds = new List<long>(16);
 
