@@ -150,7 +150,10 @@ namespace GameFrameX.Network.Runtime
                 }
 
                 var defaultMessageActorObject = RpcMessageData.Create(messageObject as IRequestMessage, _rpcTimeout, isIgnoreErrorCode);
-                _waitingReplyHandlingObjects.TryAdd(messageObject.UniqueId, defaultMessageActorObject);
+                if (!_waitingReplyHandlingObjects.TryAdd(messageObject.UniqueId, defaultMessageActorObject))
+                {
+                    return defaultMessageActorObject.Task;
+                }
                 try
                 {
                     _rpcStartHandler?.Invoke(this, messageObject);
