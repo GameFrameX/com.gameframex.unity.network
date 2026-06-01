@@ -55,7 +55,7 @@ namespace GameFrameX.Network.Runtime
             }
         }
 
-        private static EventComponent _event;
+        private EventComponent _event;
 
         public void Initialize(INetworkChannel netChannel)
         {
@@ -145,6 +145,11 @@ namespace GameFrameX.Network.Runtime
 
         public bool SendHeartBeat()
         {
+            if (m_NetworkChannel == null)
+            {
+                return false;
+            }
+
             var message = m_NetworkChannel.PacketHeartBeatHandler.Handler();
             m_NetworkChannel.Send(message);
             return true;
@@ -174,6 +179,7 @@ namespace GameFrameX.Network.Runtime
         public bool DeserializePacketHeader(byte[] source)
         {
             GameFrameworkGuard.NotNull(source, nameof(source));
+            GameFrameworkGuard.NotNull(m_NetworkChannel, nameof(m_NetworkChannel));
 
             return m_NetworkChannel.PacketReceiveHeaderHandler.Handler(source);
         }
