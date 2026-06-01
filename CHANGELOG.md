@@ -1,3 +1,18 @@
+## [2.6.2](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.1...2.6.2) (2026-06-01)
+
+
+### Bug Fixes
+
+* **network:** m_PActive 和 PIsConnecting 标记 volatile 保证跨线程可见性 ([857e22a](https://github.com/gameframex/com.gameframex.unity.network/commit/857e22ad0b0856fd21c8914f09bfc359180124b0))
+* **network:** RpcState 超时收集改为预分配实例字段消除每帧 GC ([986acf6](https://github.com/gameframex/com.gameframex.unity.network/commit/986acf68ba0adaef3a22675b1fc066d96b416edf))
+* **network:** 收发计数器改用 Interlocked 操作修复多线程可见性 ([ea45494](https://github.com/gameframex/com.gameframex.unity.network/commit/ea45494ec41d63d7e77b37e919012132f42ca73a))
+* **network:** 消息接收队列改为 ConcurrentQueue 修复线程安全问题 ([cc363a7](https://github.com/gameframex/com.gameframex.unity.network/commit/cc363a7434c73f643b889fcf526002c3366a8972))
+
+
+### Performance Improvements
+
+* **network:** 集合预分配初始容量避免首次扩容 ([9b1b590](https://github.com/gameframex/com.gameframex.unity.network/commit/9b1b5904f125e667bda73bbb10684993e50d0e2d))
+
 ## [2.6.1](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.0...2.6.1) (2026-06-01)
 
 
