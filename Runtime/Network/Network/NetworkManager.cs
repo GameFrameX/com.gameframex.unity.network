@@ -43,6 +43,7 @@ namespace GameFrameX.Network.Runtime
     public sealed partial class NetworkManager : GameFrameworkModule, INetworkManager
     {
         private readonly Dictionary<string, NetworkChannelBase> m_NetworkChannels;
+        private readonly List<NetworkChannelBase> m_NetworkChannelSnapshot = new List<NetworkChannelBase>();
 
         private EventHandler<NetworkConnectedEventArgs> m_NetworkConnectedEventHandler;
         private EventHandler<NetworkClosedEventArgs> m_NetworkClosedEventHandler;
@@ -118,10 +119,11 @@ namespace GameFrameX.Network.Runtime
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
         protected override void Update(float elapseSeconds, float realElapseSeconds)
         {
-            var channels = new List<NetworkChannelBase>(m_NetworkChannels.Values);
-            foreach (var networkChannel in channels)
+            m_NetworkChannelSnapshot.Clear();
+            m_NetworkChannelSnapshot.AddRange(m_NetworkChannels.Values);
+            for (int i = 0; i < m_NetworkChannelSnapshot.Count; i++)
             {
-                networkChannel.Update(elapseSeconds, realElapseSeconds);
+                m_NetworkChannelSnapshot[i].Update(elapseSeconds, realElapseSeconds);
             }
         }
 
