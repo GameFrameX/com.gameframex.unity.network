@@ -118,9 +118,10 @@ namespace GameFrameX.Network.Runtime
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
         protected override void Update(float elapseSeconds, float realElapseSeconds)
         {
-            foreach (var networkChannel in m_NetworkChannels)
+            var channels = new List<NetworkChannelBase>(m_NetworkChannels.Values);
+            foreach (var networkChannel in channels)
             {
-                networkChannel.Value.Update(elapseSeconds, realElapseSeconds);
+                networkChannel.Update(elapseSeconds, realElapseSeconds);
             }
         }
 
@@ -235,17 +236,14 @@ namespace GameFrameX.Network.Runtime
         public bool DestroyNetworkChannel(string channelName)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
-            if (m_NetworkChannels.TryGetValue(channelName ?? string.Empty, out var networkChannel))
+            if (m_NetworkChannels.TryGetValue(channelName, out var networkChannel))
             {
                 networkChannel.NetworkChannelConnected -= OnNetworkChannelConnected;
                 networkChannel.NetworkChannelClosed -= OnNetworkChannelClosed;
                 networkChannel.NetworkChannelMissHeartBeat -= OnNetworkChannelMissHeartBeat;
                 networkChannel.NetworkChannelError -= OnNetworkChannelError;
                 networkChannel.Shutdown();
-                if (channelName != null)
-                {
-                    return m_NetworkChannels.Remove(channelName);
-                }
+                return m_NetworkChannels.Remove(channelName);
             }
 
             return false;
