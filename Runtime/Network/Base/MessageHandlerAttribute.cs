@@ -89,11 +89,11 @@ namespace GameFrameX.Network.Runtime
 
             if (m_InvokeMethod.IsStatic)
             {
-                m_InvokeMethod?.Invoke(null, new object[] { messageObject });
+                m_InvokeMethod.Invoke(null, new object[] { messageObject });
             }
             else
             {
-                m_InvokeMethod?.Invoke(m_MessageHandler, new object[] { messageObject });
+                m_InvokeMethod.Invoke(m_MessageHandler, new object[] { messageObject });
             }
         }
 
@@ -138,9 +138,9 @@ namespace GameFrameX.Network.Runtime
                         throw new TargetParameterCountException("参数个数必须为1");
                     }
 
-                    if (method.GetParameters()[0].ParameterType.FullName != MessageType.FullName)
+                    if (method.GetParameters()[0].ParameterType != MessageType)
                     {
-                        throw new ArgumentException("参数类型数必须为:" + MessageType.FullName);
+                        throw new ArgumentException("参数类型必须为:" + MessageType.FullName);
                     }
 
                     m_InvokeMethod = method;
@@ -180,9 +180,9 @@ namespace GameFrameX.Network.Runtime
                         throw new TargetParameterCountException("参数个数必须为1");
                     }
 
-                    if (method.GetParameters()[0].ParameterType.FullName != MessageType.FullName)
+                    if (method.GetParameters()[0].ParameterType != MessageType)
                     {
-                        throw new ArgumentException("参数类型数必须为:" + MessageType.FullName);
+                        throw new ArgumentException("参数类型必须为:" + MessageType.FullName);
                     }
 
                     m_InvokeMethod = null;
