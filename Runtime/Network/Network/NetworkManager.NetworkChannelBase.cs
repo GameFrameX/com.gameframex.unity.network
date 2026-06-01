@@ -58,7 +58,7 @@ namespace GameFrameX.Network.Runtime
 
             protected readonly GameFrameworkLinkedList<MessageObject> PSendPacketPool;
             protected readonly INetworkChannelHelper PNetworkChannelHelper;
-            protected AddressFamily PAddressFamily;
+            protected NetworkAddressFamily PAddressFamily;
 
             /// <summary>
             /// 当收到数据包时是否重置心跳流逝时长
@@ -172,7 +172,7 @@ namespace GameFrameX.Network.Runtime
                 Name = name ?? string.Empty;
                 PSendPacketPool = new GameFrameworkLinkedList<MessageObject>();
                 PNetworkChannelHelper = networkChannelHelper;
-                PAddressFamily = AddressFamily.Unknown;
+                PAddressFamily = NetworkAddressFamily.Unknown;
                 PResetHeartBeatElapseSecondsWhenReceivePacket = false;
                 PHeartBeatInterval = DefaultHeartBeatInterval;
                 MissHeartBeatCountByClose = DefaultMissHeartBeatCountByClose;
@@ -229,7 +229,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取网络地址类型。
             /// </summary>
-            public AddressFamily AddressFamily
+            public NetworkAddressFamily AddressFamily
             {
                 get { return PAddressFamily; }
             }
@@ -681,11 +681,11 @@ namespace GameFrameX.Network.Runtime
                     switch (ConnectEndPoint.AddressFamily)
                     {
                         case System.Net.Sockets.AddressFamily.InterNetwork:
-                            PAddressFamily = AddressFamily.IPv4;
+                            PAddressFamily = NetworkAddressFamily.IPv4;
                             break;
 
                         case System.Net.Sockets.AddressFamily.InterNetworkV6:
-                            PAddressFamily = AddressFamily.IPv6;
+                            PAddressFamily = NetworkAddressFamily.IPv6;
                             break;
 
                         default:

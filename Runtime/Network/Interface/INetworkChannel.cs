@@ -59,7 +59,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络地址类型。
         /// </summary>
-        AddressFamily AddressFamily { get; }
+        NetworkAddressFamily AddressFamily { get; }
 
         /// <summary>
         /// 获取要发送的消息包数量。

@@ -6,7 +6,7 @@ namespace GameFrameX.Network.Runtime
     {
         private void Start()
         {
-            _ = typeof(GameFrameX.Network.Runtime.AddressFamily);
+            _ = typeof(GameFrameX.Network.Runtime.NetworkAddressFamily);
             _ = typeof(GameFrameX.Network.Runtime.BasePacketHeartBeatHandler);
             _ = typeof(GameFrameX.Network.Runtime.DefaultMessageCompressHandler);
             _ = typeof(GameFrameX.Network.Runtime.DefaultMessageDecompressHandler);
