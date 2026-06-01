@@ -293,7 +293,14 @@ namespace GameFrameX.Network.Runtime
             public float HeartBeatInterval
             {
                 get { return PHeartBeatInterval; }
-                set { PHeartBeatInterval = value; }
+                set
+                {
+                    if (value < 0f)
+                    {
+                        throw new GameFrameworkException("HeartBeatInterval must be non-negative.");
+                    }
+                    PHeartBeatInterval = value;
+                }
             }
 
             /// <summary>
@@ -773,7 +780,15 @@ namespace GameFrameX.Network.Runtime
                 GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));
                 Send(messageObject);
                 var result = await PRpcState.Call(messageObject, isIgnoreErrorCode);
-                return result as TResult;
+                if (result is TResult typedResult)
+                {
+                    return typedResult;
+                }
+
+                throw new GameFrameworkException(
+                    Utility.Text.Format("RPC response type mismatch. Expected: {0}, Actual: {1}",
+                        typeof(TResult).FullName,
+                        result?.GetType().FullName ?? "null"));
             }
 
             /// <summary>
@@ -800,18 +815,6 @@ namespace GameFrameX.Network.Runtime
                 if (!PActive)
                 {
                     const string errorMessage = "Socket is not active.";
-                    if (NetworkChannelError != null)
-                    {
-                        NetworkChannelError(this, NetworkErrorCode.SendError, SocketError.Success, errorMessage);
-                        return;
-                    }
-
-                    throw new GameFrameworkException(errorMessage);
-                }
-
-                if (messageObject == null)
-                {
-                    const string errorMessage = "Packet is invalid.";
                     if (NetworkChannelError != null)
                     {
                         NetworkChannelError(this, NetworkErrorCode.SendError, SocketError.Success, errorMessage);
