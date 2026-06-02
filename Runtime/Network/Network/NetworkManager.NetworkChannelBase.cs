@@ -299,6 +299,7 @@ namespace GameFrameX.Network.Runtime
                     {
                         throw new GameFrameworkException("HeartBeatInterval must be non-negative.");
                     }
+
                     PHeartBeatInterval = value;
                 }
             }
@@ -759,7 +760,10 @@ namespace GameFrameX.Network.Runtime
                     }
 
                     PRpcState.Reset();
-                    m_ExecutionMessageQueue.Clear();
+                    while (m_ExecutionMessageQueue.Count > 0)
+                    {
+                        m_ExecutionMessageQueue.TryDequeue(out _);
+                    }
                 }
             }
 
@@ -782,8 +786,8 @@ namespace GameFrameX.Network.Runtime
 
                 throw new GameFrameworkException(
                     Utility.Text.Format("RPC response type mismatch. Expected: {0}, Actual: {1}",
-                        typeof(TResult).FullName,
-                        result?.GetType().FullName ?? "null"));
+                                        typeof(TResult).FullName,
+                                        result?.GetType().FullName ?? "null"));
             }
 
             /// <summary>
