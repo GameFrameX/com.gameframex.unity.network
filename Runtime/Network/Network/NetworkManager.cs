@@ -271,7 +271,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     NetworkConnectedEventArgs networkConnectedEventArgs = NetworkConnectedEventArgs.Create(networkChannel, userData);
                     m_NetworkConnectedEventHandler(this, networkConnectedEventArgs);
-                    // ReferencePool.Release(networkConnectedEventArgs);
+                    ReferencePool.Release(networkConnectedEventArgs);
                 }
             }
         }
@@ -284,7 +284,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     NetworkClosedEventArgs networkClosedEventArgs = NetworkClosedEventArgs.Create(networkChannel, reason, errorCode);
                     m_NetworkClosedEventHandler(this, networkClosedEventArgs);
-                    // ReferencePool.Release(networkClosedEventArgs);
+                    ReferencePool.Release(networkClosedEventArgs);
                 }
             }
         }
@@ -297,7 +297,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     NetworkMissHeartBeatEventArgs networkMissHeartBeatEventArgs = NetworkMissHeartBeatEventArgs.Create(networkChannel, missHeartBeatCount);
                     m_NetworkMissHeartBeatEventHandler(this, networkMissHeartBeatEventArgs);
-                    // ReferencePool.Release(networkMissHeartBeatEventArgs);
+                    ReferencePool.Release(networkMissHeartBeatEventArgs);
                 }
             }
         }
@@ -310,7 +310,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     NetworkErrorEventArgs networkErrorEventArgs = NetworkErrorEventArgs.Create(networkChannel, errorCode, socketErrorCode, errorMessage);
                     m_NetworkErrorEventHandler(this, networkErrorEventArgs);
-                    // ReferencePool.Release(networkErrorEventArgs);
+                    ReferencePool.Release(networkErrorEventArgs);
                 }
             }
         }
