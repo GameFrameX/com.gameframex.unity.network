@@ -1,3 +1,10 @@
+## [2.6.4](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.3...2.6.4) (2026-06-02)
+
+
+### Bug Fixes
+
+* **network:** 使用 TryDequeue 循环替代 ConcurrentQueue.Clear ([8d3a1fe](https://github.com/gameframex/com.gameframex.unity.network/commit/8d3a1fe5fc093fe65a0dfa8a38d12b6c0c3335eb))
+
 ## [2.6.3](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.2...2.6.3) (2026-06-02)
 
 
