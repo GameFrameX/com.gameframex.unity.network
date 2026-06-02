@@ -1,3 +1,10 @@
+## [2.6.3](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.2...2.6.3) (2026-06-02)
+
+
+### Bug Fixes
+
+* **network:** 集合预分配初始容量避免首次扩容 ([8fab110](https://github.com/gameframex/com.gameframex.unity.network/commit/8fab110fed45c5351a85c74e139587bed8048405))
+
 ## [2.6.2](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.1...2.6.2) (2026-06-01)
 
 
