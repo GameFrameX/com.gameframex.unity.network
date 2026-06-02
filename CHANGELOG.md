@@ -1,3 +1,10 @@
+## [2.6.5](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.4...2.6.5) (2026-06-02)
+
+
+### Bug Fixes
+
+* **network:** 恢复网络事件 EventArgs 的引用池回收 ([f9f109e](https://github.com/gameframex/com.gameframex.unity.network/commit/f9f109e89b4954f41f4fe3b478d963ee5b5460c1))
+
 ## [2.6.4](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.3...2.6.4) (2026-06-02)
 
 
