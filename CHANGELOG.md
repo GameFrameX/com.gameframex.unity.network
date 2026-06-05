@@ -1,3 +1,10 @@
+## [2.6.6](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.5...2.6.6) (2026-06-05)
+
+
+### Bug Fixes
+
+* **network:** 网络事件重新创建 EventArgs 实例触发 ([2e7f8a9](https://github.com/gameframex/com.gameframex.unity.network/commit/2e7f8a9d54f480fec89cf72214a8f88a3c0b38db))
+
 ## [2.6.5](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.4...2.6.5) (2026-06-02)
 
 
