@@ -195,34 +195,46 @@ namespace GameFrameX.Network.Runtime
 
         private void OnNetworkConnected(object sender, NetworkConnectedEventArgs eventArgs)
         {
-            if (m_EventComponent != null)
+            if (m_EventComponent == null)
             {
-                m_EventComponent.Fire(this, eventArgs);
+                return;
             }
+
+            var networkConnectedEventArgs = NetworkConnectedEventArgs.Create(eventArgs.NetworkChannel, eventArgs.UserData);
+            m_EventComponent.Fire(this, networkConnectedEventArgs);
         }
 
         private void OnNetworkClosed(object sender, NetworkClosedEventArgs eventArgs)
         {
-            if (m_EventComponent != null)
+            if (m_EventComponent == null)
             {
-                m_EventComponent.Fire(this, eventArgs);
+                return;
             }
+
+            var networkClosedEventArgs = NetworkClosedEventArgs.Create(eventArgs.NetworkChannel, eventArgs.Reason, eventArgs.ErrorCode);
+            m_EventComponent.Fire(this, networkClosedEventArgs);
         }
 
         private void OnNetworkMissHeartBeat(object sender, NetworkMissHeartBeatEventArgs eventArgs)
         {
-            if (m_EventComponent != null)
+            if (m_EventComponent == null)
             {
-                m_EventComponent.Fire(this, eventArgs);
+                return;
             }
+
+            var networkMissHeartBeatEventArgs = NetworkMissHeartBeatEventArgs.Create(eventArgs.NetworkChannel, eventArgs.MissCount);
+            m_EventComponent.Fire(this, networkMissHeartBeatEventArgs);
         }
 
         private void OnNetworkError(object sender, NetworkErrorEventArgs eventArgs)
         {
-            if (m_EventComponent != null)
+            if (m_EventComponent == null)
             {
-                m_EventComponent.Fire(this, eventArgs);
+                return;
             }
+
+            var networkErrorEventArgs = NetworkErrorEventArgs.Create(eventArgs.NetworkChannel, eventArgs.ErrorCode, eventArgs.SocketErrorCode, eventArgs.ErrorMessage);
+            m_EventComponent.Fire(this, networkErrorEventArgs);
         }
     }
 }
