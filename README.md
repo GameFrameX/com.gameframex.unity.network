@@ -67,7 +67,6 @@ Then add the package to `dependencies`:
 }
 ```
 
-
 ## Platform Support
 
 | Platform | Supported |
@@ -94,4 +93,4 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ## License
 
-This project is licensed under the terms of the [LICENSE](LICENSE) file.
+See [LICENSE.md](LICENSE.md) for license information.
