@@ -92,6 +92,13 @@ Then add the package to `dependencies`:
 
 詳見 [CHANGELOG.md](CHANGELOG.md)。
 
+
+## 依賴
+
+| 套件 | 說明 |
+|------|------|
+| `com.gameframex.unity` | 1.1.1 |
+| `com.gameframex.unity.event` | 1.0.0 |
 ## 開源協議
 
 本專案基於 [LICENSE](LICENSE) 文件中定義的條款授權。

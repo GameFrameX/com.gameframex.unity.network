@@ -92,6 +92,13 @@ Then add the package to `dependencies`:
 
 詳細は [CHANGELOG.md](CHANGELOG.md) をご覧ください。
 
+
+## 依存関係
+
+| パッケージ | 説明 |
+|----------|------|
+| `com.gameframex.unity` | 1.1.1 |
+| `com.gameframex.unity.event` | 1.0.0 |
 ## ライセンス
 
 このプロジェクトは [LICENSE](LICENSE) ファイルに定義された条件に基づいてライセンスされています。

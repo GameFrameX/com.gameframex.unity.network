@@ -91,6 +91,13 @@ Then add the package to `dependencies`:
 
 See [CHANGELOG.md](CHANGELOG.md) for details.
 
+
+## Dependencies
+
+| Package | Description |
+|---------|-------------|
+| `com.gameframex.unity` | 1.1.1 |
+| `com.gameframex.unity.event` | 1.0.0 |
 ## License
 
 See [LICENSE.md](LICENSE.md) for license information.

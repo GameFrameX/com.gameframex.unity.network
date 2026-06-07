@@ -92,6 +92,13 @@ Then add the package to `dependencies`:
 
 자세한 내용은 [CHANGELOG.md](CHANGELOG.md)를 참조하세요.
 
+
+## 의존성
+
+| 패키지 | 설명 |
+|--------|------|
+| `com.gameframex.unity` | 1.1.1 |
+| `com.gameframex.unity.event` | 1.0.0 |
 ## 라이선스
 
 이 프로젝트는 [LICENSE](LICENSE) 파일에 정의된 조건에 따라 라이선스가 부여됩니다.
