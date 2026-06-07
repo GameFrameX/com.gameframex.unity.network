@@ -1,34 +1,24 @@
-<p align="center">
-  <img src="https://download.alianblank.com/gameframex/gameframex_logo_320.png" alt="GameFrameX Logo" width="160" />
-</p>
+<div align="center">
 
-<h1 align="center">Game Frame X Network</h1>
+<img src="https://download.alianblank.com/gameframex/gameframex_logo_320.png" alt="Game Frame X Logo" width="160" />
 
-<p align="center">
-  <a href="https://github.com/gameframex/com.gameframex.unity.network/releases">
-    <img src="https://img.shields.io/github/v/release/gameframex/com.gameframex.unity.network" alt="Version" />
-  </a>
-  <a href="https://github.com/gameframex/com.gameframex.unity.network/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/gameframex/com.gameframex.unity.network" alt="License" />
-  </a>
-  <a href="https://gameframex.doc.alianblank.com">
-    <img src="https://img.shields.io/badge/Documentation-online-blue" alt="Documentation" />
-  </a>
-</p>
+# Game Frame X Network
 
-<p align="center">
-  獨立遊戲前後端一體化解決方案 · 獨立遊戲開發者的圓夢大使
-</p>
+[![License](https://img.shields.io/github/license/GameFrameX/com.gameframex.unity.network)](https://github.com/GameFrameX/com.gameframex.unity.network/blob/main/LICENSE.md)
+[![Version](https://img.shields.io/github/v/release/GameFrameX/com.gameframex.unity.network)](https://github.com/GameFrameX/com.gameframex.unity.network/releases)
+[![Documentation](https://img.shields.io/badge/Documentation-docs-blue)](https://gameframex.doc.alianblank.com)
 
-<p align="center">
-  <a href="https://gameframex.doc.alianblank.com">文檔</a> ·
-  <a href="#快速開始">快速開始</a> ·
-  <a href="https://qm.qq.com/cgi-bin/qm/qr?k=ikT9gA5m2sKwOyNOfYmQvSAPK_c3GmD6">QQ群</a> ·
-  語言: <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <strong>繁體中文</strong> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a>
-</p>
+獨立遊戲前後端一體化解決方案 · 獨立遊戲開發者的圓夢大使
 
----
+<br />
 
+[文檔](https://gameframex.doc.alianblank.com) · [快速開始](#快速開始) · [QQ群](https://qm.qq.com/cgi-bin/qm/qr?k=ikT9gA5m2sKwOyNOfYmQvSAPK_c3GmD6)
+
+<br />
+
+[English](README.md) | [简体中文](README.zh-CN.md) | **繁體中文** | [日本語](README.ja.md) | [한국어](README.ko.md)
+
+</div>
 ## 項目簡介
 
 **Network 長連接網絡組件** - 提供 Unity 長連接網絡組件相關的介面，包括 TCP、WebSocket 和自訂協議支援，使網絡功能的使用更加簡單高效。

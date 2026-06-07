@@ -1,34 +1,24 @@
-<p align="center">
-  <img src="https://download.alianblank.com/gameframex/gameframex_logo_320.png" alt="GameFrameX Logo" width="160" />
-</p>
+<div align="center">
 
-<h1 align="center">Game Frame X Network</h1>
+<img src="https://download.alianblank.com/gameframex/gameframex_logo_320.png" alt="Game Frame X Logo" width="160" />
 
-<p align="center">
-  <a href="https://github.com/gameframex/com.gameframex.unity.network/releases">
-    <img src="https://img.shields.io/github/v/release/gameframex/com.gameframex.unity.network" alt="Version" />
-  </a>
-  <a href="https://github.com/gameframex/com.gameframex.unity.network/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/gameframex/com.gameframex.unity.network" alt="License" />
-  </a>
-  <a href="https://gameframex.doc.alianblank.com">
-    <img src="https://img.shields.io/badge/Documentation-online-blue" alt="Documentation" />
-  </a>
-</p>
+# Game Frame X Network
 
-<p align="center">
-  インディゲーム開発者向けオールインワンソリューション · インディ開発者の夢を支援
-</p>
+[![License](https://img.shields.io/github/license/GameFrameX/com.gameframex.unity.network)](https://github.com/GameFrameX/com.gameframex.unity.network/blob/main/LICENSE.md)
+[![Version](https://img.shields.io/github/v/release/GameFrameX/com.gameframex.unity.network)](https://github.com/GameFrameX/com.gameframex.unity.network/releases)
+[![Documentation](https://img.shields.io/badge/Documentation-docs-blue)](https://gameframex.doc.alianblank.com)
 
-<p align="center">
-  <a href="https://gameframex.doc.alianblank.com">ドキュメント</a> ·
-  <a href="#クイックスタート">クイックスタート</a> ·
-  <a href="https://qm.qq.com/cgi-bin/qm/qr?k=ikT9gA5m2sKwOyNOfYmQvSAPK_c3GmD6">QQグループ</a> ·
-  言語: <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-TW.md">繁體中文</a> | <strong>日本語</strong> | <a href="README.ko.md">한국어</a>
-</p>
+インディゲーム開発者向けオールインワンソリューション · インディ開発者の夢を支援
 
----
+<br />
 
+[ドキュメント](https://gameframex.doc.alianblank.com) · [クイックスタート](#クイックスタート) · [QQグループ](https://qm.qq.com/cgi-bin/qm/qr?k=ikT9gA5m2sKwOyNOfYmQvSAPK_c3GmD6)
+
+<br />
+
+[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | **日本語** | [한국어](README.ko.md)
+
+</div>
 ## プロジェクト概要
 
 **Network 長接続ネットワークコンポーネント** - Unity 向けの長接続ネットワークコンポーネント関連インターフェースを提供します。TCP、WebSocket、カスタムプロトコルサポートを含み、ネットワーク機能の使用をよりシンプルかつ効率的にします。

@@ -1,34 +1,24 @@
-<p align="center">
-  <img src="https://download.alianblank.com/gameframex/gameframex_logo_320.png" alt="GameFrameX Logo" width="160" />
-</p>
+<div align="center">
 
-<h1 align="center">Game Frame X Network</h1>
+<img src="https://download.alianblank.com/gameframex/gameframex_logo_320.png" alt="Game Frame X Logo" width="160" />
 
-<p align="center">
-  <a href="https://github.com/gameframex/com.gameframex.unity.network/releases">
-    <img src="https://img.shields.io/github/v/release/gameframex/com.gameframex.unity.network" alt="Version" />
-  </a>
-  <a href="https://github.com/gameframex/com.gameframex.unity.network/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/gameframex/com.gameframex.unity.network" alt="License" />
-  </a>
-  <a href="https://gameframex.doc.alianblank.com">
-    <img src="https://img.shields.io/badge/Documentation-online-blue" alt="Documentation" />
-  </a>
-</p>
+# Game Frame X Network
 
-<p align="center">
-  All-in-One Solution for Indie Game Development · Empowering Indie Developers' Dreams
-</p>
+[![License](https://img.shields.io/github/license/GameFrameX/com.gameframex.unity.network)](https://github.com/GameFrameX/com.gameframex.unity.network/blob/main/LICENSE.md)
+[![Version](https://img.shields.io/github/v/release/GameFrameX/com.gameframex.unity.network)](https://github.com/GameFrameX/com.gameframex.unity.network/releases)
+[![Documentation](https://img.shields.io/badge/Documentation-docs-blue)](https://gameframex.doc.alianblank.com)
 
-<p align="center">
-  <a href="https://gameframex.doc.alianblank.com">Documentation</a> ·
-  <a href="#quick-start">Quick Start</a> ·
-  <a href="https://qm.qq.com/cgi-bin/qm/qr?k=ikT9gA5m2sKwOyNOfYmQvSAPK_c3GmD6">QQ Group</a> ·
-  Language: <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-TW.md">繁體中文</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a>
-</p>
+All-in-One Solution for Indie Game Development · Empowering Indie Developers' Dreams
 
----
+<br />
 
+[Documentation](https://gameframex.doc.alianblank.com) · [Quick Start](#quick-start) · [QQ Group](https://qm.qq.com/cgi-bin/qm/qr?k=ikT9gA5m2sKwOyNOfYmQvSAPK_c3GmD6)
+
+<br />
+
+**English** | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
+
+</div>
 ## Project Overview
 
 **Network Component** - A long-connection network component for Unity that provides network interfaces including TCP, WebSocket, and custom protocol support, making network functionality simpler and more efficient.
