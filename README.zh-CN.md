@@ -39,34 +39,36 @@
 
 ### 安装
 
-编辑 Unity 项目的 `Packages/manifest.json`，添加 `scopedRegistries` 部分：
+选择以下任一方式：
 
-```json
-{
-  "scopedRegistries": [
-    {
-      "name": "GameFrameX",
-      "url": "https://gameframex.upm.alianblank.uk",
-      "scopes": [
-        "com.gameframex"
-      ]
-    }
-  ]
-}
-```
+1. 编辑 Unity 项目的 `Packages/manifest.json`，添加 `scopedRegistries` 部分：
+   ```json
+   {
+     "scopedRegistries": [
+       {
+         "name": "GameFrameX",
+         "url": "https://gameframex.upm.alianblank.uk",
+         "scopes": [
+           "com.gameframex"
+         ]
+       }
+     ],
+     "dependencies": {
+       "com.gameframex.unity.network": "2.6.6"
+     }
+   }
+   ```
 
-`scopes` 控制哪些包通过此注册表解析。只有以 `com.gameframex` 开头的包才会从这个注册表获取。
+   `scopes` 控制哪些包通过此注册表解析。只有以 `com.gameframex` 开头的包才会从这个注册表获取。
 
-Then add the package to `dependencies`:
-
-```json
-{
-  "dependencies": {
-    "com.gameframex.unity.network": "2.6.6"
-  }
-}
-```
-
+2. 直接在 `manifest.json` 的 `dependencies` 节点下添加以下内容：
+   ```json
+   {
+      "com.gameframex.unity.network": "https://github.com/gameframex/com.gameframex.unity.network.git"
+   }
+   ```
+3. 在 Unity 的 `Package Manager` 中使用 `Git URL` 的方式添加库，地址为：`https://github.com/gameframex/com.gameframex.unity.network.git`
+4. 直接下载仓库放置到 Unity 项目的 `Packages` 目录下，会自动加载识别。
 ## 平台支持
 
 | 平台 | 支持 |
