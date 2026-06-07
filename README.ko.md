@@ -39,42 +39,34 @@
 
 ### 설치
 
-다음 방법 중 하나를 선택하세요:
+Unity 프로젝트의 `Packages/manifest.json`을 편집하여 `scopedRegistries` 섹션을 추가하세요:
 
-1. 프로젝트의 `manifest.json` 파일의 `dependencies` 섹션에 다음 내용을 추가:
-   ```json
-   {"com.gameframex.unity.network": "https://github.com/AlianBlank/com.gameframex.unity.network.git"}
-   ```
-2. Unity의 `Package Manager`에서 `Git URL`을 사용하여 추가: https://github.com/AlianBlank/com.gameframex.unity.network.git
-3. 리포지토리를 다운로드하여 Unity 프로젝트의 `Packages` 디렉토리에 배치 (자동으로 로드됩니다).
-
-### 사용 예시
-
-```csharp
-// 표준: GameEntry를 통해 (com.gameframex.unity.entry 비의존)
-var networkComponent = GameEntry.GetComponent<NetworkComponent>();
-networkComponent.Connect("127.0.0.1", 8080);
+```json
+{
+  "scopedRegistries": [
+    {
+      "name": "GameFrameX",
+      "url": "https://gameframex.upm.alianblank.uk",
+      "scopes": [
+        "com.gameframex"
+      ]
+    }
+  ]
+}
 ```
 
-#### 플러그형 직렬화
+`scopes`는 이 레지스트리를 통해 어떤 패키지를 해석할지 제어합니다. `com.gameframex`로 시작하는 패키지만 이 레지스트리에서 가져옵니다.
 
-네트워크 패키지는 메시지 직렬화/역직렬화를 위해 `IMessageSerializer` 인터페이스를 정의합니다. 두 가지 수준에서 커스텀 직렬화기를 등록할 수 있습니다:
+Then add the package to `dependencies`:
 
-**전역 등록** — 모든 채널의 기본 직렬화기를 설정합니다:
-
-```csharp
-// 전역 직렬화기 등록 (예: 앱 시작 시)
-MessageSerializerRegistry.RegisterGlobal(new MyCustomSerializer());
+```json
+{
+  "dependencies": {
+    "com.gameframex.unity.network": "2.6.6"
+  }
+}
 ```
 
-**채널별 재정의** — 특정 채널에 직렬화기를 지정합니다 (`Initialize` 전에 호출해야 함):
-
-```csharp
-var helper = new DefaultNetworkChannelHelper();
-helper.SetChannelSerializer(new MyCustomSerializer()); // Initialize() 전에 호출해야 합니다
-```
-
-등록된 직렬화기가 없으면 `DefaultMessageSerializer`가 사용됩니다. 이 기본 구현은 등록을 알리기 위해 `InvalidOperationException`을 발생시킵니다. `com.gameframex.unity.google.protobuf` 패키지는 로드 시 `ProtobufMessageSerializer`를 전역 기본값으로 자동 등록하여, 설정 없이도 기존과의 호환성을 제공합니다.
 
 ## 플랫폼 지원
 

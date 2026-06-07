@@ -37,44 +37,36 @@
 
 ## 快速開始
 
-### 安裝方式
+### 安裝
 
-任選其一：
+編輯 Unity 專案的 `Packages/manifest.json`，添加 `scopedRegistries` 部分：
 
-1. 直接在 `manifest.json` 的文件中的 `dependencies` 節點下添加以下內容
-   ```json
-   {"com.gameframex.unity.network": "https://github.com/AlianBlank/com.gameframex.unity.network.git"}
-   ```
-2. 在 Unity 的 `Packages Manager` 中使用 `Git URL` 的方式添加庫，地址為：https://github.com/AlianBlank/com.gameframex.unity.network.git
-3. 直接下載倉庫放置到 Unity 專案的 `Packages` 目錄下，會自動載入識別。
-
-### 使用範例
-
-```csharp
-// 標準方式：透過 GameEntry（不依賴 com.gameframex.unity.entry）
-var networkComponent = GameEntry.GetComponent<NetworkComponent>();
-networkComponent.Connect("127.0.0.1", 8080);
+```json
+{
+  "scopedRegistries": [
+    {
+      "name": "GameFrameX",
+      "url": "https://gameframex.upm.alianblank.uk",
+      "scopes": [
+        "com.gameframex"
+      ]
+    }
+  ]
+}
 ```
 
-#### 可插拔序列化
+`scopes` 控制哪些套件透過此註冊表解析。只有以 `com.gameframex` 開頭的套件才會從這個註冊表取得。
 
-網絡包透過 `IMessageSerializer` 介面定義訊息的序列化與反序列化行為。支援在兩個層級註冊自訂序列化器：
+Then add the package to `dependencies`:
 
-**全域註冊** — 設定所有頻道的預設序列化器：
-
-```csharp
-// 註冊全域序列化器（例如在應用啟動時）
-MessageSerializerRegistry.RegisterGlobal(new MyCustomSerializer());
+```json
+{
+  "dependencies": {
+    "com.gameframex.unity.network": "2.6.6"
+  }
+}
 ```
 
-**按頻道覆蓋** — 為特定頻道指定序列化器（必須在 `Initialize` 之前呼叫）：
-
-```csharp
-var helper = new DefaultNetworkChannelHelper();
-helper.SetChannelSerializer(new MyCustomSerializer()); // 必須在 Initialize() 之前呼叫
-```
-
-如果未註冊任何序列化器，將使用 `DefaultMessageSerializer`，該預設實作會拋出 `InvalidOperationException` 以提醒開發者進行註冊。`com.gameframex.unity.google.protobuf` 包在載入時會自動將 `ProtobufMessageSerializer` 註冊為全域預設序列化器，提供零配置的向後相容性。
 
 ## 平台支援
 

@@ -39,42 +39,34 @@
 
 ### インストール
 
-以下のいずれかの方法を選択してください：
+Unity プロジェクトの `Packages/manifest.json` を編集し、`scopedRegistries` セクションを追加してください：
 
-1. プロジェクトの `manifest.json` の `dependencies` セクションに以下を追加：
-   ```json
-   {"com.gameframex.unity.network": "https://github.com/AlianBlank/com.gameframex.unity.network.git"}
-   ```
-2. Unity の `Package Manager` で `Git URL` を使用して追加：https://github.com/AlianBlank/com.gameframex.unity.network.git
-3. リポジトリをダウンロードして Unity プロジェクトの `Packages` ディレクトリに配置（自動的に読み込まれます）。
-
-### 使用例
-
-```csharp
-// 標準: GameEntry 経由（com.gameframex.unity.entry 非依存）
-var networkComponent = GameEntry.GetComponent<NetworkComponent>();
-networkComponent.Connect("127.0.0.1", 8080);
+```json
+{
+  "scopedRegistries": [
+    {
+      "name": "GameFrameX",
+      "url": "https://gameframex.upm.alianblank.uk",
+      "scopes": [
+        "com.gameframex"
+      ]
+    }
+  ]
+}
 ```
 
-#### プラグイン可能なシリアライズ
+`scopes` は、どのパッケージをこのレジストリから解決するかを制御します。`com.gameframex` で始まるパッケージのみがこのレジストリから取得されます。
 
-ネットワークパッケージは `IMessageSerializer` インターフェースを定義し、メッセージのシリアライズ/デシリアライズを扱います。カスタムシリアライザを 2 つのレベルで登録できます：
+Then add the package to `dependencies`:
 
-**グローバル登録** — すべてのチャネルのデフォルトシリアライザを設定します：
-
-```csharp
-// グローバルシリアライザを登録（例：アプリ起動時）
-MessageSerializerRegistry.RegisterGlobal(new MyCustomSerializer());
+```json
+{
+  "dependencies": {
+    "com.gameframex.unity.network": "2.6.6"
+  }
+}
 ```
 
-**チャネルごとの上書き** — 特定のチャネルにシリアライザを指定します（`Initialize` の前に呼び出す必要があります）：
-
-```csharp
-var helper = new DefaultNetworkChannelHelper();
-helper.SetChannelSerializer(new MyCustomSerializer()); // Initialize() の前に呼び出す必要があります
-```
-
-シリアライザが登録されていない場合、`DefaultMessageSerializer` が使用されます。このデフォルト実装は登録を促すために `InvalidOperationException` をスローします。`com.gameframex.unity.google.protobuf` パッケージは読み込み時に `ProtobufMessageSerializer` をグローバルデフォルトとして自動登録し、設定不要の後方互換性を提供します。
 
 ## プラットフォーム対応
 
