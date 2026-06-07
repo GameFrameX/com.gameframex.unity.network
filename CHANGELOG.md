@@ -1,3 +1,10 @@
+## [2.6.7](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.6...2.6.7) (2026-06-07)
+
+
+### Bug Fixes
+
+* 补全包规范文件（LICENSE/CHANGELOG/URL 字段/unity 字段） ([02a2833](https://github.com/gameframex/com.gameframex.unity.network/commit/02a2833333f7520f263d5a91ce993f8014d17eb3))
+
 ## [2.6.6](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.5...2.6.6) (2026-06-05)
 
 
