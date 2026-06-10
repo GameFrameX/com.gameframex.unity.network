@@ -91,7 +91,7 @@ namespace GameFrameX.Network.Runtime
             var messageType = messageObject.GetType();
             Id = ProtoMessageIdHandler.GetReqMessageIdByType(messageType);
             messageBodyBuffer = (ChannelSerializer ?? MessageSerializerRegistry.Global).Serialize(messageObject);
-            if (messageBodyBuffer == null || messageBodyBuffer.Length == 0)
+            if (messageBodyBuffer == null)
             {
                 return false;
             }
