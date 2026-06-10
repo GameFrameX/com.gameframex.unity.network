@@ -1,3 +1,10 @@
+## [2.6.8](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.7...2.6.8) (2026-06-10)
+
+
+### Bug Fixes
+
+* **network:** 移除消息体长度为零的检查 ([0b3bfac](https://github.com/gameframex/com.gameframex.unity.network/commit/0b3bfacde4916443e057f765ecb53c713eb55309))
+
 ## [2.6.7](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.6...2.6.7) (2026-06-07)
 
 
