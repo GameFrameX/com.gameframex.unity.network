@@ -1,3 +1,10 @@
+## [2.6.9](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.8...2.6.9) (2026-06-15)
+
+
+### Bug Fixes
+
+* **websocket:** 简化 WebSocket 连接逻辑 ([9fda842](https://github.com/gameframex/com.gameframex.unity.network/commit/9fda842e3c62c2ebdbf2bb437b8765de5b8b7a3a)), closes [#163](https://github.com/gameframex/com.gameframex.unity.network/issues/163)
+
 ## [2.6.8](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.7...2.6.8) (2026-06-10)
 
 
