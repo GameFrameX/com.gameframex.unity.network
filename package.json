@@ -20,9 +20,10 @@
     "url": "https://gameframex.doc.alianblank.com"
   },
   "dependencies": {
-    "com.gameframex.unity": "1.1.1",
-    "com.gameframex.unity.event": "1.0.0",
-    "com.gameframex.unity.litjson": "1.2.0"
+    "com.gameframex.unity": "2.5.1",
+    "com.gameframex.unity.event": "1.3.0",
+    "com.gameframex.unity.litjson": "1.2.2",
+    "com.gameframex.unity.psygames.unitywebsocket": "2.9.2"
   },
   "publishConfig": {
     "access": "public",
