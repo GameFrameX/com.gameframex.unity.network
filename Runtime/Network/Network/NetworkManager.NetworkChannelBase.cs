@@ -662,7 +662,7 @@ namespace GameFrameX.Network.Runtime
                 {
                     try
                     {
-                        var ipHost = Utility.Net.GetHostIPv4(address.Host);
+                        var ipHost = NetworkHelper.GetHostIPv4(address.Host);
                         if (IPAddress.TryParse(ipHost, out ipAddress))
                         {
                             ConnectEndPoint = new IPEndPoint(ipAddress, address.Port);
