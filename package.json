@@ -23,7 +23,7 @@
         "com.gameframex.unity": "3.0.0",
         "com.gameframex.unity.event": "2.0.0",
         "com.gameframex.unity.litjson": "1.2.4",
-        "com.gameframex.unity.psygames.unitywebsocket": "2.9.2"
+        "com.gameframex.unity.psygames.unitywebsocket": "2.9.3"
     },
     "publishConfig": {
         "access": "public",
