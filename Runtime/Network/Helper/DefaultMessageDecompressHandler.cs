@@ -14,6 +14,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="message">消息压缩内容</param>
         /// <returns></returns>
+        [UnityEngine.Scripting.Preserve]
         public byte[] Handler(byte[] message)
         {
             if (message == null)

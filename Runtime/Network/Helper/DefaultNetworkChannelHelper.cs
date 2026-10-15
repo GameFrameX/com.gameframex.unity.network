@@ -15,6 +15,7 @@ namespace GameFrameX.Network.Runtime
         private INetworkChannel m_NetworkChannel;
         private IMessageSerializer m_ChannelSerializer;
 
+        [UnityEngine.Scripting.Preserve]
         public DefaultNetworkChannelHelper()
         {
             m_NetworkChannel = null;
@@ -29,6 +30,7 @@ namespace GameFrameX.Network.Runtime
         /// </remarks>
         /// <param name="serializer">消息序列化器实例 / The message serializer instance</param>
         /// <exception cref="InvalidOperationException">当 <see cref="Initialize"/> 已调用后调用时抛出 / Thrown when called after <see cref="Initialize"/> has been invoked</exception>
+        [UnityEngine.Scripting.Preserve]
         public void SetChannelSerializer(IMessageSerializer serializer)
         {
             if (m_NetworkChannel != null)
@@ -42,21 +44,23 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取事件组件。
         /// </summary>
-        public EventComponent Event
+        [UnityEngine.Scripting.Preserve]
+        public IEventManager Event
         {
             get
             {
                 if (_event == null)
                 {
-                    _event = GameEntry.GetComponent<EventComponent>();
+                    _event = GameFrameworkEntry.GetModule<IEventManager>();
                 }
 
                 return _event;
             }
         }
 
-        private EventComponent _event;
+        private IEventManager _event;
 
+        [UnityEngine.Scripting.Preserve]
         public void Initialize(INetworkChannel netChannel)
         {
             m_NetworkChannel = netChannel;
@@ -128,6 +132,7 @@ namespace GameFrameX.Network.Runtime
             Event.CheckSubscribe(NetworkErrorEventArgs.EventId, OnNetworkErrorEventArgs);
         }
 
+        [UnityEngine.Scripting.Preserve]
         public void Shutdown()
         {
             Event.Unsubscribe(NetworkConnectedEventArgs.EventId, OnNetworkConnectedEventArgs);
@@ -137,12 +142,14 @@ namespace GameFrameX.Network.Runtime
             m_NetworkChannel = null;
         }
 
+        [UnityEngine.Scripting.Preserve]
         public void PrepareForConnecting()
         {
             m_NetworkChannel.Socket.ReceiveBufferSize = 1024 * 64 - 1;
             m_NetworkChannel.Socket.SendBufferSize = 1024 * 64 - 1;
         }
 
+        [UnityEngine.Scripting.Preserve]
         public bool SendHeartBeat()
         {
             if (m_NetworkChannel == null)
@@ -155,6 +162,7 @@ namespace GameFrameX.Network.Runtime
             return true;
         }
 
+        [UnityEngine.Scripting.Preserve]
         public bool SerializePacketHeader<T>(T messageObject, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject
         {
             GameFrameworkGuard.NotNull(m_NetworkChannel, nameof(m_NetworkChannel));
@@ -165,6 +173,7 @@ namespace GameFrameX.Network.Runtime
             return m_NetworkChannel.PacketSendHeaderHandler.Handler(messageObject, m_NetworkChannel.MessageCompressHandler, destination, out messageBodyBuffer);
         }
 
+        [UnityEngine.Scripting.Preserve]
         public bool SerializePacketBody(byte[] messageBodyBuffer, MemoryStream destination)
         {
             GameFrameworkGuard.NotNull(m_NetworkChannel, nameof(m_NetworkChannel));
@@ -176,6 +185,7 @@ namespace GameFrameX.Network.Runtime
             return m_NetworkChannel.PacketSendBodyHandler.Handler(messageBodyBuffer, destination);
         }
 
+        [UnityEngine.Scripting.Preserve]
         public bool DeserializePacketHeader(byte[] source)
         {
             GameFrameworkGuard.NotNull(source, nameof(source));
@@ -184,6 +194,7 @@ namespace GameFrameX.Network.Runtime
             return m_NetworkChannel.PacketReceiveHeaderHandler.Handler(source);
         }
 
+        [UnityEngine.Scripting.Preserve]
         public bool DeserializePacketBody(byte[] source, int messageId, out MessageObject messageObject)
         {
             GameFrameworkGuard.NotNull(source, nameof(source));
@@ -191,6 +202,7 @@ namespace GameFrameX.Network.Runtime
             return m_NetworkChannel.PacketReceiveBodyHandler.Handler(source, messageId, out messageObject);
         }
 
+        [UnityEngine.Scripting.Preserve]
         public void Clear()
         {
             m_NetworkChannel?.Close(NetworkCloseReason.Dispose, (ushort)NetworkErrorCode.DisposeError);

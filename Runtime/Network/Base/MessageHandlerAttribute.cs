@@ -18,6 +18,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息对象
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public Type MessageType { get; }
 
         /// <summary>
@@ -50,6 +51,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="message">注册的消息对象。需要继承MessageObject和实现IResponseMessage</param>
         /// <param name="invokeMethodName">执行的方法名称。建议使用nameof标记当前的函数</param>
+        [UnityEngine.Scripting.Preserve]
         public MessageHandlerAttribute(Type message, string invokeMethodName)
         {
             GameFrameworkGuard.NotNull(message, nameof(message));
@@ -72,6 +74,7 @@ namespace GameFrameX.Network.Runtime
         /// 设置消息对象
         /// </summary>
         /// <param name="messageObject">消息对象</param>
+        [UnityEngine.Scripting.Preserve]
         public void SetMessageObject(MessageObject messageObject)
         {
             GameFrameworkGuard.NotNull(messageObject, nameof(messageObject));

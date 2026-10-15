@@ -51,6 +51,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 心跳间隔时长
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public float HeartBeatElapseSeconds
             {
                 get { return _heartBeatElapseSeconds; }
@@ -60,6 +61,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 心跳丢失次数
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public int MissHeartBeatCount
             {
                 get { return _missHeartBeatCount; }
@@ -70,6 +72,7 @@ namespace GameFrameX.Network.Runtime
             /// 重置心跳数据=>保活
             /// </summary>
             /// <param name="resetHeartBeatElapseSeconds">是否重置心跳流逝时长</param>
+            [UnityEngine.Scripting.Preserve]
             public void Reset(bool resetHeartBeatElapseSeconds)
             {
                 if (resetHeartBeatElapseSeconds)

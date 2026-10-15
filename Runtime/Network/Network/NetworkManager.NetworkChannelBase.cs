@@ -200,11 +200,13 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取网络频道名称。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public string Name { get; }
 
             /// <summary>
             /// 获取网络频道所使用的 Socket。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public INetworkSocket Socket
             {
                 get { return PSocket; }
@@ -213,6 +215,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取是否已连接。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public bool Connected
             {
                 get
@@ -229,6 +232,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取网络地址类型。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public NetworkAddressFamily AddressFamily
             {
                 get { return PAddressFamily; }
@@ -237,6 +241,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取要发送的消息包数量。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public int SendPacketCount
             {
                 get
@@ -251,6 +256,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取累计发送的消息包数量。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public int SentPacketCount
             {
                 get { return System.Threading.Interlocked.CompareExchange(ref m_SentPacketCount, 0, 0); }
@@ -259,6 +265,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取累计已接收的消息包数量。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public int ReceivedPacketCount
             {
                 get { return System.Threading.Interlocked.CompareExchange(ref m_ReceivedPacketCount, 0, 0); }
@@ -267,6 +274,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取或设置当收到消息包时是否重置心跳流逝时间。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public bool ResetHeartBeatElapseSecondsWhenReceivePacket
             {
                 get { return PResetHeartBeatElapseSecondsWhenReceivePacket; }
@@ -276,6 +284,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取丢失心跳的次数。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public int MissHeartBeatCount
             {
                 get
@@ -290,6 +299,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取或设置心跳间隔时长，以秒为单位。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public float HeartBeatInterval
             {
                 get { return PHeartBeatInterval; }
@@ -307,6 +317,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 获取心跳等待时长，以秒为单位。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public float HeartBeatElapseSeconds
             {
                 get
@@ -321,6 +332,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 消息发送包头处理器
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public IPacketSendHeaderHandler PacketSendHeaderHandler
             {
                 get { return m_PacketSendHeaderHandler; }
@@ -329,6 +341,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 消息发送内容处理器
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public IPacketSendBodyHandler PacketSendBodyHandler
             {
                 get { return m_PacketSendBodyHandler; }
@@ -337,6 +350,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 消息接收包头处理器
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public IPacketReceiveHeaderHandler PacketReceiveHeaderHandler
             {
                 get { return m_PacketReceiveHeaderHandler; }
@@ -345,6 +359,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 心跳消息处理器
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public IPacketHeartBeatHandler PacketHeartBeatHandler
             {
                 get { return m_PacketHeartBeatHandler; }
@@ -353,6 +368,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 消息接收内容处理器
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public IPacketReceiveBodyHandler PacketReceiveBodyHandler
             {
                 get { return m_PacketReceiveBodyHandler; }
@@ -361,11 +377,13 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 消息压缩处理器
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public IMessageCompressHandler MessageCompressHandler { get; private set; }
 
             /// <summary>
             /// 消息解压处理器
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public IMessageDecompressHandler MessageDecompressHandler { get; private set; }
 
             #endregion
@@ -375,6 +393,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
             /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
+            [UnityEngine.Scripting.Preserve]
             public virtual void Update(float elapseSeconds, float realElapseSeconds)
             {
                 if (PSocket == null || !PActive)
@@ -490,6 +509,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 关闭网络频道。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public virtual void Shutdown()
             {
                 Close(NetworkCloseReason.Normal);
@@ -832,6 +852,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 释放资源。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public void Dispose()
             {
                 Dispose(true);
@@ -985,6 +1006,7 @@ namespace GameFrameX.Network.Runtime
             /// 设置是否开启心跳包失去焦点时也发送心跳包
             /// </summary>
             /// <param name="hasFocus">是否开启心跳包失去焦点时也发送心跳包</param>
+            [UnityEngine.Scripting.Preserve]
             public void SetFocusHeartbeat(bool hasFocus)
             {
                 PFocusHeartbeat = hasFocus;

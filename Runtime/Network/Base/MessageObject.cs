@@ -10,6 +10,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息唯一编号
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         [GameFrameX.LitJSON.Runtime.JsonIgnore]
         public int UniqueId { get; private set; }
 
@@ -21,6 +22,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 更新唯一编码
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public void UpdateUniqueId()
         {
             UniqueId = Utility.IdGenerator.GetNextUniqueIntId();
@@ -29,6 +31,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 设置唯一编码
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public void SetUpdateUniqueId(int uniqueId)
         {
             UniqueId = uniqueId;
@@ -42,6 +45,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 清理引用。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public virtual void Clear()
         {
         }

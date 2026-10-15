@@ -42,34 +42,36 @@ namespace GameFrameX.Network.Runtime
     [DisallowMultipleComponent]
     [AddComponentMenu("GameFrameX/Network")]
     [UnityEngine.Scripting.Preserve]
+    [GameFrameXAutoComponent(1000)]
     public sealed class NetworkComponent : GameFrameworkComponent
     {
         private INetworkManager m_NetworkManager = null;
-        private EventComponent m_EventComponent = null;
+        private IEventManager m_EventManager = null;
 
         /// <summary>
         /// 忽略发送的网络消息ID的日志打印
         /// </summary>
-        [SerializeField] private List<int> m_IgnoredSendNetworkIds = new List<int>();
+        private List<int> m_IgnoredSendNetworkIds = new List<int>();
 
         /// <summary>
         /// 忽略接收的网络消息ID的日志打印
         /// </summary>
-        [SerializeField] private List<int> m_IgnoredReceiveNetworkIds = new List<int>();
+        private List<int> m_IgnoredReceiveNetworkIds = new List<int>();
 
         /// <summary>
         /// RPC超时时间，以毫秒为单位,默认为5秒
         /// </summary>
-        [SerializeField] private int m_rpcTimeout = 5000;
+        private int m_rpcTimeout = 5000;
 
         /// <summary>
         /// 是否在应用程序获得焦点时发送心跳包,默认为false
         /// </summary>
-        [SerializeField] private bool m_FocusHeartbeat = false;
+        private bool m_FocusHeartbeat = false;
 
         /// <summary>
         /// 获取网络频道数量。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int NetworkChannelCount
         {
             get { return m_NetworkManager.NetworkChannelCount; }
@@ -99,6 +101,14 @@ namespace GameFrameX.Network.Runtime
             ImplementationComponentType = Utility.Assembly.GetType(componentType);
             InterfaceComponentType = typeof(INetworkManager);
             base.Awake();
+            if (GameFrameXOptions.TryGet<NetworkOptions>(out var networkOptions))
+            {
+                m_rpcTimeout = networkOptions.RpcTimeout;
+                m_FocusHeartbeat = networkOptions.FocusHeartbeat;
+                m_IgnoredSendNetworkIds = networkOptions.IgnoredSendNetworkIds;
+                m_IgnoredReceiveNetworkIds = networkOptions.IgnoredReceiveNetworkIds;
+            }
+
             m_NetworkManager = GameFrameworkEntry.GetModule<INetworkManager>();
             if (m_NetworkManager == null)
             {
@@ -114,8 +124,8 @@ namespace GameFrameX.Network.Runtime
 
         private void Start()
         {
-            m_EventComponent = GameEntry.GetComponent<EventComponent>();
-            if (m_EventComponent == null)
+            m_EventManager = GameFrameworkEntry.GetModule<IEventManager>();
+            if (m_EventManager == null)
             {
                 Log.Fatal("Event component is invalid.");
                 return;
@@ -195,46 +205,46 @@ namespace GameFrameX.Network.Runtime
 
         private void OnNetworkConnected(object sender, NetworkConnectedEventArgs eventArgs)
         {
-            if (m_EventComponent == null)
+            if (m_EventManager == null)
             {
                 return;
             }
 
             var networkConnectedEventArgs = NetworkConnectedEventArgs.Create(eventArgs.NetworkChannel, eventArgs.UserData);
-            m_EventComponent.Fire(this, networkConnectedEventArgs);
+            m_EventManager.Fire(this, networkConnectedEventArgs);
         }
 
         private void OnNetworkClosed(object sender, NetworkClosedEventArgs eventArgs)
         {
-            if (m_EventComponent == null)
+            if (m_EventManager == null)
             {
                 return;
             }
 
             var networkClosedEventArgs = NetworkClosedEventArgs.Create(eventArgs.NetworkChannel, eventArgs.Reason, eventArgs.ErrorCode);
-            m_EventComponent.Fire(this, networkClosedEventArgs);
+            m_EventManager.Fire(this, networkClosedEventArgs);
         }
 
         private void OnNetworkMissHeartBeat(object sender, NetworkMissHeartBeatEventArgs eventArgs)
         {
-            if (m_EventComponent == null)
+            if (m_EventManager == null)
             {
                 return;
             }
 
             var networkMissHeartBeatEventArgs = NetworkMissHeartBeatEventArgs.Create(eventArgs.NetworkChannel, eventArgs.MissCount);
-            m_EventComponent.Fire(this, networkMissHeartBeatEventArgs);
+            m_EventManager.Fire(this, networkMissHeartBeatEventArgs);
         }
 
         private void OnNetworkError(object sender, NetworkErrorEventArgs eventArgs)
         {
-            if (m_EventComponent == null)
+            if (m_EventManager == null)
             {
                 return;
             }
 
             var networkErrorEventArgs = NetworkErrorEventArgs.Create(eventArgs.NetworkChannel, eventArgs.ErrorCode, eventArgs.SocketErrorCode, eventArgs.ErrorMessage);
-            m_EventComponent.Fire(this, networkErrorEventArgs);
+            m_EventManager.Fire(this, networkErrorEventArgs);
         }
     }
 }

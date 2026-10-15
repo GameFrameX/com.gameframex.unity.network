@@ -40,39 +40,23 @@ namespace GameFrameX.Network.Editor
     [CustomEditor(typeof(NetworkComponent))]
     internal sealed class NetworkComponentInspector : ComponentTypeComponentInspector
     {
-        private SerializedProperty m_IgnoredSendNetworkIds;
-        private SerializedProperty m_IgnoredReceiveNetworkIds;
-        private SerializedProperty m_rpcTimeout;
-        private SerializedProperty m_FocusHeartbeat;
-
-        private readonly GUIContent m_IgnoredSendNetworkIdsGUIContent = new GUIContent("Ignore Log Printing For Sent Message IDs");
-        private readonly GUIContent m_IgnoredReceiveNetworkIdsGUIContent = new GUIContent("Ignore Log Printing Of Received Message IDs");
-        private readonly GUIContent m_rpcTimeoutGUIContent = new GUIContent("RPC Timeout Time In Milliseconds");
-        private readonly GUIContent m_FocusHeartbeatGUIContent = new GUIContent("Focus Send Heartbeat");
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
             serializedObject.Update();
-            EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
-            {
-                GUI.enabled = !EditorApplication.isPlaying;
-                EditorGUILayout.IntSlider(m_rpcTimeout, 3000, 50000, m_rpcTimeoutGUIContent);
-                EditorGUILayout.PropertyField(m_FocusHeartbeat, m_FocusHeartbeatGUIContent);
-                EditorGUILayout.PropertyField(m_IgnoredSendNetworkIds, m_IgnoredSendNetworkIdsGUIContent);
-                EditorGUILayout.PropertyField(m_IgnoredReceiveNetworkIds, m_IgnoredReceiveNetworkIdsGUIContent);
-                GUI.enabled = false;
-            }
-            EditorGUI.EndDisabledGroup();
             serializedObject.ApplyModifiedProperties();
             if (!EditorApplication.isPlaying)
             {
-                EditorGUILayout.HelpBox("Available during runtime only.", MessageType.Info);
+                // C9 活视图：编辑态提示 NetworkOptions 入口（启动参数不再序列化编辑）。
+                GameFrameXOptionsLiveViewUtility.DrawLiveViewHeader(typeof(NetworkOptions).Name);
                 return;
             }
 
             NetworkComponent t = (NetworkComponent)target;
 
+            // C9 活视图：Play 态 RpcTimeout 可实时修改（写回私有字段）；FocusHeartbeat 为启动期型只读。
+            GameFrameXOptionsLiveViewUtility.DrawLiveView(t, typeof(NetworkOptions));
             if (IsPrefabInHierarchy(t.gameObject))
             {
                 EditorGUILayout.LabelField("Network Channel Count", t.NetworkChannelCount.ToString());
@@ -125,10 +109,6 @@ namespace GameFrameX.Network.Editor
         protected override void Enable()
         {
             base.Enable();
-            m_IgnoredSendNetworkIds = serializedObject.FindProperty("m_IgnoredSendNetworkIds");
-            m_IgnoredReceiveNetworkIds = serializedObject.FindProperty("m_IgnoredReceiveNetworkIds");
-            m_rpcTimeout = serializedObject.FindProperty("m_rpcTimeout");
-            m_FocusHeartbeat = serializedObject.FindProperty("m_FocusHeartbeat");
         }
     }
 }

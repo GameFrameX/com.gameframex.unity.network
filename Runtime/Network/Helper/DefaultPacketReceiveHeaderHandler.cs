@@ -11,26 +11,31 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 包长度
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public uint PacketLength { get; private set; }
 
         /// <summary>
         /// 消息ID
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int Id { get; private set; }
 
         /// <summary>
         /// 消息唯一编号
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int UniqueId { get; private set; }
 
         /// <summary>
         /// 消息操作类型
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public byte OperationType { get; private set; }
 
         /// <summary>
         /// 压缩标记
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public byte ZipFlag { get; private set; }
 
 
@@ -39,6 +44,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
+        [UnityEngine.Scripting.Preserve]
         public bool Handler(object source)
         {
             byte[] reader = source as byte[];
@@ -90,6 +96,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 包头长度 2 + 1 + 1 + 4 + 4
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public ushort PacketHeaderLength { get; } = NetPacketLength + OperationTypeLength + NetZipFlagLength + NetUniqueIdLength + NetCmdIdLength;
     }
 }

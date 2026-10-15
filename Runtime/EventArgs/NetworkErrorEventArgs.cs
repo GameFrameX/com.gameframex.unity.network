@@ -57,6 +57,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 初始化网络错误事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public NetworkErrorEventArgs()
         {
             NetworkChannel = null;
@@ -68,21 +69,25 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络频道。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel NetworkChannel { get; private set; }
 
         /// <summary>
         /// 获取错误码。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public NetworkErrorCode ErrorCode { get; private set; }
 
         /// <summary>
         /// 获取 Socket 错误码。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public SocketError SocketErrorCode { get; private set; }
 
         /// <summary>
         /// 获取错误信息。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public string ErrorMessage { get; private set; }
 
         /// <summary>
@@ -93,6 +98,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="socketErrorCode">Socket 错误码。</param>
         /// <param name="errorMessage">错误信息。</param>
         /// <returns>创建的网络错误事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static NetworkErrorEventArgs Create(INetworkChannel networkChannel, NetworkErrorCode errorCode, SocketError socketErrorCode, string errorMessage)
         {
             NetworkErrorEventArgs networkErrorEventArgs = ReferencePool.Acquire<NetworkErrorEventArgs>();

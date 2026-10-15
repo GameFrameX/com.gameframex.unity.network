@@ -12,6 +12,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息ID,不能重复
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int MessageId { get; }
 
         /// <summary>

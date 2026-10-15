@@ -50,20 +50,25 @@ namespace GameFrameX.Network.Runtime
                 _disposed = false;
             }
 
+            [UnityEngine.Scripting.Preserve]
             public MemoryStream Stream { get; private set; }
 
             /// <summary>
             /// 是否为空消息体
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public bool IsEmptyBody { get; private set; }
 
+            [UnityEngine.Scripting.Preserve]
             public IPacketReceiveHeaderHandler PacketHeader { get; set; }
 
+            [UnityEngine.Scripting.Preserve]
             public void PrepareForPacketHeader(int packetHeaderLength = PacketHeaderLength)
             {
                 Reset(packetHeaderLength, null);
             }
 
+            [UnityEngine.Scripting.Preserve]
             public void Dispose()
             {
                 Dispose(true);
@@ -89,6 +94,7 @@ namespace GameFrameX.Network.Runtime
                 _disposed = true;
             }
 
+            [UnityEngine.Scripting.Preserve]
             public void Reset(int targetLength, IPacketReceiveHeaderHandler packetHeader)
             {
                 if (_disposed)

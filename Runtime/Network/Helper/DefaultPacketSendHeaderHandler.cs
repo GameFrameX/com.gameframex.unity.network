@@ -42,6 +42,7 @@ namespace GameFrameX.Network.Runtime
         private const int NetUniqueIdLength = sizeof(int);
 
 
+        [UnityEngine.Scripting.Preserve]
         public DefaultPacketSendHeaderHandler()
         {
             // 4 + 1 + 1 + 4 + 4
@@ -52,26 +53,31 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 消息包头长度
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public ushort PacketHeaderLength { get; }
 
         /// <summary>
         /// 获取网络消息包协议编号。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int Id { get; private set; }
 
         /// <summary>
         /// 获取网络消息包长度。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public uint PacketLength { get; private set; }
 
         /// <summary>
         /// 是否压缩消息内容
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public bool IsZip { get; private set; }
 
         /// <summary>
         /// 超过消息的长度超过该值的时候启用压缩.该值 必须在设置压缩器的时候才生效,默认512
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public virtual uint LimitCompressLength { get; } = 512;
 
         private readonly byte[] m_CachedByte;
@@ -85,6 +91,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="messageBodyBuffer">消息序列化完的二进制数组</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
+        [UnityEngine.Scripting.Preserve]
         public bool Handler<T>(T messageObject, IMessageCompressHandler messageCompressHandler, MemoryStream destination, out byte[] messageBodyBuffer) where T : MessageObject
         {
             int offset = 0;

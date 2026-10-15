@@ -30,6 +30,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="message">要序列化的消息对象 / The message object to serialize</param>
         /// <returns>此方法不会返回 / This method never returns</returns>
         /// <exception cref="InvalidOperationException">未注册消息序列化器时抛出 / Thrown when no message serializer is registered</exception>
+        [UnityEngine.Scripting.Preserve]
         public byte[] Serialize<T>(T message) where T : MessageObject
         {
             throw new InvalidOperationException(
@@ -47,6 +48,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="targetType">目标消息类型 / The target message type</param>
         /// <returns>此方法不会返回 / This method never returns</returns>
         /// <exception cref="InvalidOperationException">未注册消息序列化器时抛出 / Thrown when no message serializer is registered</exception>
+        [UnityEngine.Scripting.Preserve]
         public object Deserialize(byte[] data, Type targetType)
         {
             throw new InvalidOperationException(

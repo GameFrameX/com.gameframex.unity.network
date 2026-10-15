@@ -55,6 +55,7 @@ namespace GameFrameX.Network.Runtime
             private readonly int _rpcTimeout;
             private bool _disposed;
 
+            [UnityEngine.Scripting.Preserve]
             public RpcState(int timeout)
             {
                 _rpcTimeout = timeout;
@@ -64,6 +65,7 @@ namespace GameFrameX.Network.Runtime
                 }
             }
 
+            [UnityEngine.Scripting.Preserve]
             public void Dispose()
             {
                 if (_disposed)
@@ -83,6 +85,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 重置 RPC 状态，用于重连场景。
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public void Reset()
             {
                 foreach (var kvp in _waitingReplyHandlingObjects)
@@ -101,6 +104,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="message">要处理的消息对象，必须实现IResponseMessage接口。</param>
             /// <returns>如果成功处理回复消息，则返回true；否则返回false。</returns>
+            [UnityEngine.Scripting.Preserve]
             public bool TryReply(MessageObject message)
             {
                 if (message.GetType().IsImplWithInterface(typeof(IResponseMessage)))
@@ -137,6 +141,7 @@ namespace GameFrameX.Network.Runtime
             /// <param name="messageObject">要发送的消息对象，必须实现IRequestMessage接口。</param>
             /// <param name="isIgnoreErrorCode"></param>
             /// <returns>返回一个任务，该任务在收到响应时完成，并返回IResponseMessage。</returns>
+            [UnityEngine.Scripting.Preserve]
             public Task<IResponseMessage> Call(MessageObject messageObject, bool isIgnoreErrorCode)
             {
                 if (_waitingReplyHandlingObjects.TryGetValue(messageObject.UniqueId, out var messageActorObject))
@@ -166,6 +171,7 @@ namespace GameFrameX.Network.Runtime
             /// </summary>
             /// <param name="elapseSeconds"></param>
             /// <param name="realElapseSeconds"></param>
+            [UnityEngine.Scripting.Preserve]
             public void Update(float elapseSeconds, float realElapseSeconds)
             {
                 if (_waitingReplyHandlingObjects.Count <= 0)

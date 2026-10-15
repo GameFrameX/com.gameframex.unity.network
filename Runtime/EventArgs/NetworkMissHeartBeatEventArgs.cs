@@ -56,6 +56,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 初始化网络心跳包丢失事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public NetworkMissHeartBeatEventArgs()
         {
             NetworkChannel = null;
@@ -65,11 +66,13 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络频道。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel NetworkChannel { get; private set; }
 
         /// <summary>
         /// 获取心跳包已丢失次数。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int MissCount { get; private set; }
 
         /// <summary>
@@ -78,6 +81,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="networkChannel">网络频道。</param>
         /// <param name="missCount">心跳包已丢失次数。</param>
         /// <returns>创建的网络心跳包丢失事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static NetworkMissHeartBeatEventArgs Create(INetworkChannel networkChannel, int missCount)
         {
             NetworkMissHeartBeatEventArgs networkMissHeartBeatEventArgs = ReferencePool.Acquire<NetworkMissHeartBeatEventArgs>();

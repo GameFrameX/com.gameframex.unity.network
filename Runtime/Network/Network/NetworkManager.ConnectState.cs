@@ -47,6 +47,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// Socket
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public INetworkSocket Socket
             {
                 get { return m_Socket; }
@@ -55,6 +56,7 @@ namespace GameFrameX.Network.Runtime
             /// <summary>
             /// 用户自定义数据
             /// </summary>
+            [UnityEngine.Scripting.Preserve]
             public object UserData { get; }
         }
     }

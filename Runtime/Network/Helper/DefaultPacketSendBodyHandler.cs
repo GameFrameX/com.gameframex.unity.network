@@ -8,6 +8,7 @@ namespace GameFrameX.Network.Runtime
     [UnityEngine.Scripting.Preserve]
     public sealed class DefaultPacketSendBodyHandler : IPacketSendBodyHandler, IPacketHandler
     {
+        [UnityEngine.Scripting.Preserve]
         public bool Handler(byte[] messageBodyBuffer, MemoryStream destination)
         {
             if (messageBodyBuffer == null || destination == null)

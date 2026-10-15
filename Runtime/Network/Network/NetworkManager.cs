@@ -1,4 +1,4 @@
-﻿// ==========================================================================================
+// ==========================================================================================
 //  GameFrameX 组织及其衍生项目的版权、商标、专利及其他相关权利
 //  GameFrameX organization and its derivative projects' copyrights, trademarks, patents, and related rights
 //  均受中华人民共和国及相关国际法律法规保护。
@@ -40,7 +40,7 @@ namespace GameFrameX.Network.Runtime
     /// 网络管理器。
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public sealed partial class NetworkManager : GameFrameworkModule, INetworkManager
+    public sealed partial class NetworkManager : IGameFrameworkModule, INetworkManager, IUpdatableModule, IShutdownableModule
     {
         private readonly Dictionary<string, NetworkChannelBase> m_NetworkChannels;
         private readonly List<NetworkChannelBase> m_NetworkChannelSnapshot = new List<NetworkChannelBase>(4);
@@ -71,6 +71,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络频道数量。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int NetworkChannelCount
         {
             get { return m_NetworkChannels.Count; }
@@ -117,7 +118,8 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
-        protected override void Update(float elapseSeconds, float realElapseSeconds)
+        [UnityEngine.Scripting.Preserve]
+        public void Update(float elapseSeconds, float realElapseSeconds)
         {
             m_NetworkChannelSnapshot.Clear();
             m_NetworkChannelSnapshot.AddRange(m_NetworkChannels.Values);
@@ -130,7 +132,8 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 关闭并清理网络管理器。
         /// </summary>
-        protected override void Shutdown()
+        [UnityEngine.Scripting.Preserve]
+        public void Shutdown()
         {
             foreach (var networkChannel in m_NetworkChannels)
             {
@@ -150,6 +153,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
         /// <returns>是否存在网络频道。</returns>
+        [UnityEngine.Scripting.Preserve]
         public bool HasNetworkChannel(string channelName)
         {
             return m_NetworkChannels.ContainsKey(channelName ?? string.Empty);
@@ -160,6 +164,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
         /// <returns>要获取的网络频道。</returns>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel GetNetworkChannel(string channelName)
         {
             if (m_NetworkChannels.TryGetValue(channelName ?? string.Empty, out var networkChannel))
@@ -174,6 +179,7 @@ namespace GameFrameX.Network.Runtime
         /// 获取所有网络频道。
         /// </summary>
         /// <returns>所有网络频道。</returns>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel[] GetAllNetworkChannels()
         {
             var index = 0;
@@ -190,6 +196,7 @@ namespace GameFrameX.Network.Runtime
         /// 获取所有网络频道。
         /// </summary>
         /// <param name="results">所有网络频道。</param>
+        [UnityEngine.Scripting.Preserve]
         public void GetAllNetworkChannels(List<INetworkChannel> results)
         {
             GameFrameworkGuard.NotNull(results, nameof(results));
@@ -208,6 +215,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="networkChannelHelper">网络频道辅助器。</param>
         /// <param name="rpcTimeout">RPC超时时间</param>
         /// <returns>要创建的网络频道。</returns>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel CreateNetworkChannel(string channelName, INetworkChannelHelper networkChannelHelper, int rpcTimeout)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
@@ -235,6 +243,7 @@ namespace GameFrameX.Network.Runtime
         /// </summary>
         /// <param name="channelName">网络频道名称。</param>
         /// <returns>是否销毁网络频道成功。</returns>
+        [UnityEngine.Scripting.Preserve]
         public bool DestroyNetworkChannel(string channelName)
         {
             GameFrameworkGuard.NotNullOrEmpty(channelName, nameof(channelName));
@@ -255,6 +264,7 @@ namespace GameFrameX.Network.Runtime
         /// 设置是否开启心跳包失去焦点时也发送心跳包
         /// </summary>
         /// <param name="hasFocus">是否开启心跳包失去焦点时也发送心跳包</param>
+        [UnityEngine.Scripting.Preserve]
         public void SetFocusHeartbeat(bool hasFocus)
         {
             foreach (var networkChannel in m_NetworkChannels.Values)

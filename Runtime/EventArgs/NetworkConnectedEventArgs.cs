@@ -56,6 +56,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 初始化网络连接成功事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public NetworkConnectedEventArgs()
         {
             NetworkChannel = null;
@@ -65,11 +66,13 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络频道。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel NetworkChannel { get; private set; }
 
         /// <summary>
         /// 获取用户自定义数据。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public object UserData { get; private set; }
 
         /// <summary>
@@ -78,6 +81,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="networkChannel">网络频道。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>创建的网络连接成功事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static NetworkConnectedEventArgs Create(INetworkChannel networkChannel, object userData)
         {
             NetworkConnectedEventArgs networkConnectedEventArgs = ReferencePool.Acquire<NetworkConnectedEventArgs>();

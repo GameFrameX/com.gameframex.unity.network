@@ -19,6 +19,7 @@ namespace GameFrameX.Network.Runtime
         /// Gets the global message serializer; returns the default fallback if not registered.
         /// </remarks>
         /// <value>全局消息序列化器实例 / The global message serializer instance</value>
+        [UnityEngine.Scripting.Preserve]
         public static IMessageSerializer Global
         {
             get { return _global ?? DefaultMessageSerializer.Instance; }
@@ -32,6 +33,7 @@ namespace GameFrameX.Network.Runtime
         /// </remarks>
         /// <param name="serializer">要注册的消息序列化器实例 / The message serializer instance to register</param>
         /// <exception cref="ArgumentNullException">当 <paramref name="serializer"/> 为 null 时抛出 / Thrown when <paramref name="serializer"/> is null</exception>
+        [UnityEngine.Scripting.Preserve]
         public static void RegisterGlobal(IMessageSerializer serializer)
         {
             if (serializer == null)
@@ -47,6 +49,7 @@ namespace GameFrameX.Network.Runtime
         /// <remarks>
         /// Resets the global message serializer to the default fallback.
         /// </remarks>
+        [UnityEngine.Scripting.Preserve]
         public static void Reset()
         {
             _global = null;

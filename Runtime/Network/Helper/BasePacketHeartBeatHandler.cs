@@ -9,6 +9,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 每次心跳的间隔
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public virtual float HeartBeatInterval
         {
             get { return 5; }
@@ -17,8 +18,10 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 几次心跳丢失。触发断开网络
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public virtual int MissHeartBeatCountByClose { get; } = 5;
 
+        [UnityEngine.Scripting.Preserve]
         public virtual MessageObject Handler()
         {
             throw new System.NotImplementedException(

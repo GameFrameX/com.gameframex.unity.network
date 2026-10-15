@@ -14,6 +14,7 @@ namespace GameFrameX.Network.Runtime
         /// </remarks>
         internal IMessageSerializer ChannelSerializer { get; set; }
 
+        [UnityEngine.Scripting.Preserve]
         public bool Handler<T>(byte[] source, int messageId, out T messageObject) where T : MessageObject
         {
             var messageType = ProtoMessageIdHandler.GetRespTypeById(messageId);

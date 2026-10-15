@@ -56,6 +56,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 初始化网络连接关闭事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public NetworkClosedEventArgs()
         {
             NetworkChannel = null;
@@ -64,6 +65,7 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取网络频道。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public INetworkChannel NetworkChannel { get; private set; }
 
         /// <summary>
@@ -73,6 +75,7 @@ namespace GameFrameX.Network.Runtime
         /// <param name="reason">关闭原因。</param>
         /// <param name="errorCode">错误码。</param>
         /// <returns>创建的网络连接关闭事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static NetworkClosedEventArgs Create(INetworkChannel networkChannel, string reason, ushort errorCode)
         {
             NetworkClosedEventArgs networkClosedEventArgs = ReferencePool.Acquire<NetworkClosedEventArgs>();
@@ -85,11 +88,13 @@ namespace GameFrameX.Network.Runtime
         /// <summary>
         /// 获取关闭原因。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public string Reason { get; private set; }
 
         /// <summary>
         /// 获取错误码。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public ushort ErrorCode { get; private set; }
 
 

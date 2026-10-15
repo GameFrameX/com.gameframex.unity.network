@@ -47,8 +47,10 @@ namespace GameFrameX.Network.Runtime
                 m_Disposed = false;
             }
 
+            [UnityEngine.Scripting.Preserve]
             public MemoryStream Stream { get; private set; }
 
+            [UnityEngine.Scripting.Preserve]
             public void Reset()
             {
                 if (m_Disposed)
@@ -60,6 +62,7 @@ namespace GameFrameX.Network.Runtime
                 Stream.SetLength(0L);
             }
 
+            [UnityEngine.Scripting.Preserve]
             public void Dispose()
             {
                 Dispose(true);
