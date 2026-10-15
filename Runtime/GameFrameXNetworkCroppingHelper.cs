@@ -36,7 +36,6 @@ namespace GameFrameX.Network.Runtime
             _ = typeof(GameFrameX.Network.Runtime.IRequestMessage);
             _ = typeof(GameFrameX.Network.Runtime.IResponseMessage);
             _ = typeof(GameFrameX.Network.Runtime.MessageHandlerAttribute);
-            _ = typeof(GameFrameX.Network.Runtime.MessageHttpObject);
             _ = typeof(GameFrameX.Network.Runtime.MessageSerializerRegistry);
             _ = typeof(GameFrameX.Network.Runtime.MessageObject);
             _ = typeof(GameFrameX.Network.Runtime.MessageTypeHandlerAttribute);
