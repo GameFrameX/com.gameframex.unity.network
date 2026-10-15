@@ -1,3 +1,24 @@
+# [3.0.0](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.10...3.0.0) (2026-10-15)
+
+
+* feat(module)!: 网络模块薄入口化并新增 NetworkOptions ([26bb18e](https://github.com/gameframex/com.gameframex.unity.network/commit/26bb18e82fe139f1e831d7296a7f01a6ab53cd4c))
+* feat(network)!: 迁出 MessageHttpObject 至 web.protobuff ([2e009b8](https://github.com/gameframex/com.gameframex.unity.network/commit/2e009b8a065336c4a3534c5bb7f0d3affad8288f))
+
+
+### Bug Fixes
+
+* **dependencies:** 更新依赖项版本以支持新功能 ([02b7e18](https://github.com/gameframex/com.gameframex.unity.network/commit/02b7e182b2fa16a17001244345de0b30b3260a8e))
+* **deps:** 同步依赖版本至最新 ([64bbf0d](https://github.com/gameframex/com.gameframex.unity.network/commit/64bbf0d519224c3993b737e68df605f62b32ccfe))
+* **package:** 修正品牌命名 ([1f5bdb4](https://github.com/gameframex/com.gameframex.unity.network/commit/1f5bdb4ae6e5fb2a1873c85fbe5122a406b90d37))
+
+
+### BREAKING CHANGES
+
+* NetworkComponent 序列化字段移除，编辑期配置入口收敛到代码 NetworkOptions。
+* GameFrameX.Network.Runtime.MessageHttpObject 已移除，
+改用 GameFrameX.Web.ProtoBuff.Runtime.MessageHttpObject，
+需与 web.protobuff 2.0.0+ 配套升级。
+
 ## [Unreleased]
 
 ### ⚠ BREAKING CHANGES
