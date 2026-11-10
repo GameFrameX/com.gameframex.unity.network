@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/gameframex/com.gameframex.unity.network/compare/3.0.0...3.0.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **network:** 添加完整 link.xml 防代码裁剪保护 ([a00ea43](https://github.com/gameframex/com.gameframex.unity.network/commit/a00ea43e3e371c7c10aab69d1969c6bd5f9269fe))
+
 # [3.0.0](https://github.com/gameframex/com.gameframex.unity.network/compare/2.6.10...3.0.0) (2026-10-15)
 
 
